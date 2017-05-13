@@ -1,0 +1,11 @@
+{
+    "description": "Panel widget for viewing and switching the current workspace.",
+    "licence": "GNU General Public License, Version 3",
+    "licence-url": "https://www.gnu.org/licenses/gpl-3.0.html",
+    "name": "Workspace Switcher",
+    "settings-schema": "org.gnome.shell.extensions.workspace-switcher",
+    "shell-version": [ "3.24" ],
+    "url": "https://github.com/Tomha/gnome-shell-extension-workspace-switcher",
+    "uuid": "workspace-switcher@tomha.github.com",
+    "version": "Alpha 1.0"
+}
