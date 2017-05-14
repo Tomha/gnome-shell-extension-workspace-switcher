@@ -1,5 +1,26 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <schemalist>
+	<enum id="org.gnome.shell.extensions.workspace-switcher.mode">
+		<value value="0" nick="CURRENT"/>
+		<value value="1" nick="ALL"/>
+	</enum>
+	<enum id="org.gnome.shell.extensions.workspace-switcher.position">
+		<value value="0" nick="LEFT"/>
+		<value value="1" nick="CENTER"/>
+		<value value="2" nick="RIGHT"/>
+	</enum>
 	<schema path="/org/gnome/shell/extensions/workspce-switcher/" id="org.gnome.shell.extensions.workspace-switcher">
+		<key name="index" type="i">
+			<default>-1</default>
+		</key>
+		<key name="mode" enum="org.gnome.shell.extensions.workspace-switcher.mode">
+			<default>"CURRENT"</default>
+		</key>
+		<key name="position" enum="org.gnome.shell.extensions.workspace-switcher.position">
+			<default>"RIGHT"</default>
+		</key>
+		<key name="use-names" type="b">
+			<default>true</default>
+		</key>
 	</schema>
 </schemalist>
