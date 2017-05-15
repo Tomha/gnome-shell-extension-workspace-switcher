@@ -33,6 +33,8 @@ const ExtensionUtils = imports.misc.extensionUtils;
 const Me = ExtensionUtils.getCurrentExtension();
 const Settings = Me.imports.settings;
 
+// TODO: For some reason changing mode to all only applies once prefs is closed
+
 const ACTIVE_STYLE = "background-color: #888888; border: 1px solid #cccccc";
 const INACTIVE_STYLE = "background-color: #444444; border: 1px solid #cccccc";
 const PANEL_POSITIONS = [Main.panel._leftBox,
@@ -65,12 +67,13 @@ WorkspaceSwitcher.prototype = {
 
     enable: function () {
         this._loadSettings();
+        this._settingsSignal = this._settings.connect('changed', Lang.bind(this, this._onSettingsChanged));
         this._currentWorkspace = global.screen.get_active_workspace().index();
 
-        this._childLabels = [];
-        this._childMiscWidgets = [];
-        this._widgetSignalOwners = [];
-        this._widgetSignals = [];
+        this._workspaceLabels = [];
+        this._miscWidgets = [];
+        this._miscSignalOwners = [];
+        this._miscSignals = [];
         this._workspaceSignals = [];
 
         this._container = new St.BoxLayout();
@@ -85,8 +88,7 @@ WorkspaceSwitcher.prototype = {
         this._enableMode(this._mode);
         insertAtPosition(this._panelButton, this._position, this._index);
 
-        this._widgetSignalOwners.push(this._panelButton);
-        this._widgetSignals.push(this._panelButton.connect('scroll-event', Lang.bind(this, this._onScroll)));
+        this._scrollSignal = this._panelButton.connect('scroll-event', Lang.bind(this, this._onScroll));
 
         //this._workspaceSignals.push(global.screen.connect('workspace-added', TODO);
         //this._workspaceSignals.push(global.screen.connect('workspace-removed',TODO);
@@ -94,16 +96,11 @@ WorkspaceSwitcher.prototype = {
     },
 
     disable: function () {
+        this._disableCurrentMode();
+
+        this._panelButton.disconnect(this._scrollSignal);
+        this._settings.disconnect(this._settingsSignal);
         this._settings = null;
-
-        for (let i = 0; i < this._childLabels.length; i++)
-            this._childLabels[i].destroy();
-
-        for (let i = 0; i < this._childMiscWidgets.length; i++)
-            this._childMiscWidgets[i].destroy();
-
-        for (let i = 0; i < this._widgetSignals.length; i++)
-            this._widgetSignalOwners[i].disconnect(this._widgetSignals[i]);
 
         for (let i = 0; i < this._workspaceSignals.length; i++)
             global.screen.disconnect(this._workspaceSignals[i]);
@@ -113,6 +110,21 @@ WorkspaceSwitcher.prototype = {
     },
 
     // Private Functions
+    _disableCurrentMode: function () {
+        for (let i = 0; i < this._workspaceLabels.length; i++)
+            this._workspaceLabels[i].destroy();
+        this._workspaceLabels = [];
+
+        for (let i = 0; i < this._miscWidgets.length; i++)
+            this._miscWidgets[i].destroy();
+        this._miscWidgets = [];
+
+        for (let i = 0; i < this._miscSignals.length; i++)
+            this._miscSignalOwners[i].disconnect(this._miscSignals[i]);
+        this._miscSignalOwners = [];
+        this._miscSignals = [];
+    },
+
     _enableMode: function (mode) {
         let label
         switch (mode) {
@@ -120,26 +132,26 @@ WorkspaceSwitcher.prototype = {
                 label = new St.Label({y_align: Clutter.ActorAlign.CENTER});
                 label.set_text(this._getWorkspaceName());
                 this._container.add_child(label);
-                this._childLabels.push(label);
+                this._workspaceLabels.push(label);
                 break;
             case 1:
                 for (let i = 0; i < global.screen.n_workspaces; i++) {
                     label = new St.Label({y_align: Clutter.ActorAlign.CENTER});
                     label.set_text(this._getWorkspaceName(i));
                     this._container.add_child(label);
-                    this._childLabels.push(label);
+                    this._workspaceLabels.push(label);
                 }
                 break;
             case 2:
                 let icon = new St.Icon({icon_name: 'workspace-switcher',
                                         style_class: 'system-status-icon'});
                 this._container.add_child(icon);
-                this._childMiscWidgets.push(icon);
+                this._miscWidgets.push(icon);
 
                 label = new St.Label({y_align: Clutter.ActorAlign.CENTER});
                 label.set_text(this._getWorkspaceName());
                 this._container.add_child(label);
-                this._childLabels.push(label);
+                this._workspaceLabels.push(label);
                 break;
         }
     },
@@ -174,17 +186,17 @@ WorkspaceSwitcher.prototype = {
         this._currentWorkspace = global.screen.get_active_workspace().index();
         switch (this._mode) {
             case 0:
-                this._childLabels[0].set_text(this._getWorkspaceName());
+                this._workspaceLabels[0].set_text(this._getWorkspaceName());
                 break;
             case 1:
                 for (let i = 0; i < global.screen.n_workspaces; i++) {
                     if (i == this._currentWorkspace)
-                        this._childLabels[i].set_style(ACTIVE_STYLE);
-                    else this._childLabels[i].set_style(INACTIVE_STYLE);
+                        this._workspaceLabels[i].set_style(ACTIVE_STYLE);
+                    else this._workspaceLabels[i].set_style(INACTIVE_STYLE);
                 }
                 break;
             case 2:
-                this._childLabels[1].set_text(this._getWorkspaceName());
+                this._workspaceLabels[0].set_text(this._getWorkspaceName());
                 break;
         }
     },
@@ -200,7 +212,28 @@ WorkspaceSwitcher.prototype = {
     },
 
     _onSettingsChanged: function (settings, key) {
-
+        switch (key) {
+            case 'index':
+                this._index = settings.get_int(key);
+                removeFromPosition(this._panelButton, this._position);
+                insertAtPosition(this._panelButton, this._position, this._index);
+                break;
+            case 'mode':
+                this._disableCurrentMode();
+                this._mode = settings.get_enum(key);
+                this._enableMode(this._mode);
+                break;
+            case 'position':
+                removeFromPosition(this._panelButton, this._position);
+                this._position = settings.get_enum(key);
+                insertAtPosition(this._panelButton, this._position, this._index);
+                break;
+            case 'use-names':
+                this._useNames = settings.get_boolean(key);
+                for (let i = 0; i < this._workspaceLabels.length; i++)
+                    this._workspaceLabels[i].set_text(this._getWorkspaceName(i));
+                break;
+        }
     },
 }
 

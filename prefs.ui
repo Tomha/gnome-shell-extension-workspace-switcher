@@ -17,7 +17,6 @@
     <property name="margin_bottom">16</property>
     <property name="row_spacing">8</property>
     <property name="column_spacing">8</property>
-    <property name="row_homogeneous">True</property>
     <property name="column_homogeneous">True</property>
     <child>
       <object class="GtkLabel">
@@ -56,19 +55,26 @@
       </packing>
     </child>
     <child>
-      <object class="GtkRadioButton" id="modeAll">
-        <property name="label" translatable="yes">All</property>
+      <object class="GtkLabel">
         <property name="visible">True</property>
-        <property name="can_focus">True</property>
-        <property name="receives_default">False</property>
-        <property name="active">True</property>
-        <property name="draw_indicator">True</property>
-        <property name="group">modeCurrent</property>
-        <signal name="group-changed" handler="onModeChanged" swapped="no"/>
+        <property name="can_focus">False</property>
+        <property name="halign">end</property>
+        <property name="label" translatable="yes">Use Names:</property>
       </object>
       <packing>
-        <property name="left_attach">1</property>
-        <property name="top_attach">0</property>
+        <property name="left_attach">0</property>
+        <property name="top_attach">3</property>
+      </packing>
+    </child>
+    <child>
+      <object class="GtkLabel" id="debug">
+        <property name="visible">True</property>
+        <property name="can_focus">False</property>
+      </object>
+      <packing>
+        <property name="left_attach">0</property>
+        <property name="top_attach">4</property>
+        <property name="width">4</property>
       </packing>
     </child>
     <child>
@@ -83,6 +89,22 @@
         <signal name="toggled" handler="onModeChanged" swapped="no"/>
       </object>
       <packing>
+        <property name="left_attach">1</property>
+        <property name="top_attach">0</property>
+      </packing>
+    </child>
+    <child>
+      <object class="GtkRadioButton" id="modeAll">
+        <property name="label" translatable="yes">All</property>
+        <property name="visible">True</property>
+        <property name="can_focus">True</property>
+        <property name="receives_default">False</property>
+        <property name="active">True</property>
+        <property name="draw_indicator">True</property>
+        <property name="group">modeCurrent</property>
+        <signal name="group-changed" handler="onModeChanged" swapped="no"/>
+      </object>
+      <packing>
         <property name="left_attach">2</property>
         <property name="top_attach">0</property>
       </packing>
@@ -95,7 +117,7 @@
         <property name="receives_default">False</property>
         <property name="active">True</property>
         <property name="draw_indicator">True</property>
-        <property name="group">modeAll</property>
+        <property name="group">modeCurrent</property>
         <signal name="toggled" handler="onModeChanged" swapped="no"/>
       </object>
       <packing>
@@ -165,18 +187,6 @@
       </packing>
     </child>
     <child>
-      <object class="GtkLabel">
-        <property name="visible">True</property>
-        <property name="can_focus">False</property>
-        <property name="halign">end</property>
-        <property name="label" translatable="yes">Use Names:</property>
-      </object>
-      <packing>
-        <property name="left_attach">0</property>
-        <property name="top_attach">3</property>
-      </packing>
-    </child>
-    <child>
       <object class="GtkSwitch" id="useNames">
         <property name="visible">True</property>
         <property name="can_focus">True</property>
@@ -186,17 +196,6 @@
       <packing>
         <property name="left_attach">1</property>
         <property name="top_attach">3</property>
-      </packing>
-    </child>
-    <child>
-      <object class="GtkLabel" id="debug">
-        <property name="visible">True</property>
-        <property name="can_focus">False</property>
-      </object>
-      <packing>
-        <property name="left_attach">0</property>
-        <property name="top_attach">4</property>
-        <property name="width">4</property>
       </packing>
     </child>
     <child>
