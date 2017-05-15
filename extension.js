@@ -35,8 +35,8 @@ const Settings = Me.imports.settings;
 
 // TODO: For some reason changing mode to all only applies once prefs is closed
 
-const ACTIVE_STYLE = "background-color: #888888; border: 1px solid #cccccc";
-const INACTIVE_STYLE = "background-color: #444444; border: 1px solid #cccccc";
+const ACTIVE_STYLE = "background-color: #888888; border: 1px solid #cccccc; padding: 0px 8px 0px 8px;";
+const INACTIVE_STYLE = "background-color: #444444; border: 1px solid #cccccc; padding: 0px 8px 0px 8px;";
 const PANEL_POSITIONS = [Main.panel._leftBox,
                          Main.panel._centerBox,
                          Main.panel._rightBox]
@@ -131,6 +131,7 @@ WorkspaceSwitcher.prototype = {
             case 0:
                 label = new St.Label({y_align: Clutter.ActorAlign.CENTER});
                 label.set_text(this._getWorkspaceName());
+                label.set_style(ACTIVE_STYLE);
                 this._container.add_child(label);
                 this._workspaceLabels.push(label);
                 break;
@@ -138,6 +139,8 @@ WorkspaceSwitcher.prototype = {
                 for (let i = 0; i < global.screen.n_workspaces; i++) {
                     label = new St.Label({y_align: Clutter.ActorAlign.CENTER});
                     label.set_text(this._getWorkspaceName(i));
+                    if (i == this._currentWorkspace) label.set_style(ACTIVE_STYLE);
+                    else label.set_style(INACTIVE_STYLE);
                     this._container.add_child(label);
                     this._workspaceLabels.push(label);
                 }
