@@ -35,6 +35,9 @@ const Settings = Me.imports.settings;
 
 const ACTIVE_STYLE = "background-color: #888888; border: 1px solid #cccccc";
 const INACTIVE_STYLE = "background-color: #444444; border: 1px solid #cccccc";
+const PANEL_POSITIONS = [Main.panel._leftBox,
+                         Main.panel._centerBox,
+                         Main.panel._rightBox]
 
 function getWorkspaceName (index) {
     return Meta.prefs_get_workspace_name(index)
@@ -42,6 +45,14 @@ function getWorkspaceName (index) {
 
 function getWorkspaceNum (index) {
     return (index + 1).toString();
+}
+
+function insertAtPosition (actor, position, index) {
+    PANEL_POSITIONS[position].insert_child_at_index(actor, index);
+}
+
+function removeFromPosition (actor, position) {
+    PANEL_POSITIONS[position].remove_child(actor);
 }
 
 function WorkspaceSwitcher () {
@@ -56,7 +67,8 @@ WorkspaceSwitcher.prototype = {
         this._loadSettings();
         this._currentWorkspace = global.screen.get_active_workspace().index();
 
-        this._childWidgets = [];
+        this._childLabels = [];
+        this._childMiscWidgets = [];
         this._widgetSignalOwners = [];
         this._widgetSignals = [];
         this._workspaceSignals = [];
@@ -71,7 +83,7 @@ WorkspaceSwitcher.prototype = {
                                    child: this._container});
 
         this._enableMode(this._mode);
-        this._insertAtPosition(this._panelButton, this._position, this._index);
+        insertAtPosition(this._panelButton, this._position, this._index);
 
         this._widgetSignalOwners.push(this._panelButton);
         this._widgetSignals.push(this._panelButton.connect('scroll-event', Lang.bind(this, this._onScroll)));
@@ -84,8 +96,11 @@ WorkspaceSwitcher.prototype = {
     disable: function () {
         this._settings = null;
 
-        for (let i = 0; i < this._childWidgets.length; i++)
-            this._childWidgets[i].destroy();
+        for (let i = 0; i < this._childLabels.length; i++)
+            this._childLabels[i].destroy();
+
+        for (let i = 0; i < this._childMiscWidgets.length; i++)
+            this._childMiscWidgets[i].destroy();
 
         for (let i = 0; i < this._widgetSignals.length; i++)
             this._widgetSignalOwners[i].disconnect(this._widgetSignals[i]);
@@ -103,41 +118,36 @@ WorkspaceSwitcher.prototype = {
         switch (mode) {
             case 0:
                 label = new St.Label({y_align: Clutter.ActorAlign.CENTER});
-                label.set_text(this._getWorkspaceName(this._currentWorkspace));
+                label.set_text(this._getWorkspaceName());
                 this._container.add_child(label);
-                this._childWidgets.push(label);
+                this._childLabels.push(label);
                 break;
             case 1:
                 for (let i = 0; i < global.screen.n_workspaces; i++) {
                     label = new St.Label({y_align: Clutter.ActorAlign.CENTER});
                     label.set_text(this._getWorkspaceName(i));
                     this._container.add_child(label);
-                    this._childWidgets.push(label);
+                    this._childLabels.push(label);
                 }
                 break;
             case 2:
                 let icon = new St.Icon({icon_name: 'workspace-switcher',
                                         style_class: 'system-status-icon'});
                 this._container.add_child(icon);
-                this._childWidgets.push(icon);
+                this._childMiscWidgets.push(icon);
 
                 label = new St.Label({y_align: Clutter.ActorAlign.CENTER});
-                label.set_text(this._getWorkspaceName(this._currentWorkspace));
+                label.set_text(this._getWorkspaceName());
                 this._container.add_child(label);
-                this._childWidgets.push(label);
+                this._childLabels.push(label);
                 break;
         }
     },
 
     _getWorkspaceName(index) {
+        if (index == null) index = this._currentWorkspace;
         if (this._useNames) return getWorkspaceName(index);
         else return getWorkspaceNum(index);
-    },
-
-    _insertAtPosition: function (actor, position, index) {
-        [Main.panel._leftBox,
-         Main.panel._centerBox,
-         Main.panel._rightBox][position].insert_child_at_index(actor, index);
     },
 
     _setActiveWorkspace: function (index) {
@@ -164,17 +174,17 @@ WorkspaceSwitcher.prototype = {
         this._currentWorkspace = global.screen.get_active_workspace().index();
         switch (this._mode) {
             case 0:
-                this._childWidgets[0].set_text(this._getWorkspaceName(this._currentWorkspace));
+                this._childLabels[0].set_text(this._getWorkspaceName());
                 break;
             case 1:
                 for (let i = 0; i < global.screen.n_workspaces; i++) {
                     if (i == this._currentWorkspace)
-                        this._childWidgets[i].set_style(ACTIVE_STYLE);
-                    else this._childWidgets[i].set_style(INACTIVE_STYLE);
+                        this._childLabels[i].set_style(ACTIVE_STYLE);
+                    else this._childLabels[i].set_style(INACTIVE_STYLE);
                 }
                 break;
             case 2:
-                this._childWidgets[1].set_text(this._getWorkspaceName(this._currentWorkspace));
+                this._childLabels[1].set_text(this._getWorkspaceName());
                 break;
         }
     },
