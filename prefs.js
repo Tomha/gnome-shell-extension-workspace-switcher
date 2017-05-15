@@ -28,29 +28,8 @@ const ExtensionUtils = imports.misc.extensionUtils;
 const Me = ExtensionUtils.getCurrentExtension();
 const Settings = Me.imports.settings;
 
-const MODES = {
-    modeCurrent: 0,
-    modeAll: 1,
-    modeIcon: 2
-}
-
-const MODE_WIDGETS = {
-    0: 'modeCurrent',
-    1: 'modeAll',
-    2: 'modeIcon',
-}
-
-const POSITIONS = {
-    positionLeft: 0,
-    positionCenter: 1,
-    positionRight: 2
-}
-
-POSITION_WIDGETS = {
-    0: 'positionLeft',
-    1: 'positionCenter',
-    2: 'positionRight'
-}
+const MODES = ['modeCurrent', 'modeAll', 'modeIcon'];
+const POSITIONS = ['positionLeft', 'positionCenter', 'positionRight'];
 
 function WorkspaceSwitcherPrefs () {
 	this.init();
@@ -72,22 +51,18 @@ WorkspaceSwitcherPrefs.prototype = {
 	_populate: function () {
 	    let widget, value;
 
-        // Index
         value = this._settings.get_int('index');
         widget = this._builder.get_object('index');
         widget.set_value(value);
 
-        // Mode
 	    value = this._settings.get_enum('mode');
-	    widget = this._builder.get_object(MODE_WIDGETS[value]);
+	    widget = this._builder.get_object(MODES[value]);
 	    widget.set_active(true);
 
-	    // Position
 	    value = this._settings.get_enum('position');
-	    widget = this._builder.get_object(POSITION_WIDGETS[value]);
+	    widget = this._builder.get_object(POSITIONS[value]);
 	    widget.set_active(true);
 
-	    // Use Names
 	    value = this._settings.get_boolean('use-names');
 	    widget = this._builder.get_object('useNames');
 	    widget.set_active(value);
@@ -100,14 +75,14 @@ WorkspaceSwitcherPrefs.prototype = {
     _signalHandler: {
         onModeChanged: function (radiobutton) {
             if(radiobutton.get_active()) {
-                this._settings.set_enum('mode', MODES[radiobutton.get_name()]);
+                this._settings.set_enum('mode', MODES.indexOf(radiobutton.get_name()));
                 this._settings.apply();
             }
         },
 
         onPositionChanged: function (radiobutton) {
             if(radiobutton.get_active()) {
-                this._settings.set_enum('position', POSITIONS[radiobutton.get_name()]);
+                this._settings.set_enum('position', POSITIONS.indexOf(radiobutton.get_name()));
                 this._settings.apply();
             }
         },
