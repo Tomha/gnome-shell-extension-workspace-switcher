@@ -14,11 +14,17 @@
 		<key name="index" type="i">
 			<default>-1</default>
 		</key>
+		<key name="invert-scrolling" type="b">
+			<default>false</default>
+		</key>
 		<key name="mode" enum="org.gnome.shell.extensions.workspace-switcher.mode">
 			<default>"CURRENT"</default>
 		</key>
 		<key name="position" enum="org.gnome.shell.extensions.workspace-switcher.position">
 			<default>"RIGHT"</default>
+		</key>
+		<key name="show-icon-text" type="b">
+			<default>true</default>
 		</key>
 		<key name="use-names" type="b">
 			<default>true</default>

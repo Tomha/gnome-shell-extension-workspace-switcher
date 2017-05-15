@@ -153,6 +153,7 @@ WorkspaceSwitcher.prototype = {
 
                 label = new St.Label({y_align: Clutter.ActorAlign.CENTER});
                 label.set_text(this._getWorkspaceName());
+                if (!this._showIconText) label.hide();
                 this._container.add_child(label);
                 this._workspaceLabels.push(label);
                 break;
@@ -179,6 +180,7 @@ WorkspaceSwitcher.prototype = {
         if (scrollDirection == Clutter.ScrollDirection.DOWN) direction = 1;
         else if (scrollDirection == Clutter.ScrollDirection.UP) direction = -1;
         else return;
+        if (this._invertScrolling) direction *= -1;
         let index = global.screen.get_active_workspace().index() + direction;
         if (index == global.screen.n_workspaces) index = 0;
         else if (index == -1) index = global.screen.n_workspaces - 1;
@@ -209,8 +211,10 @@ WorkspaceSwitcher.prototype = {
         if (this._settings == null) this._settings = Settings.getSettings();
 
         this._index = this._settings.get_int('index');
+        this._invertScrolling = this._settings.get_boolean('invert-scrolling');
         this._mode = this._settings.get_enum('mode');
         this._position = this._settings.get_enum('position');
+        this._showIconText = this._settings.get_boolean('show-icon-text');
         this._useNames = this._settings.get_boolean('use-names');
     },
 
@@ -221,6 +225,9 @@ WorkspaceSwitcher.prototype = {
                 removeFromPosition(this._panelButton, this._position);
                 insertAtPosition(this._panelButton, this._position, this._index);
                 break;
+            case 'invert-scrolling':
+                this._invertScrolling = settings.get_boolean(key);
+                break;
             case 'mode':
                 this._disableCurrentMode();
                 this._mode = settings.get_enum(key);
@@ -230,6 +237,13 @@ WorkspaceSwitcher.prototype = {
                 removeFromPosition(this._panelButton, this._position);
                 this._position = settings.get_enum(key);
                 insertAtPosition(this._panelButton, this._position, this._index);
+                break;
+            case 'show-icon-text':
+                this._showIconText = settings.get_boolean(key);
+                if (this._mode == 2) {
+                    if (this._showIconText) this._workspaceLabels[0].show();
+                    else this._workspaceLabels[0].hide();
+                }
                 break;
             case 'use-names':
                 this._useNames = settings.get_boolean(key);

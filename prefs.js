@@ -66,6 +66,14 @@ WorkspaceSwitcherPrefs.prototype = {
 	    value = this._settings.get_boolean('use-names');
 	    widget = this._builder.get_object('useNames');
 	    widget.set_active(value);
+
+	    value = this._settings.get_boolean('show-icon-text');
+	    widget = this._builder.get_object('showIconText');
+	    widget.set_active(value);
+
+	    value = this._settings.get_boolean('invert-scrolling');
+	    widget = this._builder.get_object('invertScrolling');
+	    widget.set_active(value);
 	},
 
     _signalConnector: function (builder, object, signal, handler) {
@@ -87,8 +95,18 @@ WorkspaceSwitcherPrefs.prototype = {
             }
         },
 
+        onShowIconTextChanged: function (toggleswitch) {
+            this._settings.set_boolean('show-icon-text', toggleswitch.get_active());
+            this._settings.apply();
+        },
+
         onIndexChanged: function (spinbutton) {
             this._settings.set_int('index', spinbutton.get_value_as_int());
+            this._settings.apply();
+        },
+
+        onInvertScrollingChanged: function (toggleswitch) {
+            this._settings.set_boolean('invert-scrolling', toggleswitch.get_active());
             this._settings.apply();
         },
 
