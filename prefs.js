@@ -20,29 +20,115 @@ Workspace Switcher; if not, see http://www.gnu.org/licenses/.
 An up to date version can also be found at:
 https://github.com/Tomha/gnome-shell-extension-workspace-switcher */
 
+const Gtk = imports.gi.Gtk;
+
+const Lang = imports.lang;
+
+const ExtensionUtils = imports.misc.extensionUtils;
+const Me = ExtensionUtils.getCurrentExtension();
+const Settings = Me.imports.settings;
+
+const MODES = {
+    modeCurrent: 0,
+    modeAll: 1,
+    modeIcon: 2
+}
+
+const MODE_WIDGETS = {
+    0: 'modeCurrent',
+    1: 'modeAll',
+    2: 'modeIcon',
+}
+
+const POSITIONS = {
+    positionLeft: 0,
+    positionCenter: 1,
+    positionRight: 2
+}
+
+POSITION_WIDGETS = {
+    0: 'positionLeft',
+    1: 'positionCenter',
+    2: 'positionRight'
+}
+
 function WorkspaceSwitcherPrefs () {
 	this.init();
 }
 
 WorkspaceSwitcherPrefs.prototype = {
 	init: function () {
-	
+	    this._settings = Settings.getSettings();
+
+	    this._builder = new Gtk.Builder();
+        this._builder.add_from_file(Me.path + '/prefs.ui');
+
+        this.widget = this._builder.get_object('container');
+        this._debug = this._builder.get_object('debug'); // DEBUG
+        this._populate();
+        this._builder.connect_signals_full(Lang.bind(this, this._signalConnector));
 	},
-	
-	// Private Functions
-	
-	_signalConnector: function (builder, object, signal, handler) {
-	
+
+	_populate: function () {
+	    let widget, value;
+
+        // Index
+        value = this._settings.get_int('index');
+        widget = this._builder.get_object('index');
+        widget.set_value(value);
+
+        // Mode
+	    value = this._settings.get_enum('mode');
+	    widget = this._builder.get_object(MODE_WIDGETS[value]);
+	    widget.set_active(true);
+
+	    // Position
+	    value = this._settings.get_enum('position');
+	    widget = this._builder.get_object(POSITION_WIDGETS[value]);
+	    widget.set_active(true);
+
+	    // Use Names
+	    value = this._settings.get_boolean('use-names');
+	    widget = this._builder.get_object('useNames');
+	    widget.set_active(value);
 	},
-	
-	_signalHandler
+
+    _signalConnector: function (builder, object, signal, handler) {
+        object.connect(signal, Lang.bind(this, this._signalHandler[handler]));
+    },
+
+    _signalHandler: {
+        onModeChanged: function (radiobutton) {
+            if(radiobutton.get_active()) {
+                this._settings.set_enum('mode', MODES[radiobutton.get_name()]);
+                this._settings.apply();
+            }
+        },
+
+        onPositionChanged: function (radiobutton) {
+            if(radiobutton.get_active()) {
+                this._settings.set_enum('position', POSITIONS[radiobutton.get_name()]);
+                this._settings.apply();
+            }
+        },
+
+        onIndexChanged: function (spinbutton) {
+            this._settings.set_int('index', spinbutton.get_value_as_int());
+            this._settings.apply();
+        },
+
+        onUseNamesChanged: function (toggleswitch) {
+            this._settings.set_boolean('use-names', toggleswitch.get_active());
+            this._settings.apply();
+        }
+    }
 }
 
 function buildPrefsWidget () {
-
+    prefs = new WorkspaceSwitcherPrefs();
+    prefs.widget.show_all();
+    return prefs.widget;
 }
 
-function init () { 
-
-}
+function init () { }
 

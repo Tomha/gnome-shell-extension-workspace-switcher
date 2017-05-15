@@ -3,6 +3,7 @@
 	<enum id="org.gnome.shell.extensions.workspace-switcher.mode">
 		<value value="0" nick="CURRENT"/>
 		<value value="1" nick="ALL"/>
+		<value value="2" nick="ICON"/>
 	</enum>
 	<enum id="org.gnome.shell.extensions.workspace-switcher.position">
 		<value value="0" nick="LEFT"/>
