@@ -98,7 +98,13 @@ WorkspaceSwitcher.prototype = {
 
 	disable: function () {
 	    this._settings = null;
-	    this._disableFunctions[this.mode];
+
+	    for (let i = 0; i < this._workspaceLabels.length; i++)
+	        this._workspaceLabels[i].destroy();
+
+        for (let i = 0; i < this._workspaceSignals.length; i++)
+            global.screen.disconnect(this._workspaceSignals[i]);
+
 	    this._panelButton.destroy();
 	    this._container.destroy();
 	},
