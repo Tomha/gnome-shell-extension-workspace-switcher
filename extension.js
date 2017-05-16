@@ -35,8 +35,8 @@ const Settings = Me.imports.settings;
 
 // TODO: For some reason changing mode to all only applies once prefs is closed
 
-const ACTIVE_STYLE = "background-color: #888888; border: 1px solid #cccccc; padding: 0px 8px 0px 8px;";
-const INACTIVE_STYLE = "background-color: #444444; border: 1px solid #cccccc; padding: 0px 8px 0px 8px;";
+const ACTIVE_STYLE = "background-color: #888888; border: 1px solid #cccccc; padding: 0px 8px 0px 8px; margin: 0px 1px 0px 1px;";
+const INACTIVE_STYLE = "background-color: #444444; border: 1px solid #cccccc; padding: 0px 8px 0px 8px; margin: 0px 1px 0px 1px;";
 const PANEL_POSITIONS = [Main.panel._leftBox,
                          Main.panel._centerBox,
                          Main.panel._rightBox]
