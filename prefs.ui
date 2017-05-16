@@ -8,6 +8,12 @@
     <property name="step_increment">1</property>
     <property name="page_increment">10</property>
   </object>
+  <object class="GtkListStore" id="workspaceNameListStore">
+    <columns>
+      <!-- column-name Name -->
+      <column type="gchararray"/>
+    </columns>
+  </object>
   <object class="GtkGrid" id="container">
     <property name="visible">True</property>
     <property name="can_focus">False</property>
@@ -188,17 +194,6 @@
       </packing>
     </child>
     <child>
-      <object class="GtkLabel" id="debug">
-        <property name="visible">True</property>
-        <property name="can_focus">False</property>
-      </object>
-      <packing>
-        <property name="left_attach">0</property>
-        <property name="top_attach">6</property>
-        <property name="width">4</property>
-      </packing>
-    </child>
-    <child>
       <object class="GtkLabel">
         <property name="visible">True</property>
         <property name="can_focus">False</property>
@@ -214,6 +209,7 @@
       <object class="GtkLabel">
         <property name="visible">True</property>
         <property name="can_focus">False</property>
+        <property name="halign">end</property>
         <property name="label" translatable="yes">Invert Scrolling:</property>
       </object>
       <packing>
@@ -244,6 +240,89 @@
         <property name="left_attach">1</property>
         <property name="top_attach">5</property>
       </packing>
+    </child>
+    <child>
+      <object class="GtkLabel" id="debug">
+        <property name="visible">True</property>
+        <property name="can_focus">False</property>
+      </object>
+      <packing>
+        <property name="left_attach">0</property>
+        <property name="top_attach">8</property>
+        <property name="width">4</property>
+      </packing>
+    </child>
+    <child>
+      <object class="GtkLabel">
+        <property name="visible">True</property>
+        <property name="can_focus">False</property>
+        <property name="halign">end</property>
+        <property name="label" translatable="yes">Workspace Names:</property>
+      </object>
+      <packing>
+        <property name="left_attach">0</property>
+        <property name="top_attach">6</property>
+      </packing>
+    </child>
+    <child>
+      <object class="GtkBox">
+        <property name="visible">True</property>
+        <property name="can_focus">False</property>
+        <property name="orientation">vertical</property>
+        <child>
+          <object class="GtkScrolledWindow">
+            <property name="height_request">100</property>
+            <property name="visible">True</property>
+            <property name="can_focus">True</property>
+            <property name="hscrollbar_policy">never</property>
+            <property name="shadow_type">in</property>
+            <child>
+              <object class="GtkTreeView" id="workspaceNameTreeView">
+                <property name="height_request">128</property>
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="model">workspaceNameListStore</property>
+                <property name="headers_visible">False</property>
+                <property name="reorderable">True</property>
+                <child internal-child="selection">
+                  <object class="GtkTreeSelection"/>
+                </child>
+              </object>
+            </child>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">0</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkToolbar" id="workspaceToolbar">
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <property name="icon_size">2</property>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">1</property>
+          </packing>
+        </child>
+      </object>
+      <packing>
+        <property name="left_attach">0</property>
+        <property name="top_attach">7</property>
+        <property name="width">4</property>
+      </packing>
+    </child>
+    <child>
+      <placeholder/>
+    </child>
+    <child>
+      <placeholder/>
+    </child>
+    <child>
+      <placeholder/>
     </child>
     <child>
       <placeholder/>
