@@ -163,7 +163,11 @@ WorkspaceSwitcher.prototype = {
     _getWorkspaceName(index) {
         if (index == null) index = this._currentWorkspace;
         if (this._useNames) return getWorkspaceName(index);
-        else return getWorkspaceNum(index);
+        else {
+            if (this._showTotalNum)
+                return getWorkspaceNum(index) + '/' + global.screen.n_workspaces.toString();
+            else return getWorkspaceNum(index);
+        }
     },
 
     _setActiveWorkspace: function (index) {
@@ -171,6 +175,11 @@ WorkspaceSwitcher.prototype = {
             let workspace = global.screen.get_workspace_by_index(index);
             workspace.activate(global.get_current_time());
         }
+    },
+
+    _updateAllWorkspaceNames: function (index) {
+        for (let i = 0; i < this._workspaceLabels.length; i++)
+            this._workspaceLabels[i].set_text(this._getWorkspaceName(i));
     },
 
     // Event Handlers
@@ -215,6 +224,7 @@ WorkspaceSwitcher.prototype = {
         this._mode = this._settings.get_enum('mode');
         this._position = this._settings.get_enum('position');
         this._showIconText = this._settings.get_boolean('show-icon-text');
+        this._showTotalNum = this._settings.get_boolean('show-total-num');
         this._useNames = this._settings.get_boolean('use-names');
     },
 
@@ -245,10 +255,13 @@ WorkspaceSwitcher.prototype = {
                     else this._workspaceLabels[0].hide();
                 }
                 break;
+            case 'show-total-num':
+                this._showTotalNum = settings.get_boolean(key);
+                if (!this._useNames) this._updateAllWorkspaceNames();
+                break;
             case 'use-names':
                 this._useNames = settings.get_boolean(key);
-                for (let i = 0; i < this._workspaceLabels.length; i++)
-                    this._workspaceLabels[i].set_text(this._getWorkspaceName(i));
+                this._updateAllWorkspaceNames();
                 break;
         }
     },

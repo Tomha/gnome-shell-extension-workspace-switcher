@@ -26,6 +26,9 @@
 		<key name="show-icon-text" type="b">
 			<default>true</default>
 		</key>
+		<key name="show-total-num" type="b">
+			<default>false</default>
+		</key>
 		<key name="use-names" type="b">
 			<default>true</default>
 		</key>
