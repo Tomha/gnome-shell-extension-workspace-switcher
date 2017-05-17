@@ -88,8 +88,8 @@ WorkspaceSwitcher.prototype = {
 
         this._scrollSignal = this._panelButton.connect('scroll-event', Lang.bind(this, this._onScroll));
 
-        //this._workspaceSignals.push(global.screen.connect('workspace-added', TODO);
-        //this._workspaceSignals.push(global.screen.connect('workspace-removed',TODO);
+        this._workspaceSignals.push(global.screen.connect('workspace-added', Lang.bind(this, this._onWorkspaceAdded)));
+        this._workspaceSignals.push(global.screen.connect('workspace-removed', Lang.bind(this, this._onWorkspaceRemoved)));
         this._workspaceSignals.push(global.screen.connect('workspace-switched', Lang.bind(this, this._onWorkspaceSwitched)));
     },
 
@@ -108,6 +108,19 @@ WorkspaceSwitcher.prototype = {
     },
 
     // Private Functions
+    _createNewWorkspaceLabel: function (index, applyStyle) {
+        label = new St.Label({y_align: Clutter.ActorAlign.CENTER});
+        label.set_text(this._getWorkspaceName(index));
+        if (applyStyle) {
+            if (index == this._currentWorkspace)
+                this._workspaceLabels[i].set_style(ACTIVE_STYLE);
+            else
+                this._workspaceLabels[i].set_style(INACTIVE_STYLE);
+        }
+        this._container.add_child(label);
+        this._workspaceLabels.push(label);
+    },
+
     _disableCurrentMode: function () {
         for (let i = 0; i < this._workspaceLabels.length; i++)
             this._workspaceLabels[i].destroy();
@@ -127,33 +140,18 @@ WorkspaceSwitcher.prototype = {
         let label
         switch (mode) {
             case 0:
-                label = new St.Label({y_align: Clutter.ActorAlign.CENTER});
-                label.set_text(this._getWorkspaceName());
-                label.set_style(ACTIVE_STYLE);
-                this._container.add_child(label);
-                this._workspaceLabels.push(label);
+                this._createNewWorkspaceLabel(this._currentWorkspace, true);
                 break;
             case 1:
-                for (let i = 0; i < global.screen.n_workspaces; i++) {
-                    label = new St.Label({y_align: Clutter.ActorAlign.CENTER});
-                    label.set_text(this._getWorkspaceName(i));
-                    if (i == this._currentWorkspace) label.set_style(ACTIVE_STYLE);
-                    else label.set_style(INACTIVE_STYLE);
-                    this._container.add_child(label);
-                    this._workspaceLabels.push(label);
-                }
+                for (let i = 0; i < global.screen.n_workspaces; i++)
+                    this._createNewWorkspaceLabel(i, true)
                 break;
             case 2:
                 let icon = new St.Icon({icon_name: 'workspace-switcher',
                                         style_class: 'system-status-icon'});
                 this._container.add_child(icon);
                 this._miscWidgets.push(icon);
-
-                label = new St.Label({y_align: Clutter.ActorAlign.CENTER});
-                label.set_text(this._getWorkspaceName());
-                if (!this._showIconText) label.hide();
-                this._container.add_child(label);
-                this._workspaceLabels.push(label);
+                this._createNewWorkspaceLabel(this._currentWorkspace, true);
                 break;
         }
     },
@@ -192,6 +190,24 @@ WorkspaceSwitcher.prototype = {
         if (index == global.screen.n_workspaces) index = 0;
         else if (index == -1) index = global.screen.n_workspaces - 1;
         this._setActiveWorkspace(index);
+    },
+
+    _onWorkspaceAdded: function () {
+        this._currentWorkspace = global.screen.get_active_workspace().index();
+        if (this._mode == 1) {
+            index = this._workspaceLabels.length;
+            this._createNewWorkspaceLabel(index, true);
+        } else if (this._showTotalNum)
+            this._workspaceLabels[0].set_text(this._getWorkspaceName());
+    },
+
+    _onWorkspaceRemoved: function () {
+        this._currentWorkspace = global.screen.get_active_workspace().index();
+        if (this._mode == 1) {
+            this._workspaceLabels.pop();
+            this._updateAllWorkspaceNames();
+        } else
+            this._workspaceLabels[0].set_text(this._getWorkspaceName());
     },
 
     _onWorkspaceSwitched: function () {
