@@ -16,17 +16,17 @@ switching workspaces.
 
 ### Immediate Goals
 - Allow switching of the current workspace via a popup menu, or scrolling the
-	panel widget, or if all workspaces are displayed, by clicking the
+	panel widget ✔, or if all workspaces are displayed, by clicking the
 	desired workspace
 - Give customisation options for border, background, and text of panel widget
-- Provide multiple display options:
-	- Name/number of current workspace
-	- Name/number of all workspaces
-	- Symbolic icon without indication of current workspaces
-	- Symbolic icon with current workspace number
-- Allow customisation of widget position (left, center, right of panel)
+- Provide multiple display options ✔:
+	- Name/number of current workspace ✔
+	- Name/number of all workspaces ✔
+	- Symbolic icon without indication of current workspaces ✔
+	- Symbolic icon with current workspace number ✔
+- Allow customisation of widget position (left, center, right of panel) ✔
 - Allow management of the number of workspaces and their names via the extension
-	preferences dialog.
+	preferences dialog. ✔
 
 ### Long Term Goals
 - Show window previews/locations in the panel widget
