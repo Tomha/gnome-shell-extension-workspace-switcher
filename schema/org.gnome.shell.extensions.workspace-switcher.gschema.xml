@@ -11,6 +11,9 @@
 		<value value="2" nick="RIGHT"/>
 	</enum>
 	<schema path="/org/gnome/shell/extensions/workspce-switcher/" id="org.gnome.shell.extensions.workspace-switcher">
+		<key name="cyclic-scrolling" type="b">
+			<default>true</default>
+		</key>
 		<key name="index" type="i">
 			<default>-1</default>
 		</key>

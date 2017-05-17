@@ -113,9 +113,9 @@ WorkspaceSwitcher.prototype = {
         label.set_text(this._getWorkspaceName(index));
         if (applyStyle) {
             if (index == this._currentWorkspace)
-                this._workspaceLabels[i].set_style(ACTIVE_STYLE);
+                label.set_style(ACTIVE_STYLE);
             else
-                this._workspaceLabels[i].set_style(INACTIVE_STYLE);
+                label.set_style(INACTIVE_STYLE);
         }
         this._container.add_child(label);
         this._workspaceLabels.push(label);
@@ -142,7 +142,7 @@ WorkspaceSwitcher.prototype = {
                 this._createNewWorkspaceLabel(i, true)
         } else this._createNewWorkspaceLabel(this._currentWorkspace, true);
 
-        if (this._mode == MOES.ICON) {
+        if (this._mode == MODES.ICON) {
             let icon = new St.Icon({icon_name: 'workspace-switcher',
                                     style_class: 'system-status-icon'});
             this._container.add_child(icon);
@@ -179,8 +179,13 @@ WorkspaceSwitcher.prototype = {
         else return;
         if (this._invertScrolling) indexChange *= -1;
         let index = global.screen.get_active_workspace().index() + indexChange;
-        if (index == global.screen.n_workspaces) index = 0;
-        else if (index == -1) index = global.screen.n_workspaces - 1;
+        if (this._cyclicScrolling) {
+            if (index == global.screen.n_workspaces) index = 0;
+            else if (index == -1) index = global.screen.n_workspaces - 1;
+        } else {
+            if (index == global.screen.n_workspaces) index = global.screen.n_workspaces - 1;
+            else if (index == -1) index = 0;
+        }
         this._setActiveWorkspace(index);
     },
 
@@ -216,6 +221,7 @@ WorkspaceSwitcher.prototype = {
     _loadSettings: function () {
         if (this._settings == null) this._settings = Settings.getSettings();
 
+        this._cyclicScrolling = this._settings.get_boolean('cyclic-scrolling');
         this._index = this._settings.get_int('index');
         this._invertScrolling = this._settings.get_boolean('invert-scrolling');
         this._mode = this._settings.get_enum('mode');
@@ -227,6 +233,9 @@ WorkspaceSwitcher.prototype = {
 
     _onSettingsChanged: function (settings, key) {
         switch (key) {
+            case 'cyclic-scrolling':
+                this._cyclicScrolling = settings.get_boolean(key);
+                break;
             case 'index':
                 this._index = settings.get_int(key);
                 removeFromPosition(this._panelButton, this._position);

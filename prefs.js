@@ -80,6 +80,10 @@ WorkspaceSwitcherPrefs.prototype = {
         widget = this._builder.get_object('invertScrolling');
         widget.set_active(value);
 
+        value = this._settings.get_boolean('cyclic-scrolling');
+        widget = this._builder.get_object('cyclicScrolling');
+        widget.set_active(value);
+
         this._workspaceNameTreeView = this._builder.get_object('workspaceNameTreeView');
         let column = new Gtk.TreeViewColumn({ title:"Name" });
         let renderer = new Gtk.CellRendererText({ editable: true });
@@ -142,6 +146,11 @@ WorkspaceSwitcherPrefs.prototype = {
 
         onInvertScrollingChanged: function (toggleswitch) {
             this._settings.set_boolean('invert-scrolling', toggleswitch.get_active());
+            this._settings.apply();
+        },
+
+        onCyclicScrollingChanged: function (toggleswitch) {
+            this._settings.set_boolean('cyclic-scrolling', toggleswitch.get_active());
             this._settings.apply();
         },
 
