@@ -164,7 +164,7 @@ WorkspaceSwitcher.prototype = {
         if (index == null) index = this._currentWorkspace;
         if (this._useNames) return getWorkspaceName(index);
         else {
-            if (this._showTotalNum)
+            if (this._showTotalNum && this._mode != 1)
                 return getWorkspaceNum(index) + '/' + global.screen.n_workspaces.toString();
             else return getWorkspaceNum(index);
         }
