@@ -97,7 +97,7 @@
         <property name="active">True</property>
         <property name="draw_indicator">True</property>
         <property name="group">modeCurrent</property>
-        <signal name="group-changed" handler="onModeChanged" swapped="no"/>
+        <signal name="toggled" handler="onModeChanged" swapped="no"/>
       </object>
       <packing>
         <property name="left_attach">2</property>
