@@ -137,16 +137,21 @@ WorkspaceSwitcher.prototype = {
     },
 
     _enableMode: function (mode) {
-        if (this._mode == MODES.ALL) {
-            for (let i = 0; i < global.screen.n_workspaces; i++)
-                this._createNewWorkspaceLabel(i, true)
-        } else this._createNewWorkspaceLabel(this._currentWorkspace, true);
-
-        if (this._mode == MODES.ICON) {
-            let icon = new St.Icon({icon_name: 'workspace-switcher',
-                                    style_class: 'system-status-icon'});
-            this._container.add_child(icon);
-            this._miscWidgets.push(icon);
+        switch (mode) {
+            case MODES.CURRENT:
+                this._createNewWorkspaceLabel(this._currentWorkspace, true);
+                break;
+            case MODES.ALL:
+                for (let i = 0; i < global.screen.n_workspaces; i++)
+                    this._createNewWorkspaceLabel(i, true)
+                break;
+            case MODES.ICON:
+                let icon = new St.Icon({icon_name: 'workspace-switcher',
+                                        style_class: 'system-status-icon'});
+                this._container.add_child(icon);
+                this._miscWidgets.push(icon);
+                this._createNewWorkspaceLabel(this._currentWorkspace, false);
+                break;
         }
     },
 
