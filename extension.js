@@ -174,8 +174,8 @@ WorkspaceSwitcher.prototype = {
     _onScroll: function (button, event) {
         let scrollDirection = event.get_scroll_direction();
         let indexChange = 0;
-        if (scrollDirection == Clutter.ScrollDirection.DOWN) indexChange++;
-        else if (scrollDirection == Clutter.ScrollDirection.UP) indexChange--;
+        if (scrollDirection == Clutter.ScrollDirection.DOWN) indexChange--;
+        else if (scrollDirection == Clutter.ScrollDirection.UP) indexChange++;
         else return;
         if (this._invertScrolling) indexChange *= -1;
         let index = global.screen.get_active_workspace().index() + indexChange;
