@@ -67,6 +67,7 @@ WorkspaceSwitcher.prototype = {
 
     enable: function () {
         this._loadSettings();
+        this._workspaceSettings = Settings.getSettings('org.gnome.desktop.wm.preferences');
         this._currentWorkspace = global.screen.get_active_workspace().index();
 
         this._panelButtons = [];
@@ -81,6 +82,7 @@ WorkspaceSwitcher.prototype = {
         insertAtPosition(this._container, this._position, this._index);
 
         this._settingsSignal = this._settings.connect('changed', Lang.bind(this, this._onSettingsChanged));
+        this._workspaceSettingsSignal = this._workspaceSettings.connect('changed', Lang.bind(this, this._onWorkspaceSettingsChanged));
         this._workspaceSignals.push(global.screen.connect('workspace-added', Lang.bind(this, this._onWorkspaceAdded)));
         this._workspaceSignals.push(global.screen.connect('workspace-removed', Lang.bind(this, this._onWorkspaceRemoved)));
         this._workspaceSignals.push(global.screen.connect('workspace-switched', Lang.bind(this, this._onWorkspaceSwitched)));
@@ -91,6 +93,7 @@ WorkspaceSwitcher.prototype = {
 
         this._settings.disconnect(this._settingsSignal);
         this._settings = null;
+        this._workspaceSettings.disconnect(this._workspaceSettingsSignal);
 
         for (let i = 0; i < this._panelButtons.length; i++)
             this._panelButtons[i].disconnect(this._panelButtonSignals[i]);
@@ -319,6 +322,11 @@ WorkspaceSwitcher.prototype = {
                 this._updateAllWorkspaceNames();
                 break;
         }
+    },
+
+    _onWorkspaceSettingsChanged: function (settings, key) {
+        if (key == 'workspace-names' && this._useNames)
+            this._updateAllWorkspaceNames();
     },
 }
 
