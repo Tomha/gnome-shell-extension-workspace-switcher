@@ -69,24 +69,17 @@ WorkspaceSwitcher.prototype = {
         this._loadSettings();
         this._currentWorkspace = global.screen.get_active_workspace().index();
 
+        this._panelButtons = [];
         this._workspaceLabels = [];
         this._miscWidgets = [];
-        this._miscSignalOwners = [];
-        this._miscSignals = [];
+        this._panelButtonSignals = [];
         this._workspaceSignals = [];
 
         this._container = new St.BoxLayout();
-        this._panelButton = new St.Bin({style_class: 'panel-button',
-                                   reactive: true,
-                                   can_focus: true,
-                                   x_fill: true,
-                                   y_fill: false,
-                                   track_hover: true,
-                                   child: this._container});
-        this._enableMode(this._mode);
-        insertAtPosition(this._panelButton, this._position, this._index);
 
-        this._scrollSignal = this._panelButton.connect('scroll-event', Lang.bind(this, this._onScroll));
+        this._enableMode(this._mode);
+        insertAtPosition(this._container, this._position, this._index);
+
         this._settingsSignal = this._settings.connect('changed', Lang.bind(this, this._onSettingsChanged));
         this._workspaceSignals.push(global.screen.connect('workspace-added', Lang.bind(this, this._onWorkspaceAdded)));
         this._workspaceSignals.push(global.screen.connect('workspace-removed', Lang.bind(this, this._onWorkspaceRemoved)));
@@ -96,29 +89,43 @@ WorkspaceSwitcher.prototype = {
     disable: function () {
         this._disableCurrentMode();
 
-        this._panelButton.disconnect(this._scrollSignal);
         this._settings.disconnect(this._settingsSignal);
+        this._settings = null;
+
+        for (let i = 0; i < this._panelButtons.length; i++)
+            this._panelButtons[i].disconnect(this._panelButtonSignals[i]);
+
         for (let i = 0; i < this._workspaceSignals.length; i++)
             global.screen.disconnect(this._workspaceSignals[i]);
 
-        this._settings = null;
-
-        this._panelButton.destroy();
         this._container.destroy();
     },
 
     // Private Functions
-    _createNewWorkspaceLabel: function (index, applyStyle) {
+    _createNewPanelButton: function (child) {
+        let button = new St.Button({style_class: 'panel-button',
+                                    reactive: true,
+                                    can_focus: true,
+                                    x_fill: true,
+                                    y_fill: false,
+                                    track_hover: true,
+                                    child: child});
+        this._panelButtons.push(button);
+        this._container.add_child(button);
+        return button;
+    },
+
+    _createNewWorkspaceLabel: function (workspaceIndex, applyStyle) {
         let label = new St.Label({y_align: Clutter.ActorAlign.CENTER});
-        label.set_text(this._getWorkspaceName(index));
+        label.set_text(this._getWorkspaceName(workspaceIndex));
         if (applyStyle) {
-            if (index == this._currentWorkspace)
+            if (workspaceIndex == this._currentWorkspace)
                 label.set_style(ACTIVE_STYLE);
             else
                 label.set_style(INACTIVE_STYLE);
         }
-        this._container.add_child(label);
         this._workspaceLabels.push(label);
+        return label;
     },
 
     _disableCurrentMode: function () {
@@ -130,27 +137,39 @@ WorkspaceSwitcher.prototype = {
             this._miscWidgets[i].destroy();
         this._miscWidgets = [];
 
-        for (let i = 0; i < this._miscSignals.length; i++)
-            this._miscSignalOwners[i].disconnect(this._miscSignals[i]);
-        this._miscSignalOwners = [];
-        this._miscSignals = [];
+        for (let i = 0; i < this._panelButtons.length; i++)
+            this._panelButtons[i].destroy();
+        this._panelButtons = [];
     },
 
     _enableMode: function (mode) {
+        let button, label;
         switch (mode) {
             case MODES.CURRENT:
-                this._createNewWorkspaceLabel(this._currentWorkspace, true);
+                label = this._createNewWorkspaceLabel(this._currentWorkspace, true);
+                button = this._createNewPanelButton(label);
+                this._panelButtonSignals.push(button.connect('scroll-event', Lang.bind(this, this._onButtonScrolled)));
                 break;
             case MODES.ALL:
-                for (let i = 0; i < global.screen.n_workspaces; i++)
-                    this._createNewWorkspaceLabel(i, true)
+                for (let i = 0; i < global.screen.n_workspaces; i++) {
+                    label = this._createNewWorkspaceLabel(i, true);
+                    button = this._createNewPanelButton(label);
+                    button.workspaceIndex = i;
+                    this._panelButtonSignals.push(button.connect('clicked', Lang.bind(this, this._onWorkspaceClicked)));
+                }
                 break;
             case MODES.ICON:
+                let container = new St.BoxLayout();
+                this._miscWidgets.push(container);
                 let icon = new St.Icon({icon_name: 'workspace-switcher',
+                                        icon_size: 16,
                                         style_class: 'system-status-icon'});
-                this._container.add_child(icon);
                 this._miscWidgets.push(icon);
-                this._createNewWorkspaceLabel(this._currentWorkspace, false);
+                container.add_child(icon);
+                label = this._createNewWorkspaceLabel(this._currentWorkspace, false);
+                container.add_child(label);
+                button = this._createNewPanelButton(container);
+                this._panelButtonSignals.push(button.connect('scroll-event', Lang.bind(this, this._onButtonScrolled)));
                 break;
         }
     },
@@ -176,7 +195,7 @@ WorkspaceSwitcher.prototype = {
     },
 
     // Event Handlers
-    _onScroll: function (button, event) {
+    _onButtonScrolled: function (button, event) {
         let scrollDirection = event.get_scroll_direction();
         let indexChange = 0;
         if (scrollDirection == Clutter.ScrollDirection.DOWN) indexChange--;
@@ -194,11 +213,18 @@ WorkspaceSwitcher.prototype = {
         this._setActiveWorkspace(index);
     },
 
+    _onWorkspaceClicked: function (button, event) {
+        this._setActiveWorkspace(button.workspaceIndex);
+    },
+
     _onWorkspaceAdded: function () {
         this._currentWorkspace = global.screen.get_active_workspace().index();
         if (this._mode == MODES.ALL) {
-            index = this._workspaceLabels.length;
-            this._createNewWorkspaceLabel(index, true);
+            let index = this._workspaceLabels.length;
+            let label = this._createNewWorkspaceLabel(index, true);
+            let button = this._createNewPanelButton(label);
+            button.workspaceIndex = index;
+            this._panelButtonSignals.push(button.connect('clicked', Lang.bind(this, this._onWorkspaceClicked)));
         } else if (this._showTotalNum)
             this._workspaceLabels[0].set_text(this._getWorkspaceName());
     },
@@ -206,8 +232,20 @@ WorkspaceSwitcher.prototype = {
     _onWorkspaceRemoved: function () {
         this._currentWorkspace = global.screen.get_active_workspace().index();
         if (this._mode == MODES.ALL) {
-            this._workspaceLabels.pop();
+            let buttonIndex = this._panelButtons.length - 1;
+            this._panelButtons[buttonIndex].disconnect(this._panelButtonSignals[buttonIndex]);
+            this._workspaceLabels.pop().destroy();
+            this._panelButtons.pop().destroy();
+            this._panelButtonSignals.pop();
             this._updateAllWorkspaceNames();
+            for (let i = 0; i < this._panelButtons.length; i++) {
+                this._panelButtons[i].workspaceIndex = i;
+                if (i == this._currentWorkspace)
+                    this._workspaceLabels[i].set_style(ACTIVE_STYLE)
+                else
+                    this._workspaceLabels[i].set_style(INACTIVE_STYLE)
+            }
+
         } else this._workspaceLabels[0].set_text(this._getWorkspaceName());
     },
 
@@ -243,8 +281,8 @@ WorkspaceSwitcher.prototype = {
                 break;
             case 'index':
                 this._index = settings.get_int(key);
-                removeFromPosition(this._panelButton, this._position);
-                insertAtPosition(this._panelButton, this._position, this._index);
+                removeFromPosition(this._container, this._position);
+                insertAtPosition(this._container, this._position, this._index);
                 break;
             case 'invert-scrolling':
                 this._invertScrolling = settings.get_boolean(key);
@@ -255,9 +293,9 @@ WorkspaceSwitcher.prototype = {
                 this._enableMode(this._mode);
                 break;
             case 'position':
-                removeFromPosition(this._panelButton, this._position);
+                removeFromPosition(this._container, this._position);
                 this._position = settings.get_enum(key);
-                insertAtPosition(this._panelButton, this._position, this._index);
+                insertAtPosition(this._container, this._position, this._index);
                 break;
             case 'show-icon-text':
                 this._showIconText = settings.get_boolean(key);
