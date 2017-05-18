@@ -148,6 +148,7 @@ WorkspaceSwitcher.prototype = {
             case MODES.CURRENT:
                 label = this._createNewWorkspaceLabel(this._currentWorkspace, true);
                 button = this._createNewPanelButton(label);
+                this._panelButtonSignals.push(button.connect('clicked', Lang.bind(this, this._onButtonClicked)));
                 this._panelButtonSignals.push(button.connect('scroll-event', Lang.bind(this, this._onButtonScrolled)));
                 break;
             case MODES.ALL:
@@ -169,6 +170,7 @@ WorkspaceSwitcher.prototype = {
                 label = this._createNewWorkspaceLabel(this._currentWorkspace, false);
                 container.add_child(label);
                 button = this._createNewPanelButton(container);
+                this._panelButtonSignals.push(button.connect('clicked', Lang.bind(this, this._onButtonClicked)));
                 this._panelButtonSignals.push(button.connect('scroll-event', Lang.bind(this, this._onButtonScrolled)));
                 break;
         }
@@ -195,6 +197,10 @@ WorkspaceSwitcher.prototype = {
     },
 
     // Event Handlers
+    _onButtonClicked: function (button, event) {
+        Main.overview.toggle();
+    },
+
     _onButtonScrolled: function (button, event) {
         let scrollDirection = event.get_scroll_direction();
         let indexChange = 0;

@@ -38,8 +38,8 @@ switching workspaces.
 - Option to use wallpaper as a background for the panel widget.
 	- Need to figure out means of appropriately sizing the background and/or
 	panel widget for a polished appearance.
-- Launch the stock Gnome workspace manager/switcher.
-	- Need to figure out how to do this, shouldn't be hard.
+- Launch the stock Gnome workspace manager/switcher. ✔
+	- ~~Need to figure out how to do this, shouldn't be hard.~~
 - Provide a custom full-screen workspace switcher with previews?
 	- Would need to provide greater/different functionality than stock Gnome option.
 
