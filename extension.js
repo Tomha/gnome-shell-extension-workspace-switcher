@@ -293,7 +293,8 @@ AllWorkspacesDisplay.prototype = {
         this._container = new St.BoxLayout();
         this._labels = [];
         this._buttons = [];
-        this._buttonSignals = [];
+        this._buttonPressSignals = [];
+        this._buttonScrollSignals = [];
         for (let i = 0; i < global.screen.n_workspaces; i++) {
             this.addWorkspace();
         }
@@ -304,7 +305,8 @@ AllWorkspacesDisplay.prototype = {
         for (let i = 0; i < this._labels.length; i++)
             this._labels.pop().destroy();
         for (let i = 0; i < this._buttons.length; i++) {
-            this._buttons[i].disconnect(this._buttonSignals[i])
+            this._buttons[i].disconnect(this._buttonPressSignals[i])
+            this._buttons[i].disconnect(this._buttonScrollSignals[i]);
             this._buttons[i].destroy();
         }
     },
@@ -331,10 +333,11 @@ AllWorkspacesDisplay.prototype = {
                                     track_hover: true,
                                     child: label});
         button.workspaceIndex = newIndex;
-        this._buttonSignals.push(button.connect('clicked',
+        this._buttonPressSignals.push(button.connect('clicked',
             Lang.bind(this, function (button, event) {
                 this._setActiveWorkspace(button.workspaceIndex);
             })));
+        this._buttonScrollSignals.push(button.connect('scroll-event', Lang.bind(this, this._onScroll)));
         this._buttons.push(button);
         this._container.add_child(button);
         this.updateWorkspaceNames();
@@ -344,7 +347,8 @@ AllWorkspacesDisplay.prototype = {
         this._settingsStore.currentWorkspace = global.screen.get_active_workspace().index();
         this._labels.pop().destroy();
         let lastButton = this._buttons.pop();
-        lastButton.disconnect(this._buttonSignals.pop());
+        lastButton.disconnect(this._buttonPressSignals.pop());
+        lastButton.disconnect(this._buttonScrollSignals.pop());
         lastButton.destroy();
         for (let i = 0; i < this._buttons.length; i++) {
             this._buttons[i].workspaceIndex = i;
