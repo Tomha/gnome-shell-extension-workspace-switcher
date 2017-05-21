@@ -57,10 +57,9 @@ const BaseWorkspaceDisplay = new Lang.Class({
     },
 
     destroy: function () {
-        this._label.destroy();
-        this._button.destroy();
         this._button.disconnect(this._pressSignal);
         this._button.disconnect(this._scrollSignal);
+        this._button.destroy();
     },
 
     getMainWidget: function () {
@@ -149,14 +148,13 @@ const AllWorkspacesDisplay = new Lang.Class({
     },
 
     destroy: function () {
-        this._container.destroy();
-        for (let i = 0; i < this._labels.length; i++)
-            this._labels.pop().destroy();
         for (let i = 0; i < this._buttons.length; i++) {
             this._buttons[i].disconnect(this._buttonPressSignals[i])
             this._buttons[i].disconnect(this._buttonScrollSignals[i]);
-            this._buttons[i].destroy();
         }
+        this._labels = [];
+        this._buttons = [];
+        this._container.destroy();
     },
 
     getMainWidget: function () {
@@ -257,16 +255,6 @@ const IconWorkspaceDisplay = new Lang.Class({
 
         this._pressSignal = this._button.connect('clicked', Lang.bind(this, this._onClick));
         this._scrollSignal = this._button.connect('scroll-event', Lang.bind(this, this._onScroll));
-    },
-
-    destroy: function () {
-        this._icon.destroy();
-        this._label.destroy();
-        this._container.destroy();
-        this._button.destroy();
-
-        this._button.disconnect(this._pressSignal);
-        this._button.disconnect(this._scrollSignal);
     },
 
     showLabel: function (doShow) {
