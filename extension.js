@@ -255,7 +255,7 @@ CurrentWorkspaceDisplay.prototype = {
         else return getWorkspaceNum(index);
     },
 
-    _onClick: function () {
+    _onClick: function (button, event) {
         Main.overview.toggle();
     },
 
@@ -333,10 +333,7 @@ AllWorkspacesDisplay.prototype = {
                                     track_hover: true,
                                     child: label});
         button.workspaceIndex = newIndex;
-        this._buttonPressSignals.push(button.connect('clicked',
-            Lang.bind(this, function (button, event) {
-                this._setActiveWorkspace(button.workspaceIndex);
-            })));
+        this._buttonPressSignals.push(button.connect('clicked', Lang.bind(this, this._onClick)));
         this._buttonScrollSignals.push(button.connect('scroll-event', Lang.bind(this, this._onScroll)));
         this._buttons.push(button);
         this._container.add_child(button);
@@ -382,8 +379,8 @@ AllWorkspacesDisplay.prototype = {
         else return getWorkspaceNum(index);
     },
 
-    _onClick: function () {
-        Main.overview.toggle();
+    _onClick: function (button, event) {
+        this._setActiveWorkspace(button.workspaceIndex);
     },
 
     _onScroll: function (button, event) {
@@ -485,7 +482,7 @@ IconWorkspaceDisplay.prototype = {
         else return getWorkspaceNum(index);
     },
 
-    _onClick: function () {
+    _onClick: function (button, event) {
         Main.overview.toggle();
     },
 
