@@ -46,29 +46,17 @@ function setActiveWorkspace (index) {
 
 const CurrentWorkspaceDisplay = new Lang.Class({
     Name: 'CurrentWorkspaceDisplay',
+    Extends: St.Bin,
 
     _init: function (settingsStore) {
+        this.parent();
         this._settingsStore = settingsStore;
-        this._label = new St.Label({y_align: Clutter.ActorAlign.CENTER});
-        this._label.set_text(this._getWorkspaceName());
-        this._label.set_style(ACTIVE_STYLE);
-        this._button = new St.Button({style_class: 'panel-button',
-                                      reactive: true,
-                                      can_focus: true,
-                                      x_fill: true,
-                                      y_fill: false,
-                                      track_hover: true,
-                                      child: this._label});
-
-        this._createPopupMenu();
-
-        this._button.connect('clicked', Lang.bind(this, this._onButtonClick));
-        this._button.connect('scroll-event', Lang.bind(this, this._onButtonScroll));
+        this.set_child(this._createWidgets());
     },
 
     destroy: function () {
-        this._popupMenu.destroy();
-        this._button.destroy();
+        if (this._popupMenu) this._popupMenu.destroy();
+        this.parent();
     },
 
     getMainWidget: function () {
@@ -112,6 +100,23 @@ const CurrentWorkspaceDisplay = new Lang.Class({
         this._popupMenu.addMenuItem(this._popupSection);
         this._popupItems = [];
         this._updatePopupSection();
+    },
+
+    _createWidgets: function () {
+        this._label = new St.Label({y_align: Clutter.ActorAlign.CENTER});
+        this._label.set_text(this._getWorkspaceName());
+        this._label.set_style(ACTIVE_STYLE);
+        this._button = new St.Button({style_class: 'panel-button',
+                                      reactive: true,
+                                      can_focus: true,
+                                      x_fill: true,
+                                      y_fill: false,
+                                      track_hover: true,
+                                      child: this._label});
+        this._createPopupMenu();
+        this._button.connect('clicked', Lang.bind(this, this._onButtonClick));
+        this._button.connect('scroll-event', Lang.bind(this, this._onButtonScroll));
+        return this._button;
     },
 
     _getWorkspaceName: function () {
@@ -177,23 +182,13 @@ const AllWorkspacesDisplay = new Lang.Class({
     Name: 'AllWorkspacesDisplay',
     Extends: CurrentWorkspaceDisplay,
 
-    _init: function (settingsStore) {
-        this._settingsStore = settingsStore;
+    _createWidgets: function () {
         this._container = new St.BoxLayout();
         this._labels = [];
         this._buttons = [];
         this._buttonPressSignals = [];
         this._buttonScrollSignals = [];
-        for (let i = 0; i < global.screen.n_workspaces; i++) {
-            this.addWorkspace();
-        }
-    },
-
-    destroy: function () {
-        this._container.destroy();
-    },
-
-    getMainWidget: function () {
+        for (let i = 0; i < global.screen.n_workspaces; i++) this.addWorkspace();
         return this._container;
     },
 
@@ -267,8 +262,7 @@ const IconWorkspaceDisplay = new Lang.Class({
     Name: 'IconWorkspaceDisplay',
     Extends: CurrentWorkspaceDisplay,
 
-    _init: function (settingsStore) {
-        this._settingsStore = settingsStore;
+    _createWidgets: function () {
         this._container = new St.BoxLayout();
         this._icon = new St.Icon({icon_name: 'workspace-switcher',
                                   icon_size: 16,
@@ -285,11 +279,10 @@ const IconWorkspaceDisplay = new Lang.Class({
                                       y_fill: false,
                                       track_hover: true,
                                       child: this._container});
-
         this._createPopupMenu();
-
         this._button.connect('clicked', Lang.bind(this, this._onButtonClick));
         this._button.connect('scroll-event', Lang.bind(this, this._onButtonScroll));
+        return this._button;
     },
 
     showLabel: function (doShow) {

@@ -55,7 +55,6 @@ const WorkspaceSwitcher = new Lang.Class({
         this._workspaceSettings = Settings.getSettings('org.gnome.desktop.wm.preferences');
 
         this._display = this._createNewDisplay();
-        this._displayWidget = this._display.getMainWidget();
         this._insertWidget();
 
         this._settingsSignal = this._settings.connect('changed', Lang.bind(this, this._onSettingsChanged));
@@ -88,7 +87,7 @@ const WorkspaceSwitcher = new Lang.Class({
     },
 
     _insertWidget: function () {
-        insertAtPosition(this._displayWidget,
+        insertAtPosition(this._display,
                          this._settingsStore.position,
                          this._settingsStore.index);
     },
@@ -109,7 +108,7 @@ const WorkspaceSwitcher = new Lang.Class({
     },
 
     _removeWidget: function () {
-        removeFromPosition(this._displayWidget,
+        removeFromPosition(this._display,
                            this._settingsStore.position);
     },
 
@@ -134,7 +133,6 @@ const WorkspaceSwitcher = new Lang.Class({
                 this._display.destroy();
                 this._settingsStore.mode = settings.get_enum(key);
                 this._display = this._createNewDisplay();
-                this._displayWidget = this._display.getMainWidget();
                 this._insertWidget();
                 break;
             case 'position':
