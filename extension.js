@@ -95,6 +95,7 @@ const WorkspaceSwitcher = new Lang.Class({
 
     _loadSettings: function () {
         let settingsStore = new SettingsStore();
+        settingsStore.clickAction = this._settings.get_enum('click-action');
         settingsStore.currentWorkspace = global.screen.get_active_workspace().index();
         settingsStore.cyclicScrolling = this._settings.get_boolean('cyclic-scrolling');
         settingsStore.index = this._settings.get_int('index');
@@ -114,6 +115,9 @@ const WorkspaceSwitcher = new Lang.Class({
 
     _onSettingsChanged: function (settings, key) {
         switch (key) {
+            case 'click-action':
+                this._settingsStore.clickAction = settings.get_enum(key);
+                break;
             case 'cyclic-scrolling':
                 this._settingsStore.cyclicScrolling = settings.get_boolean(key);
                 break;
@@ -178,6 +182,7 @@ const SettingsStore = new Lang.Class({
     Name: 'SettingsStore',
 
     _init: function () {
+        this.clickAction = null;
         this.currentWorkspace = null;
         this.cyclicScrolling = null;
         this.index = null;

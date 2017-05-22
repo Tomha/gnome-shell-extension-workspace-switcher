@@ -28,6 +28,7 @@ const ExtensionUtils = imports.misc.extensionUtils;
 const Me = ExtensionUtils.getCurrentExtension();
 const Settings = Me.imports.settings;
 
+const ACTIONS = ['actionActivities', 'actionPopup', 'actionNone'];
 const MODES = ['modeCurrent', 'modeAll', 'modeIcon'];
 const POSITIONS = ['positionLeft', 'positionCenter', 'positionRight'];
 
@@ -51,6 +52,10 @@ WorkspaceSwitcherPrefs.prototype = {
 
     _populate: function () {
         let widget, value;
+
+        value = this._settings.get_enum('click-action');
+        widget = this._builder.get_object(ACTIONS[value]);
+        widget.set_active(true);
 
         value = this._settings.get_int('index');
         widget = this._builder.get_object('index');
@@ -115,6 +120,28 @@ WorkspaceSwitcherPrefs.prototype = {
     },
 
     _signalHandler: {
+        onClickActionChanged: function (radiobutton) {
+            if(radiobutton.get_active()) {
+                this._settings.set_enum('click-action', ACTIONS.indexOf(radiobutton.get_name()));
+                this._settings.apply();
+            }
+        },
+
+        onCyclicScrollingChanged: function (toggleswitch) {
+            this._settings.set_boolean('cyclic-scrolling', toggleswitch.get_active());
+            this._settings.apply();
+        },
+
+        onIndexChanged: function (spinbutton) {
+            this._settings.set_int('index', spinbutton.get_value_as_int());
+            this._settings.apply();
+        },
+
+        onInvertScrollingChanged: function (toggleswitch) {
+            this._settings.set_boolean('invert-scrolling', toggleswitch.get_active());
+            this._settings.apply();
+        },
+
         onModeChanged: function (radiobutton) {
             if(radiobutton.get_active()) {
                 this._settings.set_enum('mode', MODES.indexOf(radiobutton.get_name()));
@@ -139,21 +166,6 @@ WorkspaceSwitcherPrefs.prototype = {
             this._settings.apply();
         },
 
-        onIndexChanged: function (spinbutton) {
-            this._settings.set_int('index', spinbutton.get_value_as_int());
-            this._settings.apply();
-        },
-
-        onInvertScrollingChanged: function (toggleswitch) {
-            this._settings.set_boolean('invert-scrolling', toggleswitch.get_active());
-            this._settings.apply();
-        },
-
-        onCyclicScrollingChanged: function (toggleswitch) {
-            this._settings.set_boolean('cyclic-scrolling', toggleswitch.get_active());
-            this._settings.apply();
-        },
-
         onUseNamesChanged: function (toggleswitch) {
             this._settings.set_boolean('use-names', toggleswitch.get_active());
             this._settings.apply();
@@ -170,6 +182,18 @@ WorkspaceSwitcherPrefs.prototype = {
             this._workspaceNameListStore.set_value(iter, 0, 'Workspace ' + workspaceNum);
         },
 
+        onWorkspaceRemoved: function (button) {
+            let [notEmpty, model, iter] = this._workspaceNameTreeView.get_selection().get_selected();
+            if (notEmpty) {
+                let index = this._workspaceNameListStore.get_path(iter).get_indices()[0];
+                let names = this._workspaceSettings.get_strv('workspace-names');
+                names.splice(index, 1);
+                this._workspaceSettings.set_strv('workspace-names', names);
+                this._workspaceSettings.apply();
+                this._workspaceNameListStore.remove(iter);
+            }
+        },
+
         onWorkspaceRenamed: function (renderer, path, text) {
             let [iterSet, iter] = this._workspaceNameListStore.get_iter_from_string(path);
             if (iterSet) {
@@ -181,18 +205,6 @@ WorkspaceSwitcherPrefs.prototype = {
                 this._workspaceNameListStore.set_value(iter, 0, text);
             }
         },
-
-        onWorkspaceRemoved: function (button) {
-            let [notEmpty, model, iter] = this._workspaceNameTreeView.get_selection().get_selected();
-            if (notEmpty) {
-                let index = this._workspaceNameListStore.get_path(iter).get_indices()[0];
-                let names = this._workspaceSettings.get_strv('workspace-names');
-                names.splice(index, 1);
-                this._workspaceSettings.set_strv('workspace-names', names);
-                this._workspaceSettings.apply();
-                this._workspaceNameListStore.remove(iter);
-            }
-        }
     }
 }
 

@@ -15,7 +15,7 @@ In short, I want a polished, one-stop solution for managing, viewing, and
 switching workspaces.
 
 ### Immediate Goals
-- Allow switching of the current workspace via a popup menu, or scrolling the
+- Allow switching of the current workspace via a popup menu ✔, or scrolling the
 	panel widget ✔, or if all workspaces are displayed, by clicking the
 	desired workspace. ✔
 - Give customisation options for border, background, and text of panel widget.
@@ -40,8 +40,8 @@ switching workspaces.
 	panel widget for a polished appearance.
 - Launch the stock Gnome workspace manager/switcher. ✔
 	- ~~Need to figure out how to do this, shouldn't be hard.~~
-- Provide a custom full-screen workspace switcher with previews?
-	- Would need to provide greater/different functionality than stock Gnome option.
+- ~~Provide a custom full-screen workspace switcher with previews?~~
+	- ~~Would need to provide greater/different functionality than stock Gnome option.~~
 
 # Installation
 At this point in time the extension is under heavy development. I aim for each

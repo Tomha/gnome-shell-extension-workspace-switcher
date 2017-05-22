@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <schemalist>
+	<enum id="org.gnome.shell.extensions.workspace-switcher.click-action">
+		<value value="0" nick="ACTIVITIES"/>
+		<value value="1" nick="POPUP"/>
+		<value value="2" nick="NONE"/>
+	</enum>
 	<enum id="org.gnome.shell.extensions.workspace-switcher.mode">
 		<value value="0" nick="CURRENT"/>
 		<value value="1" nick="ALL"/>
@@ -11,6 +16,9 @@
 		<value value="2" nick="RIGHT"/>
 	</enum>
 	<schema path="/org/gnome/shell/extensions/workspce-switcher/" id="org.gnome.shell.extensions.workspace-switcher">
+		<key name="click-action" enum="org.gnome.shell.extensions.workspace-switcher.click-action">
+			<default>"ACTIVITIES"</default>
+		</key>
 		<key name="cyclic-scrolling" type="b">
 			<default>true</default>
 		</key>
