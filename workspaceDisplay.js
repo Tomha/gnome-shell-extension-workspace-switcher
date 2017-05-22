@@ -44,8 +44,8 @@ function setActiveWorkspace (index) {
         global.screen.get_workspace_by_index(index).activate(global.get_current_time());
 }
 
-const BaseWorkspaceDisplay = new Lang.Class({
-    Name: 'BaseWorkspaceDisplay',
+const CurrentWorkspaceDisplay = new Lang.Class({
+    Name: 'CurrentWorkspaceDisplay',
 
     _init: function (settingsStore) {
         this._settingsStore = settingsStore;
@@ -173,19 +173,9 @@ const BaseWorkspaceDisplay = new Lang.Class({
     }
 });
 
-const CurrentWorkspaceDisplay = new Lang.Class({
-    Name: 'CurrentWorkspaceDisplay',
-    Extends: BaseWorkspaceDisplay,
-
-    _init: function (settingsStore) {
-        this.parent(settingsStore);
-        this._label.set_style(ACTIVE_STYLE);
-    },
-});
-
 const AllWorkspacesDisplay = new Lang.Class({
     Name: 'AllWorkspacesDisplay',
-    Extends: BaseWorkspaceDisplay,
+    Extends: CurrentWorkspaceDisplay,
 
     _init: function (settingsStore) {
         this._settingsStore = settingsStore;
@@ -225,8 +215,8 @@ const AllWorkspacesDisplay = new Lang.Class({
                                     track_hover: true,
                                     child: label});
         button.workspaceIndex = newIndex;
-        button.connect('clicked', Lang.bind(this, this._onClick));
-        button.connect('scroll-event', Lang.bind(this, this._onScroll));
+        button.connect('clicked', Lang.bind(this, this._onButtonClick));
+        button.connect('scroll-event', Lang.bind(this, this._onButtonScroll));
         this._buttons.push(button);
         this._container.add_child(button);
         this.updateWorkspaceNames();
@@ -275,7 +265,7 @@ const AllWorkspacesDisplay = new Lang.Class({
 
 const IconWorkspaceDisplay = new Lang.Class({
     Name: 'IconWorkspaceDisplay',
-    Extends: BaseWorkspaceDisplay,
+    Extends: CurrentWorkspaceDisplay,
 
     _init: function (settingsStore) {
         this._settingsStore = settingsStore;
