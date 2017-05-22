@@ -30,7 +30,11 @@ const WorkspaceDisplay = Me.imports.workspaceDisplay;
 const PANEL_POSITIONS = [Main.panel._leftBox,
                          Main.panel._centerBox,
                          Main.panel._rightBox]
+
 const MODES = { CURRENT: 0, ALL: 1, ICON: 2 }
+const MODE_OBJECTS = [WorkspaceDisplay.CurrentWorkspaceDisplay,
+                      WorkspaceDisplay.AllWorkspacesDisplay,
+                      WorkspaceDisplay.IconWorkspaceDisplay]
 
 function insertAtPosition (actor, position, index) {
     PANEL_POSITIONS[position].insert_child_at_index(actor, index);
@@ -54,7 +58,7 @@ const WorkspaceSwitcher = new Lang.Class({
         this._settingsStore = this._loadSettings();
         this._workspaceSettings = Settings.getSettings('org.gnome.desktop.wm.preferences');
 
-        this._display = this._createNewDisplay();
+        this._display = new MODE_OBJECTS[this._settingsStore.mode](this._settingsStore);
         this._insertWidget();
 
         this._settingsSignal = this._settings.connect('changed', Lang.bind(this, this._onSettingsChanged));
@@ -75,15 +79,6 @@ const WorkspaceSwitcher = new Lang.Class({
         this._workspaceSettings.disconnect(this._workspaceSettingsSignal);
         for (let i = 0; i < this._workspaceSignals.length; i++)
             global.screen.disconnect(this._workspaceSignals[i]);
-    },
-
-    _createNewDisplay: function () {
-        if (this._settingsStore.mode == MODES.CURRENT)
-            return(new WorkspaceDisplay.CurrentWorkspaceDisplay(this._settingsStore));
-        else if (this._settingsStore.mode == MODES.ALL)
-            return(new WorkspaceDisplay.AllWorkspacesDisplay(this._settingsStore));
-        else
-            return(new WorkspaceDisplay.IconWorkspaceDisplay(this._settingsStore));
     },
 
     _insertWidget: function () {
@@ -132,7 +127,7 @@ const WorkspaceSwitcher = new Lang.Class({
                 this._removeWidget();
                 this._display.destroy();
                 this._settingsStore.mode = settings.get_enum(key);
-                this._display = this._createNewDisplay();
+                this._display = new MODE_OBJECTS[this._settingsStore.mode](this._settingsStore);
                 this._insertWidget();
                 break;
             case 'position':
