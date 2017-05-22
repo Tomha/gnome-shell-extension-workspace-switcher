@@ -51,6 +51,7 @@ const CurrentWorkspaceDisplay = new Lang.Class({
     _init: function (settingsStore) {
         this.parent({y_fill: true});
         this._settingsStore = settingsStore;
+        this._createPopupMenu();
         this.set_child(this._createWidgets());
     },
 
@@ -87,7 +88,7 @@ const CurrentWorkspaceDisplay = new Lang.Class({
     },
 
     _createPopupMenu: function () {
-        this._popupMenu = new PopupMenu.PopupMenu(this._button, 0.0, St.Side.TOP, 0);
+        this._popupMenu = new PopupMenu.PopupMenu(this, 0.0, St.Side.TOP, 0);
         this._popupMenu.actor.add_style_class_name('panel-menu');
         this._popupMenu.connect('open-state-changed', Lang.bind(this, this._onPopupStateChange));
         Main.uiGroup.add_actor(this._popupMenu.actor);
@@ -113,7 +114,6 @@ const CurrentWorkspaceDisplay = new Lang.Class({
                                       y_fill: false,
                                       track_hover: true,
                                       child: this._label});
-        this._createPopupMenu();
         this._button.connect('clicked', Lang.bind(this, this._onButtonClick));
         this._button.connect('scroll-event', Lang.bind(this, this._onButtonScroll));
         return this._button;
@@ -215,6 +215,7 @@ const AllWorkspacesDisplay = new Lang.Class({
         this._buttons.push(button);
         this._container.add_child(button);
         this.updateWorkspaceNames();
+        this._updatePopupSection();
     },
 
     removeWorkspace: function () {
@@ -229,15 +230,18 @@ const AllWorkspacesDisplay = new Lang.Class({
                 this._labels[i].set_style(INACTIVE_STYLE)
         }
         this.updateWorkspaceNames();
+        this._updatePopupSection();
     },
 
     switchWorkspace: function () {
+        this._popupItems[this._settingsStore.currentWorkspace].setOrnament(PopupMenu.Ornament.NONE);
         this._settingsStore.currentWorkspace = global.screen.get_active_workspace().index();
         for (let i = 0; i < global.screen.n_workspaces; i++) {
             if (i == this._settingsStore.currentWorkspace)
                 this._labels[i].set_style(ACTIVE_STYLE);
             else this._labels[i].set_style(INACTIVE_STYLE);
         }
+        this._popupItems[this._settingsStore.currentWorkspace].setOrnament(PopupMenu.Ornament.DOT);
     },
 
     updateWorkspaceNames: function () {
@@ -254,7 +258,20 @@ const AllWorkspacesDisplay = new Lang.Class({
     },
 
     _onButtonClick: function (button, event) {
-        setActiveWorkspace(button.workspaceIndex);
+        if (this._settingsStore.clickAction == ACTIONS.ACTIVITIES)
+            setActiveWorkspace(button.workspaceIndex);
+        else if (this._settingsStore.clickAction == ACTIONS.POPUP)
+            this._popupMenu.toggle();
+    },
+
+    _onPopupStateChange: function (menu, open) {
+        if (open){
+            for (let i = 0; i < this._buttons.length; i++)
+                this._buttons[i].add_style_pseudo_class('active');
+        } else {
+            for (let i = 0; i < this._buttons.length; i++)
+                this._buttons[i].remove_style_pseudo_class('active');
+        }
     }
 });
 
@@ -279,7 +296,6 @@ const IconWorkspaceDisplay = new Lang.Class({
                                       y_fill: false,
                                       track_hover: true,
                                       child: this._container});
-        this._createPopupMenu();
         this._button.connect('clicked', Lang.bind(this, this._onButtonClick));
         this._button.connect('scroll-event', Lang.bind(this, this._onButtonScroll));
         return this._button;

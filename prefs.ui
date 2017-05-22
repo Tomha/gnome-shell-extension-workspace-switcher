@@ -376,7 +376,7 @@
     </child>
     <child>
       <object class="GtkRadioButton" id="actionActivities">
-        <property name="label" translatable="yes">Activities</property>
+        <property name="label" translatable="yes">Activities/Switch</property>
         <property name="visible">True</property>
         <property name="can_focus">True</property>
         <property name="receives_default">False</property>
