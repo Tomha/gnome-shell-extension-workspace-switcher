@@ -49,7 +49,7 @@ const CurrentWorkspaceDisplay = new Lang.Class({
     Extends: St.Bin,
 
     _init: function (settingsStore) {
-        this.parent();
+        this.parent({y_fill: true});
         this._settingsStore = settingsStore;
         this.set_child(this._createWidgets());
     },
