@@ -62,14 +62,12 @@ const BaseWorkspaceDisplay = new Lang.Class({
 
         this._createPopupMenu();
 
-        this._pressSignal = this._button.connect('clicked', Lang.bind(this, this._onButtonClick));
-        this._scrollSignal = this._button.connect('scroll-event', Lang.bind(this, this._onButtonScroll));
+        this._button.connect('clicked', Lang.bind(this, this._onButtonClick));
+        this._button.connect('scroll-event', Lang.bind(this, this._onButtonScroll));
     },
 
     destroy: function () {
         this._popupMenu.destroy();
-        this._button.disconnect(this._pressSignal);
-        this._button.disconnect(this._scrollSignal);
         this._button.destroy();
     },
 
@@ -202,12 +200,6 @@ const AllWorkspacesDisplay = new Lang.Class({
     },
 
     destroy: function () {
-        for (let i = 0; i < this._buttons.length; i++) {
-            this._buttons[i].disconnect(this._buttonPressSignals[i])
-            this._buttons[i].disconnect(this._buttonScrollSignals[i]);
-        }
-        this._labels = [];
-        this._buttons = [];
         this._container.destroy();
     },
 
@@ -233,8 +225,8 @@ const AllWorkspacesDisplay = new Lang.Class({
                                     track_hover: true,
                                     child: label});
         button.workspaceIndex = newIndex;
-        this._buttonPressSignals.push(button.connect('clicked', Lang.bind(this, this._onClick)));
-        this._buttonScrollSignals.push(button.connect('scroll-event', Lang.bind(this, this._onScroll)));
+        button.connect('clicked', Lang.bind(this, this._onClick));
+        button.connect('scroll-event', Lang.bind(this, this._onScroll));
         this._buttons.push(button);
         this._container.add_child(button);
         this.updateWorkspaceNames();
@@ -243,10 +235,7 @@ const AllWorkspacesDisplay = new Lang.Class({
     removeWorkspace: function () {
         this._settingsStore.currentWorkspace = global.screen.get_active_workspace().index();
         this._labels.pop().destroy();
-        let lastButton = this._buttons.pop();
-        lastButton.disconnect(this._buttonPressSignals.pop());
-        lastButton.disconnect(this._buttonScrollSignals.pop());
-        lastButton.destroy();
+        this._buttons.pop().destroy();
         for (let i = 0; i < this._buttons.length; i++) {
             this._buttons[i].workspaceIndex = i;
             if (i == this._settingsStore.currentWorkspace)
@@ -309,8 +298,8 @@ const IconWorkspaceDisplay = new Lang.Class({
 
         this._createPopupMenu();
 
-        this._pressSignal = this._button.connect('clicked', Lang.bind(this, this._onButtonClick));
-        this._scrollSignal = this._button.connect('scroll-event', Lang.bind(this, this._onButtonScroll));
+        this._button.connect('clicked', Lang.bind(this, this._onButtonClick));
+        this._button.connect('scroll-event', Lang.bind(this, this._onButtonScroll));
     },
 
     showLabel: function (doShow) {
