@@ -36,6 +36,15 @@ const MODE_OBJECTS = [WorkspaceDisplay.CurrentWorkspaceDisplay,
                       WorkspaceDisplay.AllWorkspacesDisplay,
                       WorkspaceDisplay.IconWorkspaceDisplay]
 
+function hexToRgbaString (hex) {
+    let string = 'rgba(';
+    string += parseInt(hex.slice(1,3), 16).toString() + ','
+    string += parseInt(hex.slice(3,5), 16).toString() + ','
+    string += parseInt(hex.slice(5,7), 16).toString() + ','
+    string += (parseInt(hex.slice(7,9), 16) / 255).toString() + ')'
+    return string;
+}
+
 function insertAtPosition (actor, position, index) {
     PANEL_POSITIONS[position].insert_child_at_index(actor, index);
 }
@@ -89,16 +98,37 @@ const WorkspaceSwitcher = new Lang.Class({
 
     _loadSettings: function () {
         let settingsStore = new SettingsStore();
+
+        settingsStore.backgroundColourActive = this._settings.get_string('background-colour-active');
+        settingsStore.backgroundColourInactive = this._settings.get_string('background-colour-inactive');
+        settingsStore.borderColour = this._settings.get_string('border-colour');
+        settingsStore.borderSize = this._settings.get_int('border-size');
+        settingsStore.borderStyle = this._settings.get_string('border-style');
         settingsStore.clickAction = this._settings.get_enum('click-action');
         settingsStore.currentWorkspace = global.screen.get_active_workspace().index();
         settingsStore.cyclicScrolling = this._settings.get_boolean('cyclic-scrolling');
+        settingsStore.fontColour = this._settings.get_string('font-colour');
+        settingsStore.fontFamily = this._settings.get_string('font-family');
+        settingsStore.fontSize = this._settings.get_int('font-size');
+        settingsStore.fontUseTheme = this._settings.get_boolean('font-use-theme');
         settingsStore.index = this._settings.get_int('index');
         settingsStore.invertScrolling = this._settings.get_boolean('invert-scrolling');
+        settingsStore.minHeight = this._settings.get_int('min-height');
+        settingsStore.minWidth = this._settings.get_int('min-width');
         settingsStore.mode = this._settings.get_enum('mode');
+        settingsStore.paddingHorizontal = this._settings.get_int('padding-horizontal');
+        settingsStore.paddingVertical = this._settings.get_int('padding-vertical');
         settingsStore.position = this._settings.get_enum('position');
         settingsStore.showIconText = this._settings.get_boolean('show-icon-text');
         settingsStore.showTotalNum = this._settings.get_boolean('show-total-num');
         settingsStore.useNames = this._settings.get_boolean('use-names');
+
+        settingsStore.makeActiveBackgroundString();
+        settingsStore.makeBorderString();
+        settingsStore.makeFontString();
+        settingsStore.makeInactiveBackgroundString();
+        settingsStore.makeSizeString();
+
         return settingsStore;
     },
 
@@ -175,15 +205,70 @@ const SettingsStore = new Lang.Class({
     Name: 'SettingsStore',
 
     _init: function () {
+        this.backgroundColourActive = null;
+        this.backgroundColourInactive = null;
+        this.borderColour = null
+        this.borderSize = null;
+        this.borderStyle = null;
         this.clickAction = null;
         this.currentWorkspace = null;
         this.cyclicScrolling = null;
+        this.fontColour = null;
+        this.fontFamily = null;
+        this.fontSize = null;
+        this.fontUseTheme = null;
         this.index = null;
         this.invertScrolling = null;
+        this.minHeight = null;
+        this.minWidth = null;
         this.mode = null;
+        this.paddingHorizontal = null;
+        this.paddingVertical = null;
         this.position = null;
         this.showIconText = null;
         this.showTotalNum = null;
+        this.styleStringBackgroundActive = null;
+        this.styleStringBackgroundInactive = null;
+        this.styleStringBorder = null;
+        this.styleStringFont = null;
+        this.styleStringSize = null;
         this.useNames = null;
+    },
+
+    makeActiveBackgroundString: function () {
+        this.styleStringBackgroundActive = 'background-color:' +
+            hexToRgbaString(this.backgroundColourActive) + ';';
+    },
+
+    makeBorderString: function () {
+        this.styleStringBorder = 'border: ' +
+                                 this.borderSize + 'px ' +
+                                 this.borderStyle + ' ' +
+                                 hexToRgbaString(this.borderColour) + ';';
+    },
+
+    makeFontString: function () {
+        this.styleStringFont = 'font-size: ' +
+                               this.fontSize + 'pt; ' +
+                               'font-family: ' +
+                               this.fontFamily + '; ' +
+                               'color: ' +
+                               hexToRgbaString(this.fontColour) + ';';
+    },
+
+    makeInactiveBackgroundString: function () {
+        this.styleStringBackgroundInactive = 'background-color: ' +
+            hexToRgbaString(this.backgroundColourInactive) + ';';
+    },
+
+    makeSizeString: function () {
+        this.styleStringSize = 'padding: ' +
+                               this.paddingVertical + 'px ' +
+                               this.paddingHorizontal + 'px; ' +
+                               'min-height: ' +
+                               this.minHeight + 'px; ' +
+                               'min-width: ' +
+                               this.minWidth + 'px; ' +
+                               'margin: 0px 1px;'
     }
 });

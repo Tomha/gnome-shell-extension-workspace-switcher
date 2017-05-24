@@ -16,10 +16,37 @@
 		<value value="2" nick="RIGHT"/>
 	</enum>
 	<schema path="/org/gnome/shell/extensions/workspce-switcher/" id="org.gnome.shell.extensions.workspace-switcher">
+		<key name="background-colour-active" type="s">
+			<default>"#888888ff"</default>
+		</key>
+		<key name="background-colour-inactive" type="s">
+			<default>"#444444ff"</default>
+		</key>
+		<key name="border-colour" type="s">
+			<default>"#ccccccff"</default>
+		</key>
+		<key name="border-size" type="i">
+			<default>1</default>
+		</key>
+		<key name="border-style" type="s">
+			<default>"solid"</default>
+		</key>
 		<key name="click-action" enum="org.gnome.shell.extensions.workspace-switcher.click-action">
 			<default>"ACTIVITIES"</default>
 		</key>
 		<key name="cyclic-scrolling" type="b">
+			<default>true</default>
+		</key>
+		<key name="font-colour" type="s">
+			<default>"#ccccccff"</default>
+		</key>
+		<key name="font-family" type="s">
+			<default>"Arial"</default>
+		</key>
+		<key name="font-size" type="i">
+			<default>11</default>
+		</key>
+		<key name="font-use-theme" type="b">
 			<default>true</default>
 		</key>
 		<key name="index" type="i">
@@ -28,8 +55,20 @@
 		<key name="invert-scrolling" type="b">
 			<default>false</default>
 		</key>
+		<key name="min-height" type="i">
+			<default>0</default>
+		</key>
+		<key name="min-width" type="i">
+			<default>0</default>
+		</key>
 		<key name="mode" enum="org.gnome.shell.extensions.workspace-switcher.mode">
 			<default>"CURRENT"</default>
+		</key>
+		<key name="padding-horizontal" type="i">
+			<default>8</default>
+		</key>
+		<key name="padding-vertical" type="i">
+			<default>0</default>
 		</key>
 		<key name="position" enum="org.gnome.shell.extensions.workspace-switcher.position">
 			<default>"RIGHT"</default>

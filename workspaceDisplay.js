@@ -56,7 +56,7 @@ const CurrentWorkspaceDisplay = new Lang.Class({
     },
 
     destroy: function () {
-        if (this._popupMenu) this._popupMenu.destroy();
+        this._popupMenu.destroy();
         this.parent();
     },
 
@@ -83,6 +83,15 @@ const CurrentWorkspaceDisplay = new Lang.Class({
         this._label.set_text(this._getWorkspaceName());
     },
 
+    updateStyle: function () {
+        let styleString = this._settingsStore.styleStringSize + ' ' +
+                          this._settingsStore.styleStringBorder + ' ' +
+                          this._settingsStore.styleStringBackgroundActive;
+        if (!this._settingsStore.fontUseTheme)
+            styleString += ' ' + this._settingsStore.styleStringFont;
+        this._label.set_style(styleString);
+    },
+
     updateWorkspaceNames: function () {
         this._label.set_text(this._getWorkspaceName());
     },
@@ -106,7 +115,7 @@ const CurrentWorkspaceDisplay = new Lang.Class({
     _createWidgets: function () {
         this._label = new St.Label({y_align: Clutter.ActorAlign.CENTER});
         this._label.set_text(this._getWorkspaceName());
-        this._label.set_style(ACTIVE_STYLE);
+        this.updateStyle();
         this._button = new St.Button({style_class: 'panel-button',
                                       reactive: true,
                                       can_focus: true,
@@ -197,11 +206,8 @@ const AllWorkspacesDisplay = new Lang.Class({
         let newIndex = this._labels.length;
         let label = new St.Label({y_align: Clutter.ActorAlign.CENTER});
         label.set_text(this._getWorkspaceName(newIndex));
-        if (newIndex == this._settingsStore.currentWorkspace)
-            label.set_style(ACTIVE_STYLE);
-        else
-            label.set_style(INACTIVE_STYLE);
         this._labels.push(label);
+        this.updateStyle();
         let button = new St.Button({style_class: 'panel-button',
                                     reactive: true,
                                     can_focus: true,
@@ -222,13 +228,9 @@ const AllWorkspacesDisplay = new Lang.Class({
         this._settingsStore.currentWorkspace = global.screen.get_active_workspace().index();
         this._labels.pop().destroy();
         this._buttons.pop().destroy();
-        for (let i = 0; i < this._buttons.length; i++) {
+        for (let i = 0; i < this._buttons.length; i++)
             this._buttons[i].workspaceIndex = i;
-            if (i == this._settingsStore.currentWorkspace)
-                this._labels[i].set_style(ACTIVE_STYLE)
-            else
-                this._labels[i].set_style(INACTIVE_STYLE)
-        }
+        this.updateStyle();
         this.updateWorkspaceNames();
         this._updatePopupSection();
     },
@@ -236,12 +238,26 @@ const AllWorkspacesDisplay = new Lang.Class({
     switchWorkspace: function () {
         this._popupItems[this._settingsStore.currentWorkspace].setOrnament(PopupMenu.Ornament.NONE);
         this._settingsStore.currentWorkspace = global.screen.get_active_workspace().index();
-        for (let i = 0; i < global.screen.n_workspaces; i++) {
-            if (i == this._settingsStore.currentWorkspace)
-                this._labels[i].set_style(ACTIVE_STYLE);
-            else this._labels[i].set_style(INACTIVE_STYLE);
-        }
+        for (let i = 0; i < global.screen.n_workspaces; i++)
+            this.updateStyle();
         this._popupItems[this._settingsStore.currentWorkspace].setOrnament(PopupMenu.Ornament.DOT);
+    },
+
+    updateStyle: function () {
+        let styleString = this._settingsStore.styleStringSize + ' ' +
+                          this._settingsStore.styleStringBorder + ' ' +
+                          this._settingsStore.styleStringBackgroundActive;
+        if (!this._settingsStore.fontUseTheme)
+            styleString += ' ' + this._settingsStore.styleStringFont;
+        for (let i = 0; i < this._labels.length; i++) {
+            if (i == this._settingsStore.currentWorkspace)
+                this._labels[i].set_style(styleString + ' ' +
+                    this._settingsStore.styleStringBackgroundActive);
+            else
+                this._labels[i].set_style(styleString + ' ' +
+                    this._settingsStore.styleStringBackgroundInactive);
+        }
+
     },
 
     updateWorkspaceNames: function () {
@@ -287,6 +303,7 @@ const IconWorkspaceDisplay = new Lang.Class({
         this._container.add_child(this._icon);
         this._label = new St.Label({y_align: Clutter.ActorAlign.CENTER});
         this._label.set_text(this._getWorkspaceName());
+        this.updateStyle();
         if (!this._settingsStore.showIconText) this._label.hide();
         this._container.add_child(this._label);
         this._button = new St.Button({style_class: 'panel-button',
@@ -304,5 +321,10 @@ const IconWorkspaceDisplay = new Lang.Class({
     showLabel: function (doShow) {
         if (doShow) this._label.show();
         else this._label.hide();
+    },
+
+    updateStyle: function () {
+        if (!this._settingsStore.fontUseTheme)
+            this._label.set_style(this._settingsStore.styleStringFont);
     }
 });
