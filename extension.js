@@ -139,11 +139,55 @@ const WorkspaceSwitcher = new Lang.Class({
 
     _onSettingsChanged: function (settings, key) {
         switch (key) {
+            case 'background-colour-active':
+                this._settingsStore.backgroundColourActive = settings.get_string(key);
+                this._settingsStore.makeActiveBackgroundString();
+                this._display.updateStyle();
+                break;
+            case 'background-colour-inactive':
+                this._settingsStore.backgroundColourInactive = settings.get_string(key);
+                this._settingsStore.makeInactiveBackgroundString();
+                this._display.updateStyle();
+                break;
+            case 'border-colour':
+                this._settingsStore.borderColour = settings.get_string(key);
+                this._settingsStore.makeBorderString();
+                this._display.updateStyle();
+                break;
+            case 'border-size':
+                this._settingsStore.borderSize = settings.get_int(key);
+                this._settingsStore.makeBorderString();
+                this._display.updateStyle();
+                break;
+            case 'border-style':
+                this._settingsStore.borderStyle = settings.get_string(key);
+                this._settingsStore.makeBorderString();
+                this._display.updateStyle();
+                break;
             case 'click-action':
                 this._settingsStore.clickAction = settings.get_enum(key);
                 break;
             case 'cyclic-scrolling':
                 this._settingsStore.cyclicScrolling = settings.get_boolean(key);
+                break;
+            case 'font-colour':
+                this._settingsStore.fontColour = settings.get_string(key);
+                this._settingsStore.makeFontString();
+                this._display.updateStyle();
+                break;
+            case 'font-family':
+                this._settingsStore.fontFamily = settings.get_string(key);
+                this._settingsStore.makeFontString();
+                this._display.updateStyle();
+                break;
+            case 'font-size':
+                this._settingsStore.fontSize = settings.get_int(key);
+                this._settingsStore.makeFontString();
+                this._display.updateStyle();
+                break;
+            case 'font-use-theme':
+                this._settingsStore.fontUseTheme = settings.get_boolean(key);
+                this._display.updateStyle();
                 break;
             case 'index':
                 this._settingsStore.index = settings.get_int(key);
@@ -153,12 +197,32 @@ const WorkspaceSwitcher = new Lang.Class({
             case 'invert-scrolling':
                 this._settingsStore.invertScrolling = settings.get_boolean(key);
                 break;
+            case 'min-height':
+                this._settingsStore.minHeight = settings.get_int(key);
+                this._settingsStore.makeSizeString();
+                this._display.updateStyle();
+                break;
+            case 'min-width':
+                this._settingsStore.minWidth = settings.get_int(key);
+                this._settingsStore.makeSizeString();
+                this._display.updateStyle();
+                break;
             case 'mode':
                 this._removeWidget();
                 this._display.destroy();
                 this._settingsStore.mode = settings.get_enum(key);
                 this._display = new MODE_OBJECTS[this._settingsStore.mode](this._settingsStore);
                 this._insertWidget();
+                break;
+            case 'padding-horizontal':
+                this._settingsStore.paddingHorizontal = settings.get_int(key);
+                this._settingsStore.makeSizeString();
+                this._display.updateStyle();
+                break;
+            case 'padding-vertical':
+                this._settingsStore.paddingVertical = settings.get_int(key);
+                this._settingsStore.makeSizeString();
+                this._display.updateStyle();
                 break;
             case 'position':
                 this._removeWidget();
