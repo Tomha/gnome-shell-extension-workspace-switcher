@@ -102,6 +102,7 @@ const WorkspaceSwitcher = new Lang.Class({
         settingsStore.backgroundColourActive = this._settings.get_string('background-colour-active');
         settingsStore.backgroundColourInactive = this._settings.get_string('background-colour-inactive');
         settingsStore.borderColour = this._settings.get_string('border-colour');
+        settingsStore.borderRadius = this._settings.get_int('border-radius');
         settingsStore.borderSize = this._settings.get_int('border-size');
         settingsStore.borderStyle = this._settings.get_string('border-style');
         settingsStore.clickAction = this._settings.get_enum('click-action');
@@ -154,6 +155,10 @@ const WorkspaceSwitcher = new Lang.Class({
                 this._settingsStore.makeBorderString();
                 this._display.updateStyle();
                 break;
+            case 'border-radius':
+                this._settingsStore.borderRadius = settings.get_int(key);
+                this._settingsStore.makeBorderString();
+                this._display.updateStyle();
             case 'border-size':
                 this._settingsStore.borderSize = settings.get_int(key);
                 this._settingsStore.makeBorderString();
@@ -271,7 +276,8 @@ const SettingsStore = new Lang.Class({
     _init: function () {
         this.backgroundColourActive = null;
         this.backgroundColourInactive = null;
-        this.borderColour = null
+        this.borderColour = null;
+        this.borderRadius = null;
         this.borderSize = null;
         this.borderStyle = null;
         this.clickAction = null;
@@ -308,7 +314,9 @@ const SettingsStore = new Lang.Class({
         this.styleStringBorder = 'border: ' +
                                  this.borderSize + 'px ' +
                                  this.borderStyle + ' ' +
-                                 hexToRgbaString(this.borderColour) + ';';
+                                 hexToRgbaString(this.borderColour) + ';' +
+                                 'border-radius: ' +
+                                 this.borderRadius + 'px; ';
     },
 
     makeFontString: function () {

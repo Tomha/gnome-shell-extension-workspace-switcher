@@ -25,6 +25,10 @@
 		<key name="border-colour" type="s">
 			<default>"#ccccccff"</default>
 		</key>
+		<key name="border-radius" type="i">
+			<range min="0" max="32"/>
+			<default>0</default>
+		</key>
 		<key name="border-size" type="i">
 			<range min="0" max="8"/>
 			<default>1</default>
