@@ -159,6 +159,7 @@ const WorkspaceSwitcher = new Lang.Class({
                 this._settingsStore.borderRadius = settings.get_int(key);
                 this._settingsStore.makeBorderString();
                 this._display.updateStyle();
+                break;
             case 'border-size':
                 this._settingsStore.borderSize = settings.get_int(key);
                 this._settingsStore.makeBorderString();
@@ -210,6 +211,7 @@ const WorkspaceSwitcher = new Lang.Class({
             case 'min-width':
                 this._settingsStore.minWidth = settings.get_int(key);
                 this._settingsStore.makeSizeString();
+                this._display.resetWorkspaceNames(); // Prevents alignment issues
                 this._display.updateStyle();
                 break;
             case 'mode':

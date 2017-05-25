@@ -76,6 +76,11 @@ const CurrentWorkspaceDisplay = new Lang.Class({
         this._label.set_text(this._getWorkspaceName());
     },
 
+    resetWorkspaceNames: function () {
+        this._label.set_text('');
+        this.updateWorkspaceNames();
+    },
+
     switchWorkspace: function () {
         this._popupItems[this._settingsStore.currentWorkspace].setOrnament(PopupMenu.Ornament.NONE);
         this._settingsStore.currentWorkspace = global.screen.get_active_workspace().index();
@@ -84,7 +89,8 @@ const CurrentWorkspaceDisplay = new Lang.Class({
     },
 
     updateStyle: function () {
-        let styleString = this._settingsStore.styleStringSize + ' ' +
+        let styleString = 'text-align: center; vertical-align: middle;' +
+                          this._settingsStore.styleStringSize + ' ' +
                           this._settingsStore.styleStringBorder + ' ' +
                           this._settingsStore.styleStringBackgroundActive;
         if (!this._settingsStore.fontUseTheme)
@@ -235,6 +241,12 @@ const AllWorkspacesDisplay = new Lang.Class({
         this._updatePopupSection();
     },
 
+    resetWorkspaceNames: function () {
+        for (let i = 0; i < this._labels.length; i++)
+            this._labels[i].set_text('');
+        this.updateWorkspaceNames();
+    },
+
     switchWorkspace: function () {
         this._popupItems[this._settingsStore.currentWorkspace].setOrnament(PopupMenu.Ornament.NONE);
         this._settingsStore.currentWorkspace = global.screen.get_active_workspace().index();
@@ -244,7 +256,8 @@ const AllWorkspacesDisplay = new Lang.Class({
     },
 
     updateStyle: function () {
-        let styleString = this._settingsStore.styleStringSize + ' ' +
+        let styleString = 'text-align: center; vertical-align: middle;' +
+                          this._settingsStore.styleStringSize + ' ' +
                           this._settingsStore.styleStringBorder + ' ' +
                           this._settingsStore.styleStringBackgroundActive;
         if (!this._settingsStore.fontUseTheme)
@@ -324,7 +337,9 @@ const IconWorkspaceDisplay = new Lang.Class({
     },
 
     updateStyle: function () {
+        let styleString = 'text-align: center; vertical-align: middle;';
         if (!this._settingsStore.fontUseTheme)
-            this._label.set_style(this._settingsStore.styleStringFont);
+            styleString += this._settingsStore.styleStringFont
+        this._label.set_style(styleString);
     }
 });
