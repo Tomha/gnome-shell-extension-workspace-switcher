@@ -71,6 +71,7 @@ WorkspaceSwitcherPrefs.prototype = {
         this.widget = this._builder.get_object('container');
         this._debug = this._builder.get_object('debug'); // DEBUG
         this._populate();
+        this._populateAbout();
         this._populateStyle();
         this._builder.connect_signals_full(Lang.bind(this, this._signalConnector));
     },
@@ -138,6 +139,29 @@ WorkspaceSwitcherPrefs.prototype = {
         delButton.connect('clicked', Lang.bind(this, this._signalHandler['onWorkspaceRemoved']));
         toolbar.add(delButton);
 
+    },
+
+    _populateAbout: function () {
+        let name = this._builder.get_object('nameLabel');
+        name.set_text(Me.metadata['name'].toString());
+
+        let about = this._builder.get_object('aboutLabel');
+        about.set_text(Me.metadata['description'].toString());
+
+        let version = this._builder.get_object('versionLabel');
+        version.set_text(Me.metadata['version'].toString());
+
+        let website = this._builder.get_object('websiteLabel');
+        website.set_markup('<a href="' + Me.metadata['url'].toString() + '">' +
+           Me.metadata['name'].toString() + '</a>');
+
+        let licence = this._builder.get_object('licenceLabel');
+        licence.set_markup('<span font="10">' +
+            'This extension comes with absolutely no warranty.\n' +
+            'See the <a href="' +
+            Me.metadata['licence-url'].toString() + '">' +
+            Me.metadata['licence'].toString() +
+            ' or later</a> for details.</span>');
     },
 
     _populateStyle: function () {
