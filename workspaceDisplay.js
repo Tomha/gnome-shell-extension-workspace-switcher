@@ -136,7 +136,7 @@ const CurrentWorkspaceDisplay = new Lang.Class({
 
     _getWorkspaceName: function () {
         let index = this._settingsStore.currentWorkspace;
-        if (this._settingsStore.useNames)
+        if (this._settingsStore.showNames)
             return getWorkspaceName(index);
         else if (this._settingsStore.showTotalNum)
             return getWorkspaceNum(index) + '/' + global.screen.n_workspaces.toString();
@@ -288,7 +288,7 @@ const AllWorkspacesDisplay = new Lang.Class({
     _getWorkspaceName: function (index) {
         if (index == null)
             index = this._settingsStore.currentWorkspace;
-        if (this._settingsStore.useNames)
+        if (this._settingsStore.showNames)
             return getWorkspaceName(index);
         else return getWorkspaceNum(index);
     },

@@ -128,8 +128,8 @@ const WorkspaceSwitcher = new Lang.Class({
         settingsStore.paddingVertical = this._settings.get_int('padding-vertical');
         settingsStore.position = this._settings.get_enum('position');
         settingsStore.showIconText = this._settings.get_boolean('show-icon-text');
+        settingsStore.showNames = this._settings.get_boolean('show-names');
         settingsStore.showTotalNum = this._settings.get_boolean('show-total-num');
-        settingsStore.useNames = this._settings.get_boolean('use-names');
 
         settingsStore.makeActiveBackgroundString();
         settingsStore.makeInactiveBackgroundString();
@@ -287,13 +287,13 @@ const WorkspaceSwitcher = new Lang.Class({
                     else this._display.showLabel(false);
                 }
                 break;
+            case 'show-names':
+                this._settingsStore.showNames = settings.get_boolean(key);
+                this._display.updateWorkspaceNames();
+                break;
             case 'show-total-num':
                 this._settingsStore.showTotalNum = settings.get_boolean(key);
-                if (!this._settingsStore.useNames) this._display.updateWorkspaceNames();
-                break;
-            case 'use-names':
-                this._settingsStore.useNames = settings.get_boolean(key);
-                this._display.updateWorkspaceNames();
+                if (!this._settingsStore.showNames) this._display.updateWorkspaceNames();
                 break;
         }
     },
@@ -307,7 +307,7 @@ const WorkspaceSwitcher = new Lang.Class({
     },
 
     _onWorkspaceSettingsChanged: function (settings, key) {
-        if (key == 'workspace-names' && this._settingsStore.useNames)
+        if (key == 'workspace-names' && this._settingsStore.showNames)
             this._display.updateWorkspaceNames();
     },
 
@@ -349,6 +349,7 @@ const SettingsStore = new Lang.Class({
         this.paddingVertical = null;
         this.position = null;
         this.showIconText = null;
+        this.showNames = null;
         this.showTotalNum = null;
         this.styleStringBackgroundActive = null;
         this.styleStringBackgroundInactive = null;
@@ -357,7 +358,6 @@ const SettingsStore = new Lang.Class({
         this.styleStringFontActive = null;
         this.styleStringFontInactive = null;
         this.styleStringSize = null;
-        this.useNames = null;
     },
 
     makeActiveBackgroundString: function () {

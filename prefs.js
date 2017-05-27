@@ -120,8 +120,8 @@ WorkspaceSwitcherPrefs.prototype = {
         widget = this._builder.get_object(POSITIONS[value]);
         widget.set_active(true);
 
-        value = this._settings.get_boolean('use-names');
-        widget = this._builder.get_object('useNames');
+        value = this._settings.get_boolean('show-names');
+        widget = this._builder.get_object('showNames');
         widget.set_active(value);
 
         value = this._settings.get_boolean('show-total-num');
@@ -368,13 +368,13 @@ WorkspaceSwitcherPrefs.prototype = {
             this._settings.apply();
         },
 
-        onShowTotalNumChanged: function (toggleswitch) {
-            this._settings.set_boolean('show-total-num', toggleswitch.get_active());
+        onShowNamesSet: function (toggleswitch) {
+            this._settings.set_boolean('show-names', toggleswitch.get_active());
             this._settings.apply();
         },
 
-        onUseNamesChanged: function (toggleswitch) {
-            this._settings.set_boolean('use-names', toggleswitch.get_active());
+        onShowTotalNumChanged: function (toggleswitch) {
+            this._settings.set_boolean('show-total-num', toggleswitch.get_active());
             this._settings.apply();
         },
 

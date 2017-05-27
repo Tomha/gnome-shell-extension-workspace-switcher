@@ -181,11 +181,11 @@
                         <property name="can_focus">False</property>
                         <property name="spacing">8</property>
                         <child>
-                          <object class="GtkSwitch" id="useNames">
+                          <object class="GtkSwitch" id="showNames">
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
                             <property name="halign">start</property>
-                            <signal name="state-set" handler="onUseNamesChanged" swapped="no"/>
+                            <signal name="state-set" handler="onShowNamesSet" swapped="no"/>
                           </object>
                           <packing>
                             <property name="expand">False</property>
