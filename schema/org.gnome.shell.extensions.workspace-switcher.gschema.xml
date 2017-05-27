@@ -1,5 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <schemalist>
+	<enum id="org.gnome.shell.extensions.workspace-switcher.border-style">
+		<value value="0" nick="dashed"/>
+		<value value="1" nick="dotted"/>
+		<value value="2" nick="double"/>
+		<value value="3" nick="groove"/>
+		<value value="4" nick="inset"/>
+		<value value="5" nick="outset"/>
+		<value value="6" nick="ridge"/>
+		<value value="7" nick="solid"/>
+	</enum>
 	<enum id="org.gnome.shell.extensions.workspace-switcher.click-action">
 		<value value="0" nick="ACTIVITIES"/>
 		<value value="1" nick="POPUP"/>
@@ -40,10 +50,10 @@
 			<range min="0" max="8"/>
 			<default>1</default>
 		</key>
-		<key name="border-style-active" type="s">
+		<key name="border-style-active" enum="org.gnome.shell.extensions.workspace-switcher.border-style">
 			<default>"solid"</default>
 		</key>
-		<key name="border-style-inactive" type="s">
+		<key name="border-style-inactive" enum="org.gnome.shell.extensions.workspace-switcher.border-style">
 			<default>"solid"</default>
 		</key>
 		<key name="click-action" enum="org.gnome.shell.extensions.workspace-switcher.click-action">

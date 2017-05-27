@@ -31,6 +31,8 @@ const PANEL_POSITIONS = [Main.panel._leftBox,
                          Main.panel._centerBox,
                          Main.panel._rightBox];
 
+const BORDER_STYLES = ['dashed', 'dotted', 'double', 'groove', 'inset',
+                       'outset', 'ridge', 'solid'];
 const MODES = { CURRENT: 0, ALL: 1, ICON: 2 }
 const MODE_OBJECTS = [WorkspaceDisplay.CurrentWorkspaceDisplay,
                       WorkspaceDisplay.AllWorkspacesDisplay,
@@ -106,8 +108,8 @@ const WorkspaceSwitcher = new Lang.Class({
         settingsStore.borderRadius = this._settings.get_int('border-radius');
         settingsStore.borderSizeActive = this._settings.get_int('border-size-active');
         settingsStore.borderSizeInactive = this._settings.get_int('border-size-inactive');
-        settingsStore.borderStyleActive = this._settings.get_string('border-style-active');
-        settingsStore.borderStyleInactive = this._settings.get_string('border-style-inactive');
+        settingsStore.borderStyleActive = this._settings.get_enum('border-style-active');
+        settingsStore.borderStyleInactive = this._settings.get_enum('border-style-inactive');
         settingsStore.clickAction = this._settings.get_enum('click-action');
         settingsStore.currentWorkspace = global.screen.get_active_workspace().index();
         settingsStore.cyclicScrolling = this._settings.get_boolean('cyclic-scrolling');
@@ -184,12 +186,12 @@ const WorkspaceSwitcher = new Lang.Class({
                 this._display.updateStyle();
                 break;
             case 'border-style-active':
-                this._settingsStore.borderStyleActive = settings.get_string(key);
+                this._settingsStore.borderStyleActive = BORDER_STYLES[settings.get_enum(key)];
                 this._settingsStore.makeActiveDecorationStyleString();
                 this._display.updateStyle();
                 break;
             case 'border-style-inactive':
-                this._settingsStore.borderStyleInactive = settings.get_string(key);
+                this._settingsStore.borderStyleInactive = BORDER_STYLES[settings.get_enum(key)];
                 this._settingsStore.makeInactiveDecorationStyleString();
                 this._display.updateStyle();
                 break;

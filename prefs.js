@@ -202,7 +202,13 @@ WorkspaceSwitcherPrefs.prototype = {
         widget = this._builder.get_object('borderSizeInactive');
         widget.set_value(value);
 
-        // TODO: Border style
+        value = this._settings.get_enum('border-style-active');
+        widget = this._builder.get_object('borderStyleActive');
+        widget.set_active(value);
+
+        value = this._settings.get_enum('border-style-inactive');
+        widget = this._builder.get_object('borderStyleInactive');
+        widget.set_active(value);
 
         value = this._settings.get_string('border-colour-active');
         widget = this._builder.get_object('borderColourActive');
@@ -281,7 +287,15 @@ WorkspaceSwitcherPrefs.prototype = {
             this._settings.apply();
         },
 
-        // TODO: Border style changed
+        onBorderStyleActiveChanged: function (combobox) {
+            this._settings.set_enum('border-style-active', combobox.get_active());
+            this._settings.apply();
+        },
+
+        onBorderStyleInactiveChanged: function (combobox) {
+            this._settings.set_enum('border-style-inactive', combobox.get_active());
+            this._settings.apply();
+        },
 
         onClickActionChanged: function (radiobutton) {
             if(radiobutton.get_active()) {
