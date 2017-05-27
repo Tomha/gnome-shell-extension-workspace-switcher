@@ -131,13 +131,11 @@ const WorkspaceSwitcher = new Lang.Class({
         settingsStore.showNames = this._settings.get_boolean('show-names');
         settingsStore.showTotalNum = this._settings.get_boolean('show-total-num');
 
-        settingsStore.makeActiveBackgroundString();
-        settingsStore.makeInactiveBackgroundString();
-        settingsStore.makeActiveBorderString();
-        settingsStore.makeInactiveBorderString();
-        settingsStore.makeActiveFontString();
-        settingsStore.makeInactiveFontString();
-        settingsStore.makeSizeString();
+        settingsStore.makeBaseStyleString();
+        settingsStore.makeActiveDecorationStyleString();
+        settingsStore.makeInactiveDecorationStyleString();
+        settingsStore.makeActiveFontStyleString();
+        settingsStore.makeInactiveFontStyleString();
 
         return settingsStore;
     },
@@ -151,48 +149,48 @@ const WorkspaceSwitcher = new Lang.Class({
         switch (key) {
             case 'background-colour-active':
                 this._settingsStore.backgroundColourActive = settings.get_string(key);
-                this._settingsStore.makeActiveBackgroundString();
+                this._settingsStore.makeActiveDecorationStyleString();
                 this._display.updateStyle();
                 break;
             case 'background-colour-inactive':
                 this._settingsStore.backgroundColourInactive = settings.get_string(key);
-                this._settingsStore.makeInactiveBackgroundString();
+                this._settingsStore.makeInactiveDecorationStyleString();
                 this._display.updateStyle();
                 break;
             case 'border-colour-active':
                 this._settingsStore.borderColourActive = settings.get_string(key);
-                this._settingsStore.makeActiveBorderString();
+                this._settingsStore.makeActiveDecorationStyleString();
                 this._display.updateStyle();
                 break;
             case 'border-colour-inactive':
                 this._settingsStore.borderColourInactive = settings.get_string(key);
-                this._settingsStore.makeInactiveBorderString();
+                this._settingsStore.makeInactiveDecorationStyleString();
                 this._display.updateStyle();
                 break;
             case 'border-radius':
                 this._settingsStore.borderRadius = settings.get_int(key);
-                this._settingsStore.makeActiveBorderString();
-                this._settingsStore.makeInactiveBorderString();
+                this._settingsStore.makeActiveDecorationStyleString();
+                this._settingsStore.makeInactiveDecorationStyleString();
                 this._display.updateStyle();
                 break;
             case 'border-size-active':
                 this._settingsStore.borderSizeActive = settings.get_int(key);
-                this._settingsStore.makeActiveBorderString();
+                this._settingsStore.makeActiveDecorationStyleString();
                 this._display.updateStyle();
                 break;
             case 'border-size-inactive':
                 this._settingsStore.borderSizeInactive = settings.get_int(key);
-                this._settingsStore.makeInactiveBorderString();
+                this._settingsStore.makeInactiveDecorationStyleString();
                 this._display.updateStyle();
                 break;
             case 'border-style-active':
                 this._settingsStore.borderStyleActive = settings.get_string(key);
-                this._settingsStore.makeActiveBorderString();
+                this._settingsStore.makeActiveDecorationStyleString();
                 this._display.updateStyle();
                 break;
             case 'border-style-inactive':
                 this._settingsStore.borderStyleInactive = settings.get_string(key);
-                this._settingsStore.makeInactiveBorderString();
+                this._settingsStore.makeInactiveDecorationStyleString();
                 this._display.updateStyle();
                 break;
             case 'click-action':
@@ -203,32 +201,32 @@ const WorkspaceSwitcher = new Lang.Class({
                 break;
             case 'font-colour-active':
                 this._settingsStore.fontColourActive = settings.get_string(key);
-                this._settingsStore.makeActiveFontString();
+                this._settingsStore.makeActiveFontStyleString();
                 this._display.updateStyle();
                 break;
             case 'font-colour-inactive':
                 this._settingsStore.fontColourInactive = settings.get_string(key);
-                this._settingsStore.makeInactiveFontString();
+                this._settingsStore.makeInactiveFontStyleString();
                 this._display.updateStyle();
                 break;
             case 'font-family-active':
                 this._settingsStore.fontFamilyActive = settings.get_string(key);
-                this._settingsStore.makeActiveFontString();
+                this._settingsStore.makeActiveFontStyleString();
                 this._display.updateStyle();
                 break;
             case 'font-family-inactive':
                 this._settingsStore.fontFamilyInactive = settings.get_string(key);
-                this._settingsStore.makeInactiveFontString();
+                this._settingsStore.makeInactiveFontStyleString();
                 this._display.updateStyle();
                 break;
             case 'font-size-active':
                 this._settingsStore.fontSizeActive = settings.get_int(key);
-                this._settingsStore.makeActiveFontString();
+                this._settingsStore.makeActiveFontStyleString();
                 this._display.updateStyle();
                 break;
             case 'font-size-inactive':
                 this._settingsStore.fontSizeInactive = settings.get_int(key);
-                this._settingsStore.makeInactiveFontString();
+                this._settingsStore.makeInactiveFontStyleString();
                 this._display.updateStyle();
                 break;
             case 'font-use-theme-active':
@@ -249,12 +247,12 @@ const WorkspaceSwitcher = new Lang.Class({
                 break;
             case 'min-height':
                 this._settingsStore.minHeight = settings.get_int(key);
-                this._settingsStore.makeSizeString();
+                this._settingsStore.makeBaseStyleString();
                 this._display.updateStyle();
                 break;
             case 'min-width':
                 this._settingsStore.minWidth = settings.get_int(key);
-                this._settingsStore.makeSizeString();
+                this._settingsStore.makeBaseStyleString();
                 this._display.resetWorkspaceNames(); // Prevents alignment issues
                 this._display.updateStyle();
                 break;
@@ -267,12 +265,12 @@ const WorkspaceSwitcher = new Lang.Class({
                 break;
             case 'padding-horizontal':
                 this._settingsStore.paddingHorizontal = settings.get_int(key);
-                this._settingsStore.makeSizeString();
+                this._settingsStore.makeBaseStyleString();
                 this._display.updateStyle();
                 break;
             case 'padding-vertical':
                 this._settingsStore.paddingVertical = settings.get_int(key);
-                this._settingsStore.makeSizeString();
+                this._settingsStore.makeBaseStyleString();
                 this._display.updateStyle();
                 break;
             case 'position':
@@ -351,69 +349,53 @@ const SettingsStore = new Lang.Class({
         this.showIconText = null;
         this.showNames = null;
         this.showTotalNum = null;
-        this.styleStringBackgroundActive = null;
-        this.styleStringBackgroundInactive = null;
-        this.styleStringBorderActive = null;
-        this.styleStringBorderInactive = null;
+        this.styleStringDecorationActive = null;
+        this.styleStringDecorationInactive = null;
         this.styleStringFontActive = null;
         this.styleStringFontInactive = null;
-        this.styleStringSize = null;
+        this.styleStringBase = null;
     },
 
-    makeActiveBackgroundString: function () {
-        this.styleStringBackgroundActive = 'background-color:' +
-            hexToRgbaString(this.backgroundColourActive) + ';';
+    makeBaseStyleString: function () {
+        this.styleStringBase = 'margin: 0px 1px;' +
+                               'min-height:' + this.minHeight + 'px;' +
+                               'min-width:' + this.minWidth + 'px;' +
+                               'padding:' + this.paddingVertical + 'px ' +
+                                    this.paddingHorizontal + 'px;' +
+                               'text-align:center;' +
+                               'vertical-align: middle;';
     },
 
-    makeInactiveBackgroundString: function () {
-        this.styleStringBackgroundInactive = 'background-color: ' +
-            hexToRgbaString(this.backgroundColourInactive) + ';';
+    makeActiveDecorationStyleString: function () {
+        this.styleStringDecorationActive =
+            'border-color:' + hexToRgbaString(this.borderColourActive) + ';' +
+            'border-radius:' + this.borderRadius + 'px;' +
+            'border-style:' + this.borderStyleActive + ';' +
+            'border-width:' + this.borderSizeActive + 'px;' +
+            'background-color: ' + hexToRgbaString(this.backgroundColourActive) + ';';
+
     },
 
-    makeActiveBorderString: function () {
-        this.styleStringBorderActive = 'border: ' +
-                                       this.borderSizeActive + 'px ' +
-                                       this.borderStyleActive + ' ' +
-                                       hexToRgbaString(this.borderColourActive) + ';' +
-                                       'border-radius: ' +
-                                       this.borderRadius + 'px; ';
+    makeInactiveDecorationStyleString: function () {
+        this.styleStringDecorationInactive =
+            'border-color:' + hexToRgbaString(this.borderColourInactive) + ';' +
+            'border-radius:' + this.borderRadius + 'px;' +
+            'border-style:' + this.borderStyleInactive + ';' +
+            'border-width:' + this.borderSizeInactive + 'px;' +
+            'background-color:' + hexToRgbaString(this.backgroundColourInactive) + ';';
     },
 
-    makeInactiveBorderString: function () {
-        this.styleStringBorderInactive = 'border: ' +
-                                         this.borderSizeInactive + 'px ' +
-                                         this.borderStyleInactive + ' ' +
-                                         hexToRgbaString(this.borderColourInactive) + ';' +
-                                         'border-radius: ' +
-                                         this.borderRadius + 'px; ';
+    makeActiveFontStyleString: function () {
+        this.styleStringFontActive =
+            'font-size:' + this.fontSizeActive + 'pt;' +
+            'font-family:' + this.fontFamilyActive + ';' +
+            'color:' + hexToRgbaString(this.fontColourActive) + ';';
     },
 
-    makeActiveFontString: function () {
-        this.styleStringFontActive = 'font-size: ' +
-                                     this.fontSizeActive + 'pt; ' +
-                                     'font-family: ' +
-                                     this.fontFamilyActive + '; ' +
-                                     'color: ' +
-                                     hexToRgbaString(this.fontColourActive) + ';';
-    },
-
-    makeInactiveFontString: function () {
-        this.styleStringFontInactive = 'font-size: ' +
-                                       this.fontSizeInactive + 'pt; ' +
-                                       'font-family: ' +
-                                       this.fontFamilyInactive + '; ' +
-                                       'color: ' +
-                                       hexToRgbaString(this.fontColourInactive) + ';';
-    },
-
-    makeSizeString: function () {
-        this.styleStringSize = 'padding: ' +
-                               this.paddingVertical + 'px ' +
-                               this.paddingHorizontal + 'px; ' +
-                               'min-height: ' +
-                               this.minHeight + 'px; ' +
-                               'min-width: ' +
-                               this.minWidth + 'px; ' +
-                               'margin: 0px 1px;';
+    makeInactiveFontStyleString: function () {
+        this.styleStringFontInactive =
+            'font-size:' + this.fontSizeInactive + 'pt;' +
+            'font-family:' + this.fontFamilyInactive + ';' +
+            'color:' + hexToRgbaString(this.fontColourInactive) + ';';
     }
 });

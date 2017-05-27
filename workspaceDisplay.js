@@ -89,12 +89,10 @@ const CurrentWorkspaceDisplay = new Lang.Class({
     },
 
     updateStyle: function () {
-        let styleString = 'text-align: center; vertical-align: middle;' +
-                          this._settingsStore.styleStringSize + ' ' +
-                          this._settingsStore.styleStringBorderActive + ' ' +
-                          this._settingsStore.styleStringBackgroundActive;
+        let styleString = this._settingsStore.styleStringBase +
+                          this._settingsStore.styleStringDecorationActive;
         if (!this._settingsStore.fontUseThemeActive)
-            styleString += ' ' + this._settingsStore.styleStringFontActive;
+            styleString += this._settingsStore.styleStringFontActive;
         this._label.set_style(styleString);
     },
 
@@ -213,7 +211,7 @@ const AllWorkspacesDisplay = new Lang.Class({
         let label = new St.Label({y_align: Clutter.ActorAlign.CENTER});
         label.set_text(this._getWorkspaceName(newIndex));
         this._labels.push(label);
-        this.updateStyle();
+        this.updateStyleForWorkspace(newIndex);
         let button = new St.Button({style_class: 'panel-button',
                                     reactive: true,
                                     can_focus: true,
@@ -256,28 +254,24 @@ const AllWorkspacesDisplay = new Lang.Class({
     },
 
     updateStyle: function () {
-        let styleStringBase = 'text-align: center; vertical-align: middle;' +
-                              this._settingsStore.styleStringSize;
+        for (let i = 0; i < this._labels.length; i++)
+            this.updateStyleForWorkspace(i);
+    },
 
-        let styleStringActive = styleStringBase + ' ' +
-            this._settingsStore.styleStringBackgroundActive + ' ' +
-            this._settingsStore.styleStringBorderActive;
-        if (!this._settingsStore.fontUseThemeActive)
-            styleStringActive += ' ' + this._settingsStore.styleStringFontActive;
+    updateStyleForWorkspace: function (workspaceIndex) {
+        let styleString = this._settingsStore.styleStringBase;
 
-        let styleStringInactive = styleStringBase + ' ' +
-            this._settingsStore.styleStringBackgroundInactive + ' ' +
-            this._settingsStore.styleStringBorderInactive;
-        if (!this._settingsStore.fontUseThemeInactive)
-            styleStringInactive += ' ' + this._settingsStore.styleStringFontInactive;
-
-        for (let i = 0; i < this._labels.length; i++) {
-            if (i == this._settingsStore.currentWorkspace)
-                this._labels[i].set_style(styleStringActive);
-            else
-                this._labels[i].set_style(styleStringInactive);
+        if (workspaceIndex == this._settingsStore.currentWorkspace) {
+            styleString += this._settingsStore.styleStringDecorationActive;
+            if (!this._settingsStore.fontUseThemeActive)
+                styleString += this._settingsStore.styleStringFontActive;
+            this._labels[workspaceIndex].set_style(styleString);
+        } else {
+            styleString += this._settingsStore.styleStringDecorationInactive;
+            if (!this._settingsStore.fontUseThemeInactive)
+                styleString += this._settingsStore.styleStringFontInactive;
+            this._labels[workspaceIndex].set_style(styleString);
         }
-
     },
 
     updateWorkspaceNames: function () {
@@ -344,10 +338,9 @@ const IconWorkspaceDisplay = new Lang.Class({
     },
 
     updateStyle: function () {
-        let styleString = 'text-align: center; vertical-align: middle;' +
-                          this._settingsStore.styleStringSize;
+        let styleString = this._settingsStore.styleStringBase;
         if (!this._settingsStore.fontUseThemeActive)
-            styleString += ' ' + this._settingsStore.styleStringFontActive;
+            styleString += this._settingsStore.styleStringFontActive;
         this._label.set_style(styleString);
     },
 });
