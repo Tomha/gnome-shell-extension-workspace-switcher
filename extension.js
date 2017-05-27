@@ -108,8 +108,6 @@ const WorkspaceSwitcher = new Lang.Class({
         settingsStore.borderRadius = this._settings.get_int('border-radius');
         settingsStore.borderSizeActive = this._settings.get_int('border-size-active');
         settingsStore.borderSizeInactive = this._settings.get_int('border-size-inactive');
-        settingsStore.borderStyleActive = this._settings.get_enum('border-style-active');
-        settingsStore.borderStyleInactive = this._settings.get_enum('border-style-inactive');
         settingsStore.clickAction = this._settings.get_enum('click-action');
         settingsStore.currentWorkspace = global.screen.get_active_workspace().index();
         settingsStore.cyclicScrolling = this._settings.get_boolean('cyclic-scrolling');
@@ -182,16 +180,6 @@ const WorkspaceSwitcher = new Lang.Class({
                 break;
             case 'border-size-inactive':
                 this._settingsStore.borderSizeInactive = settings.get_int(key);
-                this._settingsStore.makeInactiveDecorationStyleString();
-                this._display.updateStyle();
-                break;
-            case 'border-style-active':
-                this._settingsStore.borderStyleActive = BORDER_STYLES[settings.get_enum(key)];
-                this._settingsStore.makeActiveDecorationStyleString();
-                this._display.updateStyle();
-                break;
-            case 'border-style-inactive':
-                this._settingsStore.borderStyleInactive = BORDER_STYLES[settings.get_enum(key)];
                 this._settingsStore.makeInactiveDecorationStyleString();
                 this._display.updateStyle();
                 break;
@@ -327,8 +315,6 @@ const SettingsStore = new Lang.Class({
         this.borderRadius = null;
         this.borderSizeActive = null;
         this.borderSizeInactive = null;
-        this.borderStyleActive = null;
-        this.borderStyleInactive = null;
         this.clickAction = null;
         this.currentWorkspace = null;
         this.cyclicScrolling = null;
@@ -372,7 +358,6 @@ const SettingsStore = new Lang.Class({
         this.styleStringDecorationActive =
             'border-color:' + hexToRgbaString(this.borderColourActive) + ';' +
             'border-radius:' + this.borderRadius + 'px;' +
-            'border-style:' + this.borderStyleActive + ';' +
             'border-width:' + this.borderSizeActive + 'px;' +
             'background-color: ' + hexToRgbaString(this.backgroundColourActive) + ';';
 
@@ -382,7 +367,6 @@ const SettingsStore = new Lang.Class({
         this.styleStringDecorationInactive =
             'border-color:' + hexToRgbaString(this.borderColourInactive) + ';' +
             'border-radius:' + this.borderRadius + 'px;' +
-            'border-style:' + this.borderStyleInactive + ';' +
             'border-width:' + this.borderSizeInactive + 'px;' +
             'background-color:' + hexToRgbaString(this.backgroundColourInactive) + ';';
     },

@@ -1047,7 +1047,7 @@
                                 <property name="can_focus">False</property>
                                 <property name="halign">end</property>
                                 <property name="valign">center</property>
-                                <property name="label" translatable="yes">Inactive Size:</property>
+                                <property name="label" translatable="yes">Active Size:</property>
                                 <attributes>
                                   <attribute name="weight" value="bold"/>
                                 </attributes>
@@ -1071,38 +1071,6 @@
                               <packing>
                                 <property name="left_attach">0</property>
                                 <property name="top_attach">1</property>
-                              </packing>
-                            </child>
-                            <child>
-                              <object class="GtkLabel">
-                                <property name="visible">True</property>
-                                <property name="can_focus">False</property>
-                                <property name="halign">end</property>
-                                <property name="valign">center</property>
-                                <property name="label" translatable="yes">Active Colour:</property>
-                                <attributes>
-                                  <attribute name="weight" value="bold"/>
-                                </attributes>
-                              </object>
-                              <packing>
-                                <property name="left_attach">0</property>
-                                <property name="top_attach">2</property>
-                              </packing>
-                            </child>
-                            <child>
-                              <object class="GtkLabel">
-                                <property name="visible">True</property>
-                                <property name="can_focus">False</property>
-                                <property name="halign">end</property>
-                                <property name="valign">center</property>
-                                <property name="label" translatable="yes">Corner Radius:</property>
-                                <attributes>
-                                  <attribute name="weight" value="bold"/>
-                                </attributes>
-                              </object>
-                              <packing>
-                                <property name="left_attach">0</property>
-                                <property name="top_attach">3</property>
                               </packing>
                             </child>
                             <child>
@@ -1161,65 +1129,6 @@
                                 <property name="can_focus">False</property>
                                 <property name="spacing">8</property>
                                 <child>
-                                  <object class="GtkComboBoxText" id="borderStyleActive">
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">False</property>
-                                    <property name="halign">start</property>
-                                    <property name="valign">center</property>
-                                    <items>
-                                      <item translatable="yes">dashed</item>
-                                      <item translatable="yes">dotted</item>
-                                      <item translatable="yes">double</item>
-                                      <item translatable="yes">groove</item>
-                                      <item translatable="yes">inset</item>
-                                      <item translatable="yes">outset</item>
-                                      <item translatable="yes">ridge</item>
-                                      <item translatable="yes">solid</item>
-                                    </items>
-                                    <signal name="changed" handler="onBorderStyleActiveChanged" swapped="no"/>
-                                  </object>
-                                  <packing>
-                                    <property name="expand">False</property>
-                                    <property name="fill">True</property>
-                                    <property name="position">0</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <object class="GtkButton" id="resetBorderStyleActive">
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">True</property>
-                                    <property name="receives_default">True</property>
-                                    <property name="halign">start</property>
-                                    <property name="valign">center</property>
-                                    <property name="relief">none</property>
-                                    <property name="always_show_image">True</property>
-                                    <signal name="clicked" handler="resetBorderStyleActive" swapped="no"/>
-                                    <child>
-                                      <object class="GtkImage">
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">False</property>
-                                        <property name="stock">gtk-clear</property>
-                                      </object>
-                                    </child>
-                                  </object>
-                                  <packing>
-                                    <property name="expand">False</property>
-                                    <property name="fill">True</property>
-                                    <property name="position">1</property>
-                                  </packing>
-                                </child>
-                              </object>
-                              <packing>
-                                <property name="left_attach">1</property>
-                                <property name="top_attach">1</property>
-                              </packing>
-                            </child>
-                            <child>
-                              <object class="GtkBox">
-                                <property name="visible">True</property>
-                                <property name="can_focus">False</property>
-                                <property name="spacing">8</property>
-                                <child>
                                   <object class="GtkColorButton" id="borderColourActive">
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
@@ -1262,7 +1171,7 @@
                               </object>
                               <packing>
                                 <property name="left_attach">1</property>
-                                <property name="top_attach">2</property>
+                                <property name="top_attach">1</property>
                               </packing>
                             </child>
                             <child>
@@ -1312,7 +1221,23 @@
                               </object>
                               <packing>
                                 <property name="left_attach">1</property>
-                                <property name="top_attach">3</property>
+                                <property name="top_attach">2</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkLabel">
+                                <property name="visible">True</property>
+                                <property name="can_focus">False</property>
+                                <property name="halign">end</property>
+                                <property name="valign">center</property>
+                                <property name="label" translatable="yes">Corner Radius:</property>
+                                <attributes>
+                                  <attribute name="weight" value="bold"/>
+                                </attributes>
+                              </object>
+                              <packing>
+                                <property name="left_attach">0</property>
+                                <property name="top_attach">2</property>
                               </packing>
                             </child>
                           </object>
@@ -1334,7 +1259,7 @@
                                 <property name="can_focus">False</property>
                                 <property name="halign">end</property>
                                 <property name="valign">center</property>
-                                <property name="label" translatable="yes">Active Size:</property>
+                                <property name="label" translatable="yes">Inactive Size:</property>
                                 <attributes>
                                   <attribute name="weight" value="bold"/>
                                 </attributes>
@@ -1357,132 +1282,6 @@
                               </object>
                               <packing>
                                 <property name="left_attach">0</property>
-                                <property name="top_attach">1</property>
-                              </packing>
-                            </child>
-                            <child>
-                              <object class="GtkLabel">
-                                <property name="visible">True</property>
-                                <property name="can_focus">False</property>
-                                <property name="halign">end</property>
-                                <property name="valign">center</property>
-                                <property name="label" translatable="yes">Inactive Colour:</property>
-                                <attributes>
-                                  <attribute name="weight" value="bold"/>
-                                </attributes>
-                              </object>
-                              <packing>
-                                <property name="left_attach">0</property>
-                                <property name="top_attach">2</property>
-                              </packing>
-                            </child>
-                            <child>
-                              <object class="GtkBox">
-                                <property name="visible">True</property>
-                                <property name="can_focus">False</property>
-                                <property name="spacing">8</property>
-                                <child>
-                                  <object class="GtkColorButton" id="borderColourInactive">
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">True</property>
-                                    <property name="receives_default">True</property>
-                                    <property name="halign">start</property>
-                                    <property name="valign">center</property>
-                                    <property name="use_alpha">True</property>
-                                    <signal name="color-set" handler="onBorderColourInactiveSet" swapped="no"/>
-                                  </object>
-                                  <packing>
-                                    <property name="expand">False</property>
-                                    <property name="fill">True</property>
-                                    <property name="position">0</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <object class="GtkButton" id="resetBorderColourInactive">
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">True</property>
-                                    <property name="receives_default">True</property>
-                                    <property name="halign">start</property>
-                                    <property name="valign">center</property>
-                                    <property name="relief">none</property>
-                                    <property name="always_show_image">True</property>
-                                    <signal name="clicked" handler="resetBorderColourInactive" swapped="no"/>
-                                    <child>
-                                      <object class="GtkImage">
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">False</property>
-                                        <property name="stock">gtk-clear</property>
-                                      </object>
-                                    </child>
-                                  </object>
-                                  <packing>
-                                    <property name="expand">False</property>
-                                    <property name="fill">True</property>
-                                    <property name="position">1</property>
-                                  </packing>
-                                </child>
-                              </object>
-                              <packing>
-                                <property name="left_attach">1</property>
-                                <property name="top_attach">2</property>
-                              </packing>
-                            </child>
-                            <child>
-                              <object class="GtkBox">
-                                <property name="visible">True</property>
-                                <property name="can_focus">False</property>
-                                <property name="spacing">8</property>
-                                <child>
-                                  <object class="GtkComboBoxText" id="borderStyleInactive">
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">False</property>
-                                    <property name="halign">start</property>
-                                    <property name="valign">center</property>
-                                    <items>
-                                      <item translatable="yes">dashed</item>
-                                      <item translatable="yes">dotted</item>
-                                      <item translatable="yes">double</item>
-                                      <item translatable="yes">groove</item>
-                                      <item translatable="yes">inset</item>
-                                      <item translatable="yes">outset</item>
-                                      <item translatable="yes">ridge</item>
-                                      <item translatable="yes">solid</item>
-                                    </items>
-                                    <signal name="changed" handler="onBorderStyleInactiveChanged" swapped="no"/>
-                                  </object>
-                                  <packing>
-                                    <property name="expand">False</property>
-                                    <property name="fill">True</property>
-                                    <property name="position">0</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <object class="GtkButton" id="resetBorderStyleInactive">
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">True</property>
-                                    <property name="receives_default">True</property>
-                                    <property name="halign">start</property>
-                                    <property name="valign">center</property>
-                                    <property name="relief">none</property>
-                                    <property name="always_show_image">True</property>
-                                    <signal name="clicked" handler="resetBorderStyleInactive" swapped="no"/>
-                                    <child>
-                                      <object class="GtkImage">
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">False</property>
-                                        <property name="stock">gtk-clear</property>
-                                      </object>
-                                    </child>
-                                  </object>
-                                  <packing>
-                                    <property name="expand">False</property>
-                                    <property name="fill">True</property>
-                                    <property name="position">1</property>
-                                  </packing>
-                                </child>
-                              </object>
-                              <packing>
-                                <property name="left_attach">1</property>
                                 <property name="top_attach">1</property>
                               </packing>
                             </child>
@@ -1537,13 +1336,64 @@
                               </packing>
                             </child>
                             <child>
+                              <object class="GtkBox">
+                                <property name="visible">True</property>
+                                <property name="can_focus">False</property>
+                                <property name="spacing">8</property>
+                                <child>
+                                  <object class="GtkColorButton" id="borderColourInactive">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">True</property>
+                                    <property name="receives_default">True</property>
+                                    <property name="halign">start</property>
+                                    <property name="valign">center</property>
+                                    <property name="use_alpha">True</property>
+                                    <signal name="color-set" handler="onBorderColourInactiveSet" swapped="no"/>
+                                  </object>
+                                  <packing>
+                                    <property name="expand">False</property>
+                                    <property name="fill">True</property>
+                                    <property name="position">0</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkButton" id="resetBorderColourInactive">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">True</property>
+                                    <property name="receives_default">True</property>
+                                    <property name="halign">start</property>
+                                    <property name="valign">center</property>
+                                    <property name="relief">none</property>
+                                    <property name="always_show_image">True</property>
+                                    <signal name="clicked" handler="resetBorderColourInactive" swapped="no"/>
+                                    <child>
+                                      <object class="GtkImage">
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">False</property>
+                                        <property name="stock">gtk-clear</property>
+                                      </object>
+                                    </child>
+                                  </object>
+                                  <packing>
+                                    <property name="expand">False</property>
+                                    <property name="fill">True</property>
+                                    <property name="position">1</property>
+                                  </packing>
+                                </child>
+                              </object>
+                              <packing>
+                                <property name="left_attach">1</property>
+                                <property name="top_attach">1</property>
+                              </packing>
+                            </child>
+                            <child>
                               <object class="GtkLabel">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
                               </object>
                               <packing>
                                 <property name="left_attach">0</property>
-                                <property name="top_attach">3</property>
+                                <property name="top_attach">2</property>
                               </packing>
                             </child>
                             <child>
