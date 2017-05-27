@@ -90,9 +90,8 @@ const CurrentWorkspaceDisplay = new Lang.Class({
 
     updateStyle: function () {
         let styleString = this._settingsStore.styleStringBase +
-                          this._settingsStore.styleStringDecorationActive;
-        if (!this._settingsStore.fontUseThemeActive)
-            styleString += this._settingsStore.styleStringFontActive;
+                          this._settingsStore.styleStringDecorationActive +
+                          this._settingsStore.styleStringFontActive;
         this._label.set_style(styleString);
     },
 
@@ -260,18 +259,13 @@ const AllWorkspacesDisplay = new Lang.Class({
 
     updateStyleForWorkspace: function (workspaceIndex) {
         let styleString = this._settingsStore.styleStringBase;
-
-        if (workspaceIndex == this._settingsStore.currentWorkspace) {
-            styleString += this._settingsStore.styleStringDecorationActive;
-            if (!this._settingsStore.fontUseThemeActive)
-                styleString += this._settingsStore.styleStringFontActive;
-            this._labels[workspaceIndex].set_style(styleString);
-        } else {
-            styleString += this._settingsStore.styleStringDecorationInactive;
-            if (!this._settingsStore.fontUseThemeInactive)
-                styleString += this._settingsStore.styleStringFontInactive;
-            this._labels[workspaceIndex].set_style(styleString);
-        }
+        if (workspaceIndex == this._settingsStore.currentWorkspace)
+            styleString += this._settingsStore.styleStringDecorationActive +
+                        this._settingsStore.styleStringFontActive;
+        else
+            styleString += this._settingsStore.styleStringDecorationInactive +
+                            this._settingsStore.styleStringFontInactive;
+        this._labels[workspaceIndex].set_style(styleString);
     },
 
     updateWorkspaceNames: function () {
@@ -338,9 +332,8 @@ const IconWorkspaceDisplay = new Lang.Class({
     },
 
     updateStyle: function () {
-        let styleString = this._settingsStore.styleStringBase;
-        if (!this._settingsStore.fontUseThemeActive)
-            styleString += this._settingsStore.styleStringFontActive;
+        let styleString = this._settingsStore.styleStringBase +
+                          this._settingsStore.styleStringFontActive;
         this._label.set_style(styleString);
     },
 });

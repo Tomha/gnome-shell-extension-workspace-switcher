@@ -178,6 +178,14 @@ WorkspaceSwitcherPrefs.prototype = {
 
         // TODO: Font Style
 
+        value = this._settings.get_boolean('font-use-theme-active');
+        widget = this._builder.get_object('fontUseThemeActive');
+        widget.set_active(value);
+
+        value = this._settings.get_boolean('font-use-theme-inactive');
+        widget = this._builder.get_object('fontUseThemeInactive');
+        widget.set_active(value);
+
         value = this._settings.get_string('font-colour-active');
         widget = this._builder.get_object('fontColourActive');
         widget.set_rgba(hexToRgba(value));
@@ -186,12 +194,12 @@ WorkspaceSwitcherPrefs.prototype = {
         widget = this._builder.get_object('fontColourInactive');
         widget.set_rgba(hexToRgba(value));
 
-        value = this._settings.get_boolean('font-use-theme-active');
-        widget = this._builder.get_object('fontUseThemeActive');
+        value = this._settings.get_boolean('font-colour-use-theme-active');
+        widget = this._builder.get_object('fontColourUseThemeActive');
         widget.set_active(value);
 
-        value = this._settings.get_boolean('font-use-theme-inactive');
-        widget = this._builder.get_object('fontUseThemeInactive');
+        value = this._settings.get_boolean('font-colour-use-theme-inactive');
+        widget = this._builder.get_object('fontColourUseThemeInactive');
         widget.set_active(value);
 
         value = this._settings.get_int('border-size-active');
@@ -308,6 +316,16 @@ WorkspaceSwitcherPrefs.prototype = {
 
         onFontColourInactiveSet: function (button) {
             this._settings.set_string('font-colour-inactive', rgbaToHex(button.get_rgba()));
+            this._settings.apply();
+        },
+
+        onFontColourUseThemeActiveToggled: function (toggleswitch) {
+            this._settings.set_boolean('font-colour-use-theme-active', toggleswitch.get_active());
+            this._settings.apply();
+        },
+
+        onFontColourUseThemeInactiveToggled: function (toggleswitch) {
+            this._settings.set_boolean('font-colour-use-theme-inactive', toggleswitch.get_active());
             this._settings.apply();
         },
 

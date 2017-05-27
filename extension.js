@@ -117,6 +117,8 @@ const WorkspaceSwitcher = new Lang.Class({
         settingsStore.fontFamilyInactive = this._settings.get_string('font-family-inactive');
         settingsStore.fontSizeActive = this._settings.get_int('font-size-active');
         settingsStore.fontSizeInactive = this._settings.get_int('font-size-inactive');
+        settingsStore.fontColourUseThemeActive = this._settings.get_boolean('font-colour-use-theme-active');
+        settingsStore.fontColourUseThemeInactive = this._settings.get_boolean('font-colour-use-theme-inactive');
         settingsStore.fontUseThemeActive = this._settings.get_boolean('font-use-theme-active');
         settingsStore.fontUseThemeInactive = this._settings.get_boolean('font-use-theme-inactive');
         settingsStore.index = this._settings.get_int('index');
@@ -219,12 +221,24 @@ const WorkspaceSwitcher = new Lang.Class({
                 this._settingsStore.makeInactiveFontStyleString();
                 this._display.updateStyle();
                 break;
+            case 'font-colour-use-theme-active':
+                this._settingsStore.fontColourUseThemeActive = settings.get_boolean(key);
+                this._settingsStore.makeActiveFontStyleString();
+                this._display.updateStyle();
+                break;
+            case 'font-colour-use-theme-inactive':
+                this._settingsStore.fontColourUseThemeInactive = settings.get_boolean(key);
+                this._settingsStore.makeInactiveFontStyleString();
+                this._display.updateStyle();
+                break;
             case 'font-use-theme-active':
                 this._settingsStore.fontUseThemeActive = settings.get_boolean(key);
+                this._settingsStore.makeActiveFontStyleString();
                 this._display.updateStyle();
                 break;
             case 'font-use-theme-inactive':
                 this._settingsStore.fontUseThemeInactive = settings.get_boolean(key);
+                this._settingsStore.makeInactiveFontStyleString();
                 this._display.updateStyle();
                 break;
             case 'index':
@@ -324,6 +338,8 @@ const SettingsStore = new Lang.Class({
         this.fontFamilyInactive = null;
         this.fontSizeActive = null;
         this.fontSizeInactive = null;
+        this.fontColourUseThemeActive = null;
+        this.fontColourUseThemeInactive = null;
         this.fontUseThemeActive = null;
         this.fontUseThemeInactive = null;
         this.index = null;
@@ -372,16 +388,24 @@ const SettingsStore = new Lang.Class({
     },
 
     makeActiveFontStyleString: function () {
-        this.styleStringFontActive =
-            'font-size:' + this.fontSizeActive + 'pt;' +
-            'font-family:' + this.fontFamilyActive + ';' +
-            'color:' + hexToRgbaString(this.fontColourActive) + ';';
+        this.styleStringFontActive = '';
+        if (!this.fontColourUseThemeActive)
+            this.styleStringFontActive +=
+                'color:' + hexToRgbaString(this.fontColourActive) + ';';
+        if (!this.fontUseThemeActive)
+            this.styleStringFontActive +=
+                'font-size:' + this.fontSizeActive + 'pt;' +
+                'font-family:' + this.fontFamilyActive + ';';
     },
 
     makeInactiveFontStyleString: function () {
-        this.styleStringFontInactive =
-            'font-size:' + this.fontSizeInactive + 'pt;' +
-            'font-family:' + this.fontFamilyInactive + ';' +
-            'color:' + hexToRgbaString(this.fontColourInactive) + ';';
+        this.styleStringFontInactive = '';
+        if (!this.fontColourUseThemeInactive)
+            this.styleStringFontInactive +=
+                'color:' + hexToRgbaString(this.fontColourInactive) + ';';
+        if (!this.fontUseThemeInactive)
+            this.styleStringFontInactive +=
+                'font-size:' + this.fontSizeInactive + 'pt;' +
+                'font-family:' + this.fontFamilyInactive + ';';
     }
 });

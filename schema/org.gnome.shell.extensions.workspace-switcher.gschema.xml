@@ -66,6 +66,12 @@
 			<range min="8" max="32"/>
 			<default>11</default>
 		</key>
+		<key name="font-colour-use-theme-active" type="b">
+			<default>true</default>
+		</key>
+		<key name="font-colour-use-theme-inactive" type="b">
+			<default>true</default>
+		</key>
 		<key name="font-use-theme-active" type="b">
 			<default>true</default>
 		</key>
