@@ -168,32 +168,52 @@ WorkspaceSwitcherPrefs.prototype = {
     _populateStyle: function () {
         let widget, value;
 
-        value = this._settings.get_int('font-size');
-        widget = this._builder.get_object('fontSize');
+        /*value = this._settings.get_int('font-size-active');
+        widget = this._builder.get_object('fontSizeActive');
         widget.set_value(value);
 
-        // TODO: Font style
+        value = this._settings.get_int('font-size-inactive');
+        widget = this._builder.get_object('fontSizeInactive');
+        widget.set_value(value);*/
 
-        value = this._settings.get_string('font-colour');
-        widget = this._builder.get_object('fontColour');
+        // TODO: Font Style
+
+        value = this._settings.get_string('font-colour-active');
+        widget = this._builder.get_object('fontColourActive');
         widget.set_rgba(hexToRgba(value));
 
-        value = this._settings.get_boolean('font-use-theme');
-        widget = this._builder.get_object('fontUseTheme');
+        value = this._settings.get_string('font-colour-inactive');
+        widget = this._builder.get_object('fontColourInactive');
+        widget.set_rgba(hexToRgba(value));
+
+        value = this._settings.get_boolean('font-use-theme-active');
+        widget = this._builder.get_object('fontUseThemeActive');
         widget.set_active(value);
 
-        value = this._settings.get_int('border-size');
-        widget = this._builder.get_object('borderSize');
+        value = this._settings.get_boolean('font-use-theme-inactive');
+        widget = this._builder.get_object('fontUseThemeInactive');
+        widget.set_active(value);
+
+        value = this._settings.get_int('border-size-active');
+        widget = this._builder.get_object('borderSizeActive');
+        widget.set_value(value);
+
+        value = this._settings.get_int('border-size-inactive');
+        widget = this._builder.get_object('borderSizeInactive');
         widget.set_value(value);
 
         // TODO: Border style
 
-        value = this._settings.get_string('border-colour');
-        widget = this._builder.get_object('borderColour');
+        value = this._settings.get_string('border-colour-active');
+        widget = this._builder.get_object('borderColourActive');
         widget.set_rgba(hexToRgba(value));
 
-        value = this._settings.get_int('border-size');
-        widget = this._builder.get_object('borderSize');
+        value = this._settings.get_string('border-colour-inactive');
+        widget = this._builder.get_object('borderColourInactive');
+        widget.set_rgba(hexToRgba(value));
+
+        value = this._settings.get_int('border-radius');
+        widget = this._builder.get_object('borderRadius');
         widget.set_value(value);
 
         value = this._settings.get_string('background-colour-inactive');
@@ -226,23 +246,24 @@ WorkspaceSwitcherPrefs.prototype = {
     },
 
     _signalHandler: {
-        onBackgroundColourActiveChanged: function (button) {
+        onBackgroundColourActiveSet: function (button) {
             this._settings.set_string('background-colour-active', rgbaToHex(button.get_rgba()));
             this._settings.apply();
         },
 
-        onBackgroundColourInactiveChanged: function (button) {
+        onBackgroundColourInactiveSet: function (button) {
             this._settings.set_string('background-colour-inactive', rgbaToHex(button.get_rgba()));
             this._settings.apply();
         },
 
-        onBorderColourChanged: function (button) {
-            this._settings.set_string('border-colour', rgbaToHex(button.get_rgba()));
+        onBorderColourActiveSet: function (button) {
+            this._settings.set_string('border-colour-active', rgbaToHex(button.get_rgba()));
             this._settings.apply();
         },
 
-        onBorderFamilyChanged: function (combobox) {
-            // TODO:
+        onBorderColourInactiveSet: function (button) {
+            this._settings.set_string('border-colour-inactive', rgbaToHex(button.get_rgba()));
+            this._settings.apply();
         },
 
         onBorderRadiusChanged: function (scale) {
@@ -250,10 +271,17 @@ WorkspaceSwitcherPrefs.prototype = {
             this._settings.apply();
         },
 
-        onBorderSizeChanged: function (spinbutton) {
-            this._settings.set_int('border-size', spinbutton.get_value_as_int());
+        onBorderSizeActiveChanged: function (scale) {
+            this._settings.set_int('border-size-active', scale.get_value());
             this._settings.apply();
         },
+
+        onBorderSizeInactiveChanged: function (scale) {
+            this._settings.set_int('border-size-inactive', scale.get_value());
+            this._settings.apply();
+        },
+
+        // TODO: Border style changed
 
         onClickActionChanged: function (radiobutton) {
             if(radiobutton.get_active()) {
@@ -277,22 +305,25 @@ WorkspaceSwitcherPrefs.prototype = {
             this._settings.apply();
         },
 
-        onFontColourChanged: function (button) {
-            this._settings.set_string('font-colour', rgbaToHex(button.get_rgba()));
+        onFontColourActiveSet: function (button) {
+            this._settings.set_string('font-colour-active', rgbaToHex(button.get_rgba()));
             this._settings.apply();
         },
 
-        onFontFamilyChanged: function (combobox) {
-            // TODO:
-        },
-
-        onFontSizeChanged: function (spinbutton) {
-            this._settings.set_int('font-size', spinbutton.get_value_as_int());
+        onFontColourInactiveSet: function (button) {
+            this._settings.set_string('font-colour-inactive', rgbaToHex(button.get_rgba()));
             this._settings.apply();
         },
 
-        onFontUseThemeChanged: function (toggleswitch) {
-            this._settings.set_boolean('font-use-theme', toggleswitch.get_active());
+        // TODO: Font family and size changed
+
+        onFontUseThemeActiveToggled: function (toggleswitch) {
+            this._settings.set_boolean('font-use-theme-active', toggleswitch.get_active());
+            this._settings.apply();
+        },
+
+        onFontUseThemeInactiveToggled: function (toggleswitch) {
+            this._settings.set_boolean('font-use-theme-inactive', toggleswitch.get_active());
             this._settings.apply();
         },
 
@@ -318,115 +349,18 @@ WorkspaceSwitcherPrefs.prototype = {
             this._settings.apply();
         },
 
+
         onPaddingVerticalChanged: function (scale) {
             this._settings.set_int('padding-vertical', scale.get_value());
             this._settings.apply();
         },
+
 
         onPositionChanged: function (radiobutton) {
             if(radiobutton.get_active()) {
                 this._settings.set_enum('position', POSITIONS.indexOf(radiobutton.get_name()));
                 this._settings.apply();
             }
-        },
-
-        onResetBackgroundColourActive: function (button) {
-            this._settings.reset('background-colour-active');
-            let widget = this._builder.get_object('backgroundColourActive');
-            let value = this._settings.get_string('background-colour-active');
-            widget.set_rgba(hexToRgba(value));
-        },
-
-        onResetBackgroundColourInactive: function (button) {
-            this._settings.reset('background-colour-inactive');
-            let widget = this._builder.get_object('backgroundColourInactive');
-            let value = this._settings.get_string('background-colour-inactive');
-            widget.set_rgba(hexToRgba(value));
-        },
-
-        onResetBorderColour: function (button) {
-            this._settings.reset('border-colour');
-            let widget = this._builder.get_object('borderColour');
-            let value = this._settings.get_string('border-colour');
-            widget.set_rgba(hexToRgba(value));
-        },
-
-        onResetBorderRadius: function (button) {
-            this._settings.reset('border-radius');
-            let widget = this._builder.get_object('borderRadius');
-            let value = this._settings.get_int('border-radius');
-            widget.set_value(value);
-        },
-
-        onResetBorderSize: function (button) {
-            this._settings.reset('border-size');
-            let widget = this._builder.get_object('borderSize');
-            let value = this._settings.get_int('border-size');
-            widget.set_value(value);
-        },
-
-        onResetBorderStyle: function (button) {
-            // TODO:
-            //this._settings.reset('border-style');
-            //let widget = this._builder.get_object('borderStyle');
-            //let value = this._settings.get_enum('border-style');
-            //widget.set_(value);
-        },
-
-        onResetFontColour: function (button) {
-            this._settings.reset('font-colour');
-            let widget = this._builder.get_object('fontColour');
-            let value = this._settings.get_string('font-colour');
-            widget.set_rgba(hexToRgba(value));
-        },
-
-        onResetFontFamily: function (button) {
-            this._settings.reset('font-family');
-            let widget = this._builder.get_object('fontFamily');
-            let value = this._settings.get_string('font-family');
-            // TODO: widget.set_active(value);
-        },
-
-        onResetFontSize: function (button) {
-            this._settings.reset('font-size');
-            let widget = this._builder.get_object('fontSize');
-            let value = this._settings.get_int('font-size');
-            widget.set_value(value);
-        },
-
-        onResetFontUseTheme: function (button) {
-            this._settings.reset('font-use-theme');
-            let widget = this._builder.get_object('fontUseTheme');
-            let value = this._settings.get_boolean('font-use-theme');
-            widget.set_active(value);
-        },
-
-        onResetMinHeight: function (button) {
-            this._settings.reset('min-height');
-            let widget = this._builder.get_object('minHeight');
-            let value = this._settings.get_int('min-height');
-            widget.set_value(value);
-        },
-
-        onResetMinWidth: function (button) {
-            this._settings.reset('min-width');
-            let widget = this._builder.get_object('minWidth');
-            let value = this._settings.get_int('min-width');
-            widget.set_value(value);
-        },
-
-        onResetPaddingHorizontal: function (button) {
-            this._settings.reset('padding-horizontal');
-            let widget = this._builder.get_object('paddingHorizontal');
-            let value = this._settings.get_int('padding-horizontal');
-            widget.set_value(value);
-        },
-
-        onResetPaddingVertical: function (button) {
-            this._settings.reset('padding-vertical');
-            let widget = this._builder.get_object('paddingVertical');
-            let value = this._settings.get_int('padding-vertical');
-            widget.set_value(value);
         },
 
         onShowIconTextChanged: function (toggleswitch) {
@@ -478,6 +412,99 @@ WorkspaceSwitcherPrefs.prototype = {
                 this._workspaceNameListStore.set_value(iter, 0, text);
             }
         },
+
+        resetBackgroundColourActive: function (button) {
+            this._settings.reset('background-colour-active');
+            let widget = this._builder.get_object('backgroundColourActive');
+            let value = this._settings.get_string('background-colour-active');
+            widget.set_rgba(hexToRgba(value));
+        },
+
+        resetBackgroundColourInactive: function (button) {
+            this._settings.reset('background-colour-inactive');
+            let widget = this._builder.get_object('backgroundColourInactive');
+            let value = this._settings.get_string('background-colour-inactive');
+            widget.set_rgba(hexToRgba(value));
+        },
+
+        resetBorderColourActive: function (button) {
+            this._settings.reset('border-colour-active');
+            let widget = this._builder.get_object('borderColourActive');
+            let value = this._settings.get_string('border-colour-active');
+            widget.set_rgba(hexToRgba(value));
+        },
+
+        resetBorderColourInactive: function (button) {
+            this._settings.reset('border-colour-inactive');
+            let widget = this._builder.get_object('borderColourInactive');
+            let value = this._settings.get_string('border-colour-inactive');
+            widget.set_rgba(hexToRgba(value));
+        },
+
+        resetBorderRadius: function (button) {
+            this._settings.reset('border-radius');
+            let widget = this._builder.get_object('borderRadius');
+            let value = this._settings.get_int('border-radius');
+            widget.set_value(value);
+        },
+
+        resetBorderSizeActive: function (button) {
+            this._settings.reset('border-size-active');
+            let widget = this._builder.get_object('borderSizeActive');
+            let value = this._settings.get_int('border-size-active');
+            widget.set_value(value);
+        },
+
+        resetBorderSizeInactive: function (button) {
+            this._settings.reset('border-size-inactive');
+            let widget = this._builder.get_object('borderSizeInactive');
+            let value = this._settings.get_int('border-size-inactive');
+            widget.set_value(value);
+        },
+
+        // TODO: Reset border style
+
+        resetFontColourActive: function (button) {
+            this._settings.reset('font-colour-active');
+            let widget = this._builder.get_object('fontColourActive');
+            let value = this._settings.get_string('font-colour-active');
+            widget.set_rgba(hexToRgba(value));
+        },
+
+        resetFontColourInactive: function (button) {
+            this._settings.reset('font-colour-inactive');
+            let widget = this._builder.get_object('fontColourInactive');
+            let value = this._settings.get_string('font-colour-inactive');
+            widget.set_rgba(hexToRgba(value));
+        },
+
+        resetMinHeight: function (button) {
+            this._settings.reset('min-height');
+            let widget = this._builder.get_object('minHeight');
+            let value = this._settings.get_int('min-height');
+            widget.set_value(value);
+        },
+
+        resetMinWidth: function (button) {
+            this._settings.reset('min-width');
+            let widget = this._builder.get_object('minWidth');
+            let value = this._settings.get_int('min-width');
+            widget.set_value(value);
+        },
+
+        resetPaddingHorizontal: function (button) {
+            this._settings.reset('padding-horizontal');
+            let widget = this._builder.get_object('paddingHorizontal');
+            let value = this._settings.get_int('padding-horizontal');
+            widget.set_value(value);
+        },
+
+        resetPaddingVertical: function (button) {
+            this._settings.reset('padding-vertical');
+            let widget = this._builder.get_object('paddingVertical');
+            let value = this._settings.get_int('padding-vertical');
+            widget.set_value(value);
+        }
     }
 }
 

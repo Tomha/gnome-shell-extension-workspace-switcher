@@ -91,10 +91,10 @@ const CurrentWorkspaceDisplay = new Lang.Class({
     updateStyle: function () {
         let styleString = 'text-align: center; vertical-align: middle;' +
                           this._settingsStore.styleStringSize + ' ' +
-                          this._settingsStore.styleStringBorder + ' ' +
+                          this._settingsStore.styleStringBorderActive + ' ' +
                           this._settingsStore.styleStringBackgroundActive;
-        if (!this._settingsStore.fontUseTheme)
-            styleString += ' ' + this._settingsStore.styleStringFont;
+        if (!this._settingsStore.fontUseThemeActive)
+            styleString += ' ' + this._settingsStore.styleStringFontActive;
         this._label.set_style(styleString);
     },
 
@@ -109,7 +109,7 @@ const CurrentWorkspaceDisplay = new Lang.Class({
         Main.uiGroup.add_actor(this._popupMenu.actor);
         this._popupMenu.actor.hide();
 
-        this._popupMenuManager = Main.panel.menuManager
+        this._popupMenuManager = Main.panel.menuManager;
         this._popupMenuManager.addMenu(this._popupMenu);
 
         this._popupSection = new PopupMenu.PopupMenuSection();
@@ -256,19 +256,26 @@ const AllWorkspacesDisplay = new Lang.Class({
     },
 
     updateStyle: function () {
-        let styleString = 'text-align: center; vertical-align: middle;' +
-                          this._settingsStore.styleStringSize + ' ' +
-                          this._settingsStore.styleStringBorder + ' ' +
-                          this._settingsStore.styleStringBackgroundActive;
-        if (!this._settingsStore.fontUseTheme)
-            styleString += ' ' + this._settingsStore.styleStringFont;
+        let styleStringBase = 'text-align: center; vertical-align: middle;' +
+                              this._settingsStore.styleStringSize;
+
+        let styleStringActive = styleStringBase + ' ' +
+            this._settingsStore.styleStringBackgroundActive + ' ' +
+            this._settingsStore.styleStringBorderActive;
+        if (!this._settingsStore.fontUseThemeActive)
+            styleStringActive += ' ' + this._settingsStore.styleStringFontActive;
+
+        let styleStringInactive = styleStringBase + ' ' +
+            this._settingsStore.styleStringBackgroundInactive + ' ' +
+            this._settingsStore.styleStringBorderInactive;
+        if (!this._settingsStore.fontUseThemeInactive)
+            styleStringInactive += ' ' + this._settingsStore.styleStringFontInactive;
+
         for (let i = 0; i < this._labels.length; i++) {
             if (i == this._settingsStore.currentWorkspace)
-                this._labels[i].set_style(styleString + ' ' +
-                    this._settingsStore.styleStringBackgroundActive);
+                this._labels[i].set_style(styleStringActive);
             else
-                this._labels[i].set_style(styleString + ' ' +
-                    this._settingsStore.styleStringBackgroundInactive);
+                this._labels[i].set_style(styleStringInactive);
         }
 
     },
@@ -337,9 +344,10 @@ const IconWorkspaceDisplay = new Lang.Class({
     },
 
     updateStyle: function () {
-        let styleString = 'text-align: center; vertical-align: middle;';
-        if (!this._settingsStore.fontUseTheme)
-            styleString += this._settingsStore.styleStringFont
+        let styleString = 'text-align: center; vertical-align: middle;' +
+                          this._settingsStore.styleStringSize;
+        if (!this._settingsStore.fontUseThemeActive)
+            styleString += ' ' + this._settingsStore.styleStringFontActive;
         this._label.set_style(styleString);
-    }
+    },
 });

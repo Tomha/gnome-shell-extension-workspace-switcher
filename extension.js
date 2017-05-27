@@ -29,19 +29,19 @@ const WorkspaceDisplay = Me.imports.workspaceDisplay;
 
 const PANEL_POSITIONS = [Main.panel._leftBox,
                          Main.panel._centerBox,
-                         Main.panel._rightBox]
+                         Main.panel._rightBox];
 
 const MODES = { CURRENT: 0, ALL: 1, ICON: 2 }
 const MODE_OBJECTS = [WorkspaceDisplay.CurrentWorkspaceDisplay,
                       WorkspaceDisplay.AllWorkspacesDisplay,
-                      WorkspaceDisplay.IconWorkspaceDisplay]
+                      WorkspaceDisplay.IconWorkspaceDisplay];
 
 function hexToRgbaString (hex) {
     let string = 'rgba(';
-    string += parseInt(hex.slice(1,3), 16).toString() + ','
-    string += parseInt(hex.slice(3,5), 16).toString() + ','
-    string += parseInt(hex.slice(5,7), 16).toString() + ','
-    string += (parseInt(hex.slice(7,9), 16) / 255).toString() + ')'
+    string += parseInt(hex.slice(1,3), 16).toString() + ',';
+    string += parseInt(hex.slice(3,5), 16).toString() + ',';
+    string += parseInt(hex.slice(5,7), 16).toString() + ',';
+    string += (parseInt(hex.slice(7,9), 16) / 255).toString() + ')';
     return string;
 }
 
@@ -101,17 +101,24 @@ const WorkspaceSwitcher = new Lang.Class({
 
         settingsStore.backgroundColourActive = this._settings.get_string('background-colour-active');
         settingsStore.backgroundColourInactive = this._settings.get_string('background-colour-inactive');
-        settingsStore.borderColour = this._settings.get_string('border-colour');
+        settingsStore.borderColourActive = this._settings.get_string('border-colour-active');
+        settingsStore.borderColourInactive = this._settings.get_string('border-colour-inactive');
         settingsStore.borderRadius = this._settings.get_int('border-radius');
-        settingsStore.borderSize = this._settings.get_int('border-size');
-        settingsStore.borderStyle = this._settings.get_string('border-style');
+        settingsStore.borderSizeActive = this._settings.get_int('border-size-active');
+        settingsStore.borderSizeInactive = this._settings.get_int('border-size-inactive');
+        settingsStore.borderStyleActive = this._settings.get_string('border-style-active');
+        settingsStore.borderStyleInactive = this._settings.get_string('border-style-inactive');
         settingsStore.clickAction = this._settings.get_enum('click-action');
         settingsStore.currentWorkspace = global.screen.get_active_workspace().index();
         settingsStore.cyclicScrolling = this._settings.get_boolean('cyclic-scrolling');
-        settingsStore.fontColour = this._settings.get_string('font-colour');
-        settingsStore.fontFamily = this._settings.get_string('font-family');
-        settingsStore.fontSize = this._settings.get_int('font-size');
-        settingsStore.fontUseTheme = this._settings.get_boolean('font-use-theme');
+        settingsStore.fontColourActive = this._settings.get_string('font-colour-active');
+        settingsStore.fontColourInactive = this._settings.get_string('font-colour-inactive');
+        settingsStore.fontFamilyActive = this._settings.get_string('font-family-active');
+        settingsStore.fontFamilyInactive = this._settings.get_string('font-family-inactive');
+        settingsStore.fontSizeActive = this._settings.get_int('font-size-active');
+        settingsStore.fontSizeInactive = this._settings.get_int('font-size-inactive');
+        settingsStore.fontUseThemeActive = this._settings.get_boolean('font-use-theme-active');
+        settingsStore.fontUseThemeInctive = this._settings.get_boolean('font-use-theme-inactive');
         settingsStore.index = this._settings.get_int('index');
         settingsStore.invertScrolling = this._settings.get_boolean('invert-scrolling');
         settingsStore.minHeight = this._settings.get_int('min-height');
@@ -125,9 +132,11 @@ const WorkspaceSwitcher = new Lang.Class({
         settingsStore.useNames = this._settings.get_boolean('use-names');
 
         settingsStore.makeActiveBackgroundString();
-        settingsStore.makeBorderString();
-        settingsStore.makeFontString();
         settingsStore.makeInactiveBackgroundString();
+        settingsStore.makeActiveBorderString();
+        settingsStore.makeInactiveBorderString();
+        settingsStore.makeActiveFontString();
+        settingsStore.makeInactiveFontString();
         settingsStore.makeSizeString();
 
         return settingsStore;
@@ -150,24 +159,40 @@ const WorkspaceSwitcher = new Lang.Class({
                 this._settingsStore.makeInactiveBackgroundString();
                 this._display.updateStyle();
                 break;
-            case 'border-colour':
-                this._settingsStore.borderColour = settings.get_string(key);
-                this._settingsStore.makeBorderString();
+            case 'border-colour-active':
+                this._settingsStore.borderColourActive = settings.get_string(key);
+                this._settingsStore.makeActiveBorderString();
+                this._display.updateStyle();
+                break;
+            case 'border-colour-inactive':
+                this._settingsStore.borderColourInactive = settings.get_string(key);
+                this._settingsStore.makeInactiveBorderString();
                 this._display.updateStyle();
                 break;
             case 'border-radius':
                 this._settingsStore.borderRadius = settings.get_int(key);
-                this._settingsStore.makeBorderString();
+                this._settingsStore.makeActiveBorderString();
+                this._settingsStore.makeInactiveBorderString();
                 this._display.updateStyle();
                 break;
-            case 'border-size':
-                this._settingsStore.borderSize = settings.get_int(key);
-                this._settingsStore.makeBorderString();
+            case 'border-size-active':
+                this._settingsStore.borderSizeActive = settings.get_int(key);
+                this._settingsStore.makeActiveBorderString();
                 this._display.updateStyle();
                 break;
-            case 'border-style':
-                this._settingsStore.borderStyle = settings.get_string(key);
-                this._settingsStore.makeBorderString();
+            case 'border-size-inactive':
+                this._settingsStore.borderSizeInactive = settings.get_int(key);
+                this._settingsStore.makeInactiveBorderString();
+                this._display.updateStyle();
+                break;
+            case 'border-style-active':
+                this._settingsStore.borderStyleActive = settings.get_string(key);
+                this._settingsStore.makeActiveBorderString();
+                this._display.updateStyle();
+                break;
+            case 'border-style-inactive':
+                this._settingsStore.borderStyleInactive = settings.get_string(key);
+                this._settingsStore.makeInactiveBorderString();
                 this._display.updateStyle();
                 break;
             case 'click-action':
@@ -176,23 +201,42 @@ const WorkspaceSwitcher = new Lang.Class({
             case 'cyclic-scrolling':
                 this._settingsStore.cyclicScrolling = settings.get_boolean(key);
                 break;
-            case 'font-colour':
-                this._settingsStore.fontColour = settings.get_string(key);
-                this._settingsStore.makeFontString();
+            case 'font-colour-active':
+                this._settingsStore.fontColourActive = settings.get_string(key);
+                this._settingsStore.makeActiveFontString();
                 this._display.updateStyle();
                 break;
-            case 'font-family':
-                this._settingsStore.fontFamily = settings.get_string(key);
-                this._settingsStore.makeFontString();
+            case 'font-colour-inactive':
+                this._settingsStore.fontColourInactive = settings.get_string(key);
+                this._settingsStore.makeInactiveFontString();
                 this._display.updateStyle();
                 break;
-            case 'font-size':
-                this._settingsStore.fontSize = settings.get_int(key);
-                this._settingsStore.makeFontString();
+            case 'font-family-active':
+                this._settingsStore.fontFamilyActive = settings.get_string(key);
+                this._settingsStore.makeActiveFontString();
                 this._display.updateStyle();
                 break;
-            case 'font-use-theme':
-                this._settingsStore.fontUseTheme = settings.get_boolean(key);
+            case 'font-family-inactive':
+                this._settingsStore.fontFamilyInactive = settings.get_string(key);
+                this._settingsStore.makeInactiveFontString();
+                this._display.updateStyle();
+                break;
+            case 'font-size-active':
+                this._settingsStore.fontSizeActive = settings.get_int(key);
+                this._settingsStore.makeActiveFontString();
+                this._display.updateStyle();
+                break;
+            case 'font-size-inactive':
+                this._settingsStore.fontSizeInactive = settings.get_int(key);
+                this._settingsStore.makeInactiveFontString();
+                this._display.updateStyle();
+                break;
+            case 'font-use-theme-active':
+                this._settingsStore.fontUseThemeActive = settings.get_boolean(key);
+                this._display.updateStyle();
+                break;
+            case 'font-use-theme-inactive':
+                this._settingsStore.fontUseThemeInactive = settings.get_boolean(key);
                 this._display.updateStyle();
                 break;
             case 'index':
@@ -278,17 +322,24 @@ const SettingsStore = new Lang.Class({
     _init: function () {
         this.backgroundColourActive = null;
         this.backgroundColourInactive = null;
-        this.borderColour = null;
+        this.borderColourActive = null;
+        this.borderColourInactive = null;
         this.borderRadius = null;
-        this.borderSize = null;
-        this.borderStyle = null;
+        this.borderSizeActive = null;
+        this.borderSizeInactive = null;
+        this.borderStyleActive = null;
+        this.borderStyleInactive = null;
         this.clickAction = null;
         this.currentWorkspace = null;
         this.cyclicScrolling = null;
-        this.fontColour = null;
-        this.fontFamily = null;
-        this.fontSize = null;
-        this.fontUseTheme = null;
+        this.fontColourActive = null;
+        this.fontColourInactive = null;
+        this.fontFamilyActive = null;
+        this.fontFamilyInactive = null;
+        this.fontSizeActive = null;
+        this.fontSizeInactive = null;
+        this.fontUseThemeActive = null;
+        this.fontUseThemeInactive = null;
         this.index = null;
         this.invertScrolling = null;
         this.minHeight = null;
@@ -301,8 +352,10 @@ const SettingsStore = new Lang.Class({
         this.showTotalNum = null;
         this.styleStringBackgroundActive = null;
         this.styleStringBackgroundInactive = null;
-        this.styleStringBorder = null;
-        this.styleStringFont = null;
+        this.styleStringBorderActive = null;
+        this.styleStringBorderInactive = null;
+        this.styleStringFontActive = null;
+        this.styleStringFontInactive = null;
         this.styleStringSize = null;
         this.useNames = null;
     },
@@ -312,27 +365,45 @@ const SettingsStore = new Lang.Class({
             hexToRgbaString(this.backgroundColourActive) + ';';
     },
 
-    makeBorderString: function () {
-        this.styleStringBorder = 'border: ' +
-                                 this.borderSize + 'px ' +
-                                 this.borderStyle + ' ' +
-                                 hexToRgbaString(this.borderColour) + ';' +
-                                 'border-radius: ' +
-                                 this.borderRadius + 'px; ';
-    },
-
-    makeFontString: function () {
-        this.styleStringFont = 'font-size: ' +
-                               this.fontSize + 'pt; ' +
-                               'font-family: ' +
-                               this.fontFamily + '; ' +
-                               'color: ' +
-                               hexToRgbaString(this.fontColour) + ';';
-    },
-
     makeInactiveBackgroundString: function () {
         this.styleStringBackgroundInactive = 'background-color: ' +
             hexToRgbaString(this.backgroundColourInactive) + ';';
+    },
+
+    makeActiveBorderString: function () {
+        this.styleStringBorderActive = 'border: ' +
+                                       this.borderSizeActive + 'px ' +
+                                       this.borderStyleActive + ' ' +
+                                       hexToRgbaString(this.borderColourActive) + ';' +
+                                       'border-radius: ' +
+                                       this.borderRadius + 'px; ';
+    },
+
+    makeInactiveBorderString: function () {
+        this.styleStringBorderInactive = 'border: ' +
+                                         this.borderSizeInactive + 'px ' +
+                                         this.borderStyleInactive + ' ' +
+                                         hexToRgbaString(this.borderColourInactive) + ';' +
+                                         'border-radius: ' +
+                                         this.borderRadius + 'px; ';
+    },
+
+    makeActiveFontString: function () {
+        this.styleStringFontActive = 'font-size: ' +
+                                     this.fontSizeActive + 'pt; ' +
+                                     'font-family: ' +
+                                     this.fontFamilyActive + '; ' +
+                                     'color: ' +
+                                     hexToRgbaString(this.fontColourActive) + ';';
+    },
+
+    makeInactiveFontString: function () {
+        this.styleStringFontInactive = 'font-size: ' +
+                                       this.fontSizeInactive + 'pt; ' +
+                                       'font-family: ' +
+                                       this.fontFamilyInactive + '; ' +
+                                       'color: ' +
+                                       hexToRgbaString(this.fontColourInactive) + ';';
     },
 
     makeSizeString: function () {
@@ -343,6 +414,6 @@ const SettingsStore = new Lang.Class({
                                this.minHeight + 'px; ' +
                                'min-width: ' +
                                this.minWidth + 'px; ' +
-                               'margin: 0px 1px;'
+                               'margin: 0px 1px;';
     }
 });

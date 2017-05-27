@@ -22,18 +22,28 @@
 		<key name="background-colour-inactive" type="s">
 			<default>"#444444ff"</default>
 		</key>
-		<key name="border-colour" type="s">
+		<key name="border-colour-active" type="s">
+			<default>"#ccccccff"</default>
+		</key>
+		<key name="border-colour-inactive" type="s">
 			<default>"#ccccccff"</default>
 		</key>
 		<key name="border-radius" type="i">
 			<range min="0" max="32"/>
 			<default>0</default>
 		</key>
-		<key name="border-size" type="i">
+		<key name="border-size-active" type="i">
 			<range min="0" max="8"/>
 			<default>1</default>
 		</key>
-		<key name="border-style" type="s">
+		<key name="border-size-inactive" type="i">
+			<range min="0" max="8"/>
+			<default>1</default>
+		</key>
+		<key name="border-style-active" type="s">
+			<default>"solid"</default>
+		</key>
+		<key name="border-style-inactive" type="s">
 			<default>"solid"</default>
 		</key>
 		<key name="click-action" enum="org.gnome.shell.extensions.workspace-switcher.click-action">
@@ -42,17 +52,30 @@
 		<key name="cyclic-scrolling" type="b">
 			<default>true</default>
 		</key>
-		<key name="font-colour" type="s">
+		<key name="font-colour-active" type="s">
 			<default>"#ccccccff"</default>
 		</key>
-		<key name="font-family" type="s">
+		<key name="font-colour-inactive" type="s">
+			<default>"#ccccccff"</default>
+		</key>
+		<key name="font-family-active" type="s">
 			<default>"Arial"</default>
 		</key>
-		<key name="font-size" type="i">
+		<key name="font-family-inactive" type="s">
+			<default>"Arial"</default>
+		</key>
+		<key name="font-size-active" type="i">
 			<range min="8" max="32"/>
 			<default>11</default>
 		</key>
-		<key name="font-use-theme" type="b">
+		<key name="font-size-inactive" type="i">
+			<range min="8" max="32"/>
+			<default>11</default>
+		</key>
+		<key name="font-use-theme-active" type="b">
+			<default>true</default>
+		</key>
+		<key name="font-use-theme-inactive" type="b">
 			<default>true</default>
 		</key>
 		<key name="index" type="i">
