@@ -52,19 +52,11 @@
 		<key name="font-colour-inactive" type="s">
 			<default>"#ccccccff"</default>
 		</key>
-		<key name="font-family-active" type="s">
-			<default>"Arial"</default>
+		<key name="font-active" type="s">
+			<default>"Sans 11"</default>
 		</key>
-		<key name="font-family-inactive" type="s">
-			<default>"Arial"</default>
-		</key>
-		<key name="font-size-active" type="i">
-			<range min="8" max="32"/>
-			<default>11</default>
-		</key>
-		<key name="font-size-inactive" type="i">
-			<range min="8" max="32"/>
-			<default>11</default>
+		<key name="font-inactive" type="s">
+			<default>"Sans 11"</default>
 		</key>
 		<key name="font-colour-use-theme-active" type="b">
 			<default>true</default>

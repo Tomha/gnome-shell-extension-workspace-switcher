@@ -14,11 +14,11 @@ fundamental changes in mind.
 In short, I want a polished, one-stop solution for managing, viewing, and
 switching workspaces.
 
-### Immediate Goals
+### Immediate Goals ✔
 - Allow switching of the current workspace via a popup menu ✔, or scrolling the
 	panel widget ✔, or if all workspaces are displayed, by clicking the
 	desired workspace. ✔
-- Give customisation options for border, background, and text of panel widget.
+- Give customisation options for border, background, and text of panel widget. ✔
 - Provide multiple display options: ✔
 	- Name/number of current workspace ✔
 	- Name/number of all workspaces ✔

@@ -168,15 +168,13 @@ WorkspaceSwitcherPrefs.prototype = {
     _populateStyle: function () {
         let widget, value;
 
-        /*value = this._settings.get_int('font-size-active');
-        widget = this._builder.get_object('fontSizeActive');
-        widget.set_value(value);
+        value = this._settings.get_string('font-active');
+        widget = this._builder.get_object('fontActive');
+        widget.set_font_name(value);
 
-        value = this._settings.get_int('font-size-inactive');
-        widget = this._builder.get_object('fontSizeInactive');
-        widget.set_value(value);*/
-
-        // TODO: Font Style
+        value = this._settings.get_string('font-inactive');
+        widget = this._builder.get_object('fontInactive');
+        widget.set_font_name(value);
 
         value = this._settings.get_boolean('font-use-theme-active');
         widget = this._builder.get_object('fontUseThemeActive');
@@ -329,7 +327,15 @@ WorkspaceSwitcherPrefs.prototype = {
             this._settings.apply();
         },
 
-        // TODO: Font family and size changed
+        onFontActiveSet: function (fontButton) {
+            this._settings.set_string('font-active', fontButton.get_font_name());
+            this._settings.apply();
+        },
+
+        onFontInactiveSet: function (fontButton) {
+            this._settings.set_string('font-inactive', fontButton.get_font_name());
+            this._settings.apply();
+        },
 
         onFontUseThemeActiveToggled: function (toggleswitch) {
             this._settings.set_boolean('font-use-theme-active', toggleswitch.get_active());
@@ -475,8 +481,6 @@ WorkspaceSwitcherPrefs.prototype = {
             let value = this._settings.get_int('border-size-inactive');
             widget.set_value(value);
         },
-
-        // TODO: Reset border style
 
         resetFontColourActive: function (button) {
             this._settings.reset('font-colour-active');

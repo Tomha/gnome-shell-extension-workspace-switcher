@@ -20,6 +20,7 @@ An up to date version can also be found at:
 https://github.com/Tomha/gnome-shell-extension-workspace-switcher */
 
 const Clutter = imports.gi.Clutter;
+const Pango = imports.gi.Pango;
 const Main = imports.ui.main;
 const Lang = imports.lang;
 const ExtensionUtils = imports.misc.extensionUtils;
@@ -33,10 +34,23 @@ const PANEL_POSITIONS = [Main.panel._leftBox,
 
 const BORDER_STYLES = ['dashed', 'dotted', 'double', 'groove', 'inset',
                        'outset', 'ridge', 'solid'];
-const MODES = { CURRENT: 0, ALL: 1, ICON: 2 }
+const MODES = { CURRENT: 0, ALL: 1, ICON: 2 };
 const MODE_OBJECTS = [WorkspaceDisplay.CurrentWorkspaceDisplay,
                       WorkspaceDisplay.AllWorkspacesDisplay,
                       WorkspaceDisplay.IconWorkspaceDisplay];
+const PANGO_STYLES = {0: 'normal', 1: 'oblique', 2: 'italic'};
+const PANGO_UNITS_PER_PT = 1024;
+const PANGO_WEIGHTS = { 100: 'thin',
+                        200: 'ultralight',
+                        300: 'light',
+                        380: 'book',
+                        400: 'normal',
+                        500: 'medium',
+                        600: 'semibold',
+                        700: 'bold',
+                        800: 'ultrabold',
+                        900: 'heavy',
+                        1000: 'ultraheavy'};
 
 function hexToRgbaString (hex) {
     let string = 'rgba(';
@@ -113,10 +127,8 @@ const WorkspaceSwitcher = new Lang.Class({
         settingsStore.cyclicScrolling = this._settings.get_boolean('cyclic-scrolling');
         settingsStore.fontColourActive = this._settings.get_string('font-colour-active');
         settingsStore.fontColourInactive = this._settings.get_string('font-colour-inactive');
-        settingsStore.fontFamilyActive = this._settings.get_string('font-family-active');
-        settingsStore.fontFamilyInactive = this._settings.get_string('font-family-inactive');
-        settingsStore.fontSizeActive = this._settings.get_int('font-size-active');
-        settingsStore.fontSizeInactive = this._settings.get_int('font-size-inactive');
+        settingsStore.fontActive = this._settings.get_string('font-active');
+        settingsStore.fontInactive = this._settings.get_string('font-inactive');
         settingsStore.fontColourUseThemeActive = this._settings.get_boolean('font-colour-use-theme-active');
         settingsStore.fontColourUseThemeInactive = this._settings.get_boolean('font-colour-use-theme-inactive');
         settingsStore.fontUseThemeActive = this._settings.get_boolean('font-use-theme-active');
@@ -201,23 +213,13 @@ const WorkspaceSwitcher = new Lang.Class({
                 this._settingsStore.makeInactiveFontStyleString();
                 this._display.updateStyle();
                 break;
-            case 'font-family-active':
-                this._settingsStore.fontFamilyActive = settings.get_string(key);
+            case 'font-active':
+                this._settingsStore.fontActive = settings.get_string(key);
                 this._settingsStore.makeActiveFontStyleString();
                 this._display.updateStyle();
                 break;
-            case 'font-family-inactive':
-                this._settingsStore.fontFamilyInactive = settings.get_string(key);
-                this._settingsStore.makeInactiveFontStyleString();
-                this._display.updateStyle();
-                break;
-            case 'font-size-active':
-                this._settingsStore.fontSizeActive = settings.get_int(key);
-                this._settingsStore.makeActiveFontStyleString();
-                this._display.updateStyle();
-                break;
-            case 'font-size-inactive':
-                this._settingsStore.fontSizeInactive = settings.get_int(key);
+            case 'font-inactive':
+                this._settingsStore.fontInactive = settings.get_string(key);
                 this._settingsStore.makeInactiveFontStyleString();
                 this._display.updateStyle();
                 break;
@@ -334,10 +336,8 @@ const SettingsStore = new Lang.Class({
         this.cyclicScrolling = null;
         this.fontColourActive = null;
         this.fontColourInactive = null;
-        this.fontFamilyActive = null;
-        this.fontFamilyInactive = null;
-        this.fontSizeActive = null;
-        this.fontSizeInactive = null;
+        this.fontActive = null;
+        this.fontInactive = null;
         this.fontColourUseThemeActive = null;
         this.fontColourUseThemeInactive = null;
         this.fontUseThemeActive = null;
@@ -392,10 +392,14 @@ const SettingsStore = new Lang.Class({
         if (!this.fontColourUseThemeActive)
             this.styleStringFontActive +=
                 'color:' + hexToRgbaString(this.fontColourActive) + ';';
-        if (!this.fontUseThemeActive)
+        if (!this.fontUseThemeActive) {
+            let font = Pango.FontDescription.from_string(this.fontActive);
             this.styleStringFontActive +=
-                'font-size:' + this.fontSizeActive + 'pt;' +
-                'font-family:' + this.fontFamilyActive + ';';
+                'font-size:' + font.get_size()/PANGO_UNITS_PER_PT  + 'pt;' +
+                'font-family:' + font.get_family() + ';' +
+                'font-weight:' + PANGO_WEIGHTS[font.get_weight()] + ';' +
+                'font-style:' + PANGO_STYLES[font.get_style()] + ';';
+        }
     },
 
     makeInactiveFontStyleString: function () {
@@ -403,9 +407,13 @@ const SettingsStore = new Lang.Class({
         if (!this.fontColourUseThemeInactive)
             this.styleStringFontInactive +=
                 'color:' + hexToRgbaString(this.fontColourInactive) + ';';
-        if (!this.fontUseThemeInactive)
+        if (!this.fontUseThemeInactive) {
+            let font = Pango.FontDescription.from_string(this.fontInactive);
             this.styleStringFontInactive +=
-                'font-size:' + this.fontSizeInactive + 'pt;' +
-                'font-family:' + this.fontFamilyInactive + ';';
+                'font-size:' + font.get_size()/PANGO_UNITS_PER_PT  + 'pt;' +
+                'font-family:' + font.get_family() + ';' +
+                'font-weight:' + PANGO_WEIGHTS[font.get_weight()] + ';' +
+                'font-style:' + PANGO_STYLES[font.get_style()] + ';';
+        }
     }
 });
