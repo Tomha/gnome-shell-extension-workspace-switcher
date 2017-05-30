@@ -392,7 +392,6 @@ const SettingsStore = new Lang.Class({
 
         this.styleStringDecorationActive += 'border-left-width:' +
             (this.borderLocations.indexOf('LEFT') > -1 ? this.borderSizeActive + 'px;' : '0px;');
-        global.log(this.styleStringDecorationActive);
     },
 
     makeInactiveDecorationStyleString: function () {
@@ -412,7 +411,6 @@ const SettingsStore = new Lang.Class({
 
         this.styleStringDecorationInactive += 'border-left-width:' +
             (this.borderLocations.indexOf('LEFT') > -1 ? this.borderSizeInactive + 'px;' : '0px;');
-        global.log(this.styleStringDecorationInactive);
     },
 
     makeActiveFontStyleString: function () {
