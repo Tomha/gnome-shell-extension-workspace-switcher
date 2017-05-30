@@ -20,11 +20,18 @@ An up to date version can also be found at:
 https://github.com/Tomha/gnome-shell-extension-workspace-switcher */
 
 const Clutter = imports.gi.Clutter;
+const Gtk = imports.gi.Gtk;
 const Meta = imports.gi.Meta;
 const St = imports.gi.St;
+
 const Main = imports.ui.main;
 const PopupMenu = imports.ui.popupMenu;
+
 const Lang = imports.lang;
+
+const ExtensionUtils = imports.misc.extensionUtils;
+const Me = ExtensionUtils.getCurrentExtension();
+
 
 const ACTIVE_STYLE = "background-color: #888888; border: 1px solid #cccccc; padding: 0px 8px 0px 8px; margin: 0px 1px 0px 1px;";
 const INACTIVE_STYLE = "background-color: #444444; border: 1px solid #cccccc; padding: 0px 8px 0px 8px; margin: 0px 1px 0px 1px;";
@@ -305,8 +312,8 @@ const IconWorkspaceDisplay = new Lang.Class({
 
     _createWidgets: function () {
         this._container = new St.BoxLayout();
-        this._icon = new St.Icon({icon_name: 'workspace-switcher',
-                                  icon_size: 16,
+        Gtk.IconTheme.get_default().append_search_path(Me.dir.get_child('icons').get_path());
+        this._icon = new St.Icon({icon_name: 'workspace-symbolic',
                                   style_class: 'system-status-icon'});
         this._container.add_child(this._icon);
         this._label = new St.Label({y_align: Clutter.ActorAlign.CENTER});
