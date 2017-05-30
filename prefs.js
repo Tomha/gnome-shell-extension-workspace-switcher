@@ -220,6 +220,19 @@ WorkspaceSwitcherPrefs.prototype = {
         widget = this._builder.get_object('borderRadius');
         widget.set_value(value);
 
+        value = this._settings.get_strv('border-locations');
+        for (let i = 0; i < value.length; i++) {
+            let position = value[i];
+            if (position == 'TOP')
+                this._builder.get_object('borderLocationTop').set_active(true);
+            else if (position == 'RIGHT')
+                this._builder.get_object('borderLocationRight').set_active(true);
+            else if (position == 'BOTTOM')
+                this._builder.get_object('borderLocationBottom').set_active(true);
+            else if (position == 'LEFT')
+                this._builder.get_object('borderLocationLeft').set_active(true);
+        }
+
         value = this._settings.get_string('background-colour-inactive');
         widget = this._builder.get_object('backgroundColourInactive');
         widget.set_rgba(hexToRgba(value));
@@ -267,6 +280,20 @@ WorkspaceSwitcherPrefs.prototype = {
 
         onBorderColourInactiveSet: function (button) {
             this._settings.set_string('border-colour-inactive', rgbaToHex(button.get_rgba()));
+            this._settings.apply();
+        },
+
+        onBorderLocationChanged: function (checkbutton) {
+            let borderPositions = [];
+            if (this._builder.get_object('borderLocationTop').get_active())
+                borderPositions.push('TOP');
+            if (this._builder.get_object('borderLocationRight').get_active())
+                borderPositions.push('RIGHT');
+            if (this._builder.get_object('borderLocationBottom').get_active())
+                borderPositions.push('BOTTOM');
+            if (this._builder.get_object('borderLocationLeft').get_active())
+                borderPositions.push('LEFT');
+            this._settings.set_strv('border-locations', borderPositions);
             this._settings.apply();
         },
 

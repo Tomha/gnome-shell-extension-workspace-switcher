@@ -119,6 +119,7 @@ const WorkspaceSwitcher = new Lang.Class({
         settingsStore.backgroundColourInactive = this._settings.get_string('background-colour-inactive');
         settingsStore.borderColourActive = this._settings.get_string('border-colour-active');
         settingsStore.borderColourInactive = this._settings.get_string('border-colour-inactive');
+        settingsStore.borderLocations = this._settings.get_strv('border-locations');
         settingsStore.borderRadius = this._settings.get_int('border-radius');
         settingsStore.borderSizeActive = this._settings.get_int('border-size-active');
         settingsStore.borderSizeInactive = this._settings.get_int('border-size-inactive');
@@ -178,6 +179,12 @@ const WorkspaceSwitcher = new Lang.Class({
                 break;
             case 'border-colour-inactive':
                 this._settingsStore.borderColourInactive = settings.get_string(key);
+                this._settingsStore.makeInactiveDecorationStyleString();
+                this._display.updateStyle();
+                break;
+            case 'border-locations':
+                this._settingsStore.borderLocations = settings.get_strv(key);
+                this._settingsStore.makeActiveDecorationStyleString();
                 this._settingsStore.makeInactiveDecorationStyleString();
                 this._display.updateStyle();
                 break;
@@ -328,6 +335,7 @@ const SettingsStore = new Lang.Class({
         this.backgroundColourInactive = null;
         this.borderColourActive = null;
         this.borderColourInactive = null;
+        this.borderLocations = null;
         this.borderRadius = null;
         this.borderSizeActive = null;
         this.borderSizeInactive = null;
@@ -372,19 +380,42 @@ const SettingsStore = new Lang.Class({
 
     makeActiveDecorationStyleString: function () {
         this.styleStringDecorationActive =
+            'background-color: ' + hexToRgbaString(this.backgroundColourActive) + ';' +
             'border-color:' + hexToRgbaString(this.borderColourActive) + ';' +
-            'border-radius:' + this.borderRadius + 'px;' +
-            'border-width:' + this.borderSizeActive + 'px;' +
-            'background-color: ' + hexToRgbaString(this.backgroundColourActive) + ';';
+            'border-radius:'+ this.borderRadius + 'px;';
 
+        this.styleStringDecorationActive += 'border-top-width:' +
+            (this.borderLocations.indexOf('TOP') > -1 ? this.borderSizeActive + 'px;' : '0px;');
+
+         this.styleStringDecorationActive += 'border-right-width:' +
+            (this.borderLocations.indexOf('RIGHT') > -1 ? this.borderSizeActive + 'px;' : '0px;');
+
+        this.styleStringDecorationActive += 'border-bottom-width:' +
+            (this.borderLocations.indexOf('BOTTOM') > -1 ? this.borderSizeActive + 'px;' : '0px;');
+
+        this.styleStringDecorationActive += 'border-left-width:' +
+            (this.borderLocations.indexOf('LEFT') > -1 ? this.borderSizeActive + 'px;' : '0px;');
+        global.log(this.styleStringDecorationActive);
     },
 
     makeInactiveDecorationStyleString: function () {
         this.styleStringDecorationInactive =
+            'background-color: ' + hexToRgbaString(this.backgroundColourInactive) + ';' +
             'border-color:' + hexToRgbaString(this.borderColourInactive) + ';' +
-            'border-radius:' + this.borderRadius + 'px;' +
-            'border-width:' + this.borderSizeInactive + 'px;' +
-            'background-color:' + hexToRgbaString(this.backgroundColourInactive) + ';';
+            'border-radius:'+ this.borderRadius + 'px;';
+
+        this.styleStringDecorationInactive += 'border-top-width:' +
+            (this.borderLocations.indexOf('TOP') > -1 ? this.borderSizeInactive + 'px;' : '0px;');
+
+         this.styleStringDecorationInactive += 'border-right-width:' +
+            (this.borderLocations.indexOf('RIGHT') > -1 ? this.borderSizeInactive + 'px;' : '0px;');
+
+        this.styleStringDecorationInactive += 'border-bottom-width:' +
+            (this.borderLocations.indexOf('BOTTOM') > -1 ? this.borderSizeInactive + 'px;' : '0px;');
+
+        this.styleStringDecorationInactive += 'border-left-width:' +
+            (this.borderLocations.indexOf('LEFT') > -1 ? this.borderSizeInactive + 'px;' : '0px;');
+        global.log(this.styleStringDecorationInactive);
     },
 
     makeActiveFontStyleString: function () {
