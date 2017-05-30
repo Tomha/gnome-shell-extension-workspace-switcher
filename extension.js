@@ -31,9 +31,6 @@ const WorkspaceDisplay = Me.imports.workspaceDisplay;
 const PANEL_POSITIONS = [Main.panel._leftBox,
                          Main.panel._centerBox,
                          Main.panel._rightBox];
-
-const BORDER_STYLES = ['dashed', 'dotted', 'double', 'groove', 'inset',
-                       'outset', 'ridge', 'solid'];
 const MODES = { CURRENT: 0, ALL: 1, ICON: 2 };
 const MODE_OBJECTS = [WorkspaceDisplay.CurrentWorkspaceDisplay,
                       WorkspaceDisplay.AllWorkspacesDisplay,

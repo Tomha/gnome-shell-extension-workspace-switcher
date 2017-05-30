@@ -30,8 +30,6 @@ const Me = ExtensionUtils.getCurrentExtension();
 const Settings = Me.imports.settings;
 
 const ACTIONS = ['actionActivities', 'actionPopup', 'actionNone'];
-const BORDER_STYLES = ['dashed', 'dotted', 'double', 'groove', 'inset',
-                       'outset', 'ridge', 'solid'];
 const MODES = ['modeCurrent', 'modeAll', 'modeIcon'];
 const POSITIONS = ['positionLeft', 'positionCenter', 'positionRight'];
 
