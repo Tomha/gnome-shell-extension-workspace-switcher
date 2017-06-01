@@ -77,7 +77,7 @@ const WorkspaceSwitcher = new Lang.Class({
 
     enable: function () {
         this._settings = Settings.getSettings();
-        this._settingsStore = this._loadSettings();
+        this._settingsStore = new SettingsStore(this._settings);
         this._workspaceSettings = Settings.getSettings('org.gnome.desktop.wm.preferences');
 
         this._display = new MODE_OBJECTS[this._settingsStore.mode](this._settingsStore);
@@ -107,49 +107,6 @@ const WorkspaceSwitcher = new Lang.Class({
         insertAtPosition(this._display,
                          this._settingsStore.position,
                          this._settingsStore.index);
-    },
-
-    _loadSettings: function () {
-        let settingsStore = new SettingsStore();
-
-        settingsStore.backgroundColourActive = this._settings.get_string('background-colour-active');
-        settingsStore.backgroundColourInactive = this._settings.get_string('background-colour-inactive');
-        settingsStore.borderColourActive = this._settings.get_string('border-colour-active');
-        settingsStore.borderColourInactive = this._settings.get_string('border-colour-inactive');
-        settingsStore.borderLocations = this._settings.get_strv('border-locations');
-        settingsStore.borderRadius = this._settings.get_int('border-radius');
-        settingsStore.borderSizeActive = this._settings.get_int('border-size-active');
-        settingsStore.borderSizeInactive = this._settings.get_int('border-size-inactive');
-        settingsStore.clickAction = this._settings.get_enum('click-action');
-        settingsStore.currentWorkspace = global.screen.get_active_workspace().index();
-        settingsStore.cyclicScrolling = this._settings.get_boolean('cyclic-scrolling');
-        settingsStore.fontColourActive = this._settings.get_string('font-colour-active');
-        settingsStore.fontColourInactive = this._settings.get_string('font-colour-inactive');
-        settingsStore.fontActive = this._settings.get_string('font-active');
-        settingsStore.fontInactive = this._settings.get_string('font-inactive');
-        settingsStore.fontColourUseThemeActive = this._settings.get_boolean('font-colour-use-theme-active');
-        settingsStore.fontColourUseThemeInactive = this._settings.get_boolean('font-colour-use-theme-inactive');
-        settingsStore.fontUseThemeActive = this._settings.get_boolean('font-use-theme-active');
-        settingsStore.fontUseThemeInactive = this._settings.get_boolean('font-use-theme-inactive');
-        settingsStore.index = this._settings.get_int('index');
-        settingsStore.invertScrolling = this._settings.get_boolean('invert-scrolling');
-        settingsStore.minHeight = this._settings.get_int('min-height');
-        settingsStore.minWidth = this._settings.get_int('min-width');
-        settingsStore.mode = this._settings.get_enum('mode');
-        settingsStore.paddingHorizontal = this._settings.get_int('padding-horizontal');
-        settingsStore.paddingVertical = this._settings.get_int('padding-vertical');
-        settingsStore.position = this._settings.get_enum('position');
-        settingsStore.showIconText = this._settings.get_boolean('show-icon-text');
-        settingsStore.showNames = this._settings.get_boolean('show-names');
-        settingsStore.showTotalNum = this._settings.get_boolean('show-total-num');
-
-        settingsStore.makeBaseStyleString();
-        settingsStore.makeActiveDecorationStyleString();
-        settingsStore.makeInactiveDecorationStyleString();
-        settingsStore.makeActiveFontStyleString();
-        settingsStore.makeInactiveFontStyleString();
-
-        return settingsStore;
     },
 
     _removeWidget: function () {
@@ -327,42 +284,43 @@ const WorkspaceSwitcher = new Lang.Class({
 const SettingsStore = new Lang.Class({
     Name: 'SettingsStore',
 
-    _init: function () {
-        this.backgroundColourActive = null;
-        this.backgroundColourInactive = null;
-        this.borderColourActive = null;
-        this.borderColourInactive = null;
-        this.borderLocations = null;
-        this.borderRadius = null;
-        this.borderSizeActive = null;
-        this.borderSizeInactive = null;
-        this.clickAction = null;
-        this.currentWorkspace = null;
-        this.cyclicScrolling = null;
-        this.fontColourActive = null;
-        this.fontColourInactive = null;
-        this.fontActive = null;
-        this.fontInactive = null;
-        this.fontColourUseThemeActive = null;
-        this.fontColourUseThemeInactive = null;
-        this.fontUseThemeActive = null;
-        this.fontUseThemeInactive = null;
-        this.index = null;
-        this.invertScrolling = null;
-        this.minHeight = null;
-        this.minWidth = null;
-        this.mode = null;
-        this.paddingHorizontal = null;
-        this.paddingVertical = null;
-        this.position = null;
-        this.showIconText = null;
-        this.showNames = null;
-        this.showTotalNum = null;
-        this.styleStringDecorationActive = null;
-        this.styleStringDecorationInactive = null;
-        this.styleStringFontActive = null;
-        this.styleStringFontInactive = null;
-        this.styleStringBase = null;
+    _init: function (settings) {
+        this.backgroundColourActive = settings.get_string('background-colour-active');
+        this.backgroundColourInactive = settings.get_string('background-colour-inactive');
+        this.borderColourActive = settings.get_string('border-colour-active');
+        this.borderColourInactive = settings.get_string('border-colour-inactive');
+        this.borderLocations = settings.get_strv('border-locations');
+        this.borderRadius = settings.get_int('border-radius');
+        this.borderSizeActive = settings.get_int('border-size-active');
+        this.borderSizeInactive = settings.get_int('border-size-inactive');
+        this.clickAction = settings.get_enum('click-action');
+        this.currentWorkspace = global.screen.get_active_workspace().index();
+        this.cyclicScrolling = settings.get_boolean('cyclic-scrolling');
+        this.fontColourActive = settings.get_string('font-colour-active');
+        this.fontColourInactive = settings.get_string('font-colour-inactive');
+        this.fontActive = settings.get_string('font-active');
+        this.fontInactive = settings.get_string('font-inactive');
+        this.fontColourUseThemeActive = settings.get_boolean('font-colour-use-theme-active');
+        this.fontColourUseThemeInactive = settings.get_boolean('font-colour-use-theme-inactive');
+        this.fontUseThemeActive = settings.get_boolean('font-use-theme-active');
+        this.fontUseThemeInactive = settings.get_boolean('font-use-theme-inactive');
+        this.index = settings.get_int('index');
+        this.invertScrolling = settings.get_boolean('invert-scrolling');
+        this.minHeight = settings.get_int('min-height');
+        this.minWidth = settings.get_int('min-width');
+        this.mode = settings.get_enum('mode');
+        this.paddingHorizontal = settings.get_int('padding-horizontal');
+        this.paddingVertical = settings.get_int('padding-vertical');
+        this.position = settings.get_enum('position');
+        this.showIconText = settings.get_boolean('show-icon-text');
+        this.showNames = settings.get_boolean('show-names');
+        this.showTotalNum = settings.get_boolean('show-total-num');
+
+        this.makeBaseStyleString();
+        this.makeActiveDecorationStyleString();
+        this.makeInactiveDecorationStyleString();
+        this.makeActiveFontStyleString();
+        this.makeInactiveFontStyleString();
     },
 
     makeBaseStyleString: function () {
