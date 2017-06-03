@@ -110,5 +110,8 @@
 		<key name="show-total-num" type="b">
 			<default>false</default>
 		</key>
+		<key name="vertical-display" type="b">
+			<default>false</default>
+		</key>
 	</schema>
 </schemalist>

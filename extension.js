@@ -260,6 +260,10 @@ const WorkspaceSwitcher = new Lang.Class({
                 this._settingsStore.showTotalNum = settings.get_boolean(key);
                 if (!this._settingsStore.showNames) this._display.updateWorkspaceNames();
                 break;
+            case 'vertical-display':
+                this._settingsStore.verticalDisplay = settings.get_boolean(key);
+                this._display.updateStyle();
+                break;
         }
     },
 
@@ -315,6 +319,7 @@ const SettingsStore = new Lang.Class({
         this.showIconText = settings.get_boolean('show-icon-text');
         this.showNames = settings.get_boolean('show-names');
         this.showTotalNum = settings.get_boolean('show-total-num');
+        this.verticalDisplay = settings.get_boolean('vertical-display');
 
         this.makeBaseStyleString();
         this.makeActiveDecorationStyleString();

@@ -130,6 +130,10 @@ WorkspaceSwitcherPrefs.prototype = {
         widget = this._builder.get_object('showIconText');
         widget.set_active(value);
 
+        value = this._settings.get_boolean('vertical-display');
+        widget = this._builder.get_object('verticalDisplay');
+        widget.set_active(value);
+
         value = this._settings.get_boolean('invert-scrolling');
         widget = this._builder.get_object('invertScrolling');
         widget.set_active(value);
@@ -420,6 +424,11 @@ WorkspaceSwitcherPrefs.prototype = {
 
         onShowTotalNumChanged: function (toggleswitch) {
             this._settings.set_boolean('show-total-num', toggleswitch.get_active());
+            this._settings.apply();
+        },
+
+        onVerticalDisplaySet: function (toggleswitch) {
+            this._settings.set_boolean('vertical-display', toggleswitch.get_active());
             this._settings.apply();
         },
 

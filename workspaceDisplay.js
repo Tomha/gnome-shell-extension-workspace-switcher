@@ -273,6 +273,7 @@ const AllWorkspacesDisplay = new Lang.Class({
             styleString += this._settingsStore.styleStringDecorationInactive +
                             this._settingsStore.styleStringFontInactive;
         this._labels[workspaceIndex].set_style(styleString);
+        this._container.set_vertical(this._settingsStore.verticalDisplay);
     },
 
     updateWorkspaceNames: function () {
