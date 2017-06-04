@@ -29,6 +29,13 @@ const ExtensionUtils = imports.misc.extensionUtils;
 const Me = ExtensionUtils.getCurrentExtension();
 const Settings = Me.imports.settings;
 
+const BORDER_LOCATIONS = ['TOP', 'RIGHT', 'BOTTOM', 'LEFT'];
+const BORDER_LOCATION_WIDGETS = {
+    TOP: 'borderLocationTop',
+    RIGHT: 'borderLocationRight',
+    BOTTOM: 'borderLocationBottom',
+    LEFT: 'borderLocationLeft'
+}
 const ACTIONS = ['actionActivities', 'actionPopup', 'actionNone'];
 const MODES = ['modeCurrent', 'modeAll', 'modeIcon'];
 const POSITIONS = ['positionLeft', 'positionCenter', 'positionRight'];
@@ -63,20 +70,16 @@ WorkspaceSwitcherPrefs.prototype = {
         this._settings = Settings.getSettings();
         this._workspaceSettings = Settings.getSettings('org.gnome.desktop.wm.preferences');
 
-        this._builder = new Gtk.Builder();
-        this._builder.add_from_file(Me.path + '/prefs.ui');
+        this._builder = Gtk.Builder.new_from_file(Me.path + '/prefs.ui');
+        this.parentWidget = this._builder.get_object('container');
 
-        this.widget = this._builder.get_object('container');
-        this._debug = this._builder.get_object('debug'); // DEBUG
-
-        this._populateGeneral();
-        this._populateStyle();
-        this._populateAbout();
-
+        this._populateGeneralTab();
+        this._populateStyleTab();
+        this._populateAboutTab();
         this._builder.connect_signals_full(Lang.bind(this, this._signalConnector));
     },
 
-    _populateAbout: function () {
+    _populateAboutTab: function () {
         let name = this._builder.get_object('nameLabel');
         name.set_text(Me.metadata['name'].toString());
 
@@ -99,7 +102,7 @@ WorkspaceSwitcherPrefs.prototype = {
             ' or later</a> for details.</span>');
     },
 
-    _populateGeneral: function () {
+    _populateGeneralTab: function () {
         let widget, value;
 
         value = this._settings.get_enum('click-action');
@@ -142,32 +145,34 @@ WorkspaceSwitcherPrefs.prototype = {
         widget = this._builder.get_object('cyclicScrolling');
         widget.set_active(value);
 
+        // Populate the workspace name treeview manually
         this._workspaceNameTreeView = this._builder.get_object('workspaceNameTreeView');
-        let column = new Gtk.TreeViewColumn({ title:"Name" });
-        let renderer = new Gtk.CellRendererText({ editable: true });
-        renderer.connect('edited', Lang.bind(this, this._signalHandler['onWorkspaceRenamed']));
-        column.pack_start(renderer, true);
-        column.add_attribute(renderer, 'text', 0);
-        this._workspaceNameTreeView.append_column(column);
+        let nameColumnrenderer = new Gtk.CellRendererText({ editable: true });
+        nameColumnrenderer.connect('edited', Lang.bind(this, this._signalHandler['onWorkspaceRenamed']));
+        let nameColumn = new Gtk.TreeViewColumn({ title:"Name" });
+        nameColumn.pack_start(nameColumnrenderer, true);
+        nameColumn.add_attribute(nameColumnrenderer, 'text', 0);
+        this._workspaceNameTreeView.append_column(nameColumn);
         this._workspaceNameListStore = this._builder.get_object('workspaceNameListStore');
-        let names = this._workspaceSettings.get_strv('workspace-names');
-        let [notEmpty, iter] = this._workspaceNameListStore.get_iter_first();
-        for (let i = 0; i < names.length; i++) {
-            iter = this._workspaceNameListStore.append();
-            this._workspaceNameListStore.set_value(iter, 0, names[i]);
+        let workspaceNames = this._workspaceSettings.get_strv('workspace-names');
+        let [treeNotEmpty, nextIter] = this._workspaceNameListStore.get_iter_first();
+        for (let i = 0; i < workspaceNames.length; i++) {
+            nextIter = this._workspaceNameListStore.append();
+            this._workspaceNameListStore.set_value(nextIter, 0, workspaceNames[i]);
         }
 
+        // Add toolbar buttons manually
         let toolbar = this._builder.get_object('workspaceToolbar');
         toolbar.get_style_context().add_class(Gtk.STYLE_CLASS_INLINE_TOOLBAR);
         let addButton = new Gtk.ToolButton({icon_name: 'list-add-symbolic'});
-        addButton.connect('clicked', Lang.bind(this, this._signalHandler['onWorkspaceAdded']));
-        toolbar.add(addButton);
         let delButton = new Gtk.ToolButton({icon_name: 'list-remove-symbolic'});
-        delButton.connect('clicked', Lang.bind(this, this._signalHandler['onWorkspaceRemoved']));
+        toolbar.add(addButton);
         toolbar.add(delButton);
+        addButton.connect('clicked', Lang.bind(this, this._signalHandler['onWorkspaceAdded']));
+        delButton.connect('clicked', Lang.bind(this, this._signalHandler['onWorkspaceRemoved']));
     },
 
-    _populateStyle: function () {
+    _populateStyleTab: function () {
         let widget, value;
 
         value = this._settings.get_string('font-active');
@@ -224,15 +229,8 @@ WorkspaceSwitcherPrefs.prototype = {
 
         value = this._settings.get_strv('border-locations');
         for (let i = 0; i < value.length; i++) {
-            let position = value[i];
-            if (position == 'TOP')
-                this._builder.get_object('borderLocationTop').set_active(true);
-            else if (position == 'RIGHT')
-                this._builder.get_object('borderLocationRight').set_active(true);
-            else if (position == 'BOTTOM')
-                this._builder.get_object('borderLocationBottom').set_active(true);
-            else if (position == 'LEFT')
-                this._builder.get_object('borderLocationLeft').set_active(true);
+            widget = this._builder.get_object(BORDER_LOCATION_WIDGETS[value[i]]);
+            widget.set_active(true);
         }
 
         value = this._settings.get_string('background-colour-inactive');
@@ -286,16 +284,13 @@ WorkspaceSwitcherPrefs.prototype = {
         },
 
         onBorderLocationChanged: function (checkbutton) {
-            let borderPositions = [];
-            if (this._builder.get_object('borderLocationTop').get_active())
-                borderPositions.push('TOP');
-            if (this._builder.get_object('borderLocationRight').get_active())
-                borderPositions.push('RIGHT');
-            if (this._builder.get_object('borderLocationBottom').get_active())
-                borderPositions.push('BOTTOM');
-            if (this._builder.get_object('borderLocationLeft').get_active())
-                borderPositions.push('LEFT');
-            this._settings.set_strv('border-locations', borderPositions);
+            let borderLocations = [];
+            for (let i = 0; i < BORDER_LOCATIONS.length; i++) {
+                let location = BORDER_LOCATIONS[i];
+                if (this._builder.get_object(BORDER_LOCATION_WIDGETS[location]).get_active())
+                    borderLocations.push(location);
+            }
+            this._settings.set_strv('border-locations', borderLocations);
             this._settings.apply();
         },
 
@@ -433,37 +428,42 @@ WorkspaceSwitcherPrefs.prototype = {
         },
 
         onWorkspaceAdded: function (button) {
-            let iter = this._workspaceNameListStore.append();
-            let workspaceNum = this._workspaceNameListStore.get_path(iter).get_indices()[0] + 1;
-            let workspaceName = 'Workspace ' + workspaceNum;
-            let names = this._workspaceSettings.get_strv('workspace-names');
-            names.push(workspaceName);
-            this._workspaceSettings.set_strv('workspace-names', names);
+            let newIter = this._workspaceNameListStore.append();
+            let newPath = this._workspaceNameListStore.get_path(newIter);
+            let newWorkspaceIndex = newPath.get_indices()[0];
+            let newWorkspaceNumber = newWorkspaceIndex + 1;
+            let newWorkspaceName = 'Workspace ' + newWorkspaceNumber;
+            let workspaceNames = this._workspaceSettings.get_strv('workspace-names');
+            workspaceNames.push(newWorkspaceName);
+            this._workspaceSettings.set_strv('workspace-names', workspaceNames);
             this._workspaceSettings.apply();
-            this._workspaceNameListStore.set_value(iter, 0, 'Workspace ' + workspaceNum);
+            this._workspaceNameListStore.set_value(newIter, 0, newWorkspaceName);
         },
 
         onWorkspaceRemoved: function (button) {
-            let [notEmpty, model, iter] = this._workspaceNameTreeView.get_selection().get_selected();
-            if (notEmpty) {
-                let index = this._workspaceNameListStore.get_path(iter).get_indices()[0];
-                let names = this._workspaceSettings.get_strv('workspace-names');
-                names.splice(index, 1);
-                this._workspaceSettings.set_strv('workspace-names', names);
+            let currentSelection = this._workspaceNameTreeView.get_selection();
+            let [selectionExists, treeModel, selectedIter] = currentSelection.get_selected();
+            if (selectionExists) {
+                let selectedPath = this._workspaceNameListStore.get_path(selectedIter);
+                let selectedIndex = selectedPath.get_indices()[0];
+                let workspaceNames = this._workspaceSettings.get_strv('workspace-names');
+                workspaceNames.splice(selectedIndex, 1);
+                this._workspaceSettings.set_strv('workspace-names', workspaceNames);
                 this._workspaceSettings.apply();
-                this._workspaceNameListStore.remove(iter);
+                this._workspaceNameListStore.remove(selectedIter);
             }
         },
 
-        onWorkspaceRenamed: function (renderer, path, text) {
-            let [iterSet, iter] = this._workspaceNameListStore.get_iter_from_string(path);
-            if (iterSet) {
-                let index = this._workspaceNameListStore.get_path(iter).get_indices()[0];
-                let names = this._workspaceSettings.get_strv('workspace-names');
-                names[index] = text;
-                this._workspaceSettings.set_strv('workspace-names', names);
+        onWorkspaceRenamed: function (renderer, editedPathString, newName) {
+            let [iterExists, editedIter] = this._workspaceNameListStore.get_iter_from_string(editedPathString);
+            if (iterExists) {
+                let editedPath = this._workspaceNameListStore.get_path(editedIter);
+                let editedIndex = editedPath.get_indices()[0];
+                let workspaceNames = this._workspaceSettings.get_strv('workspace-names');
+                workspaceNames[editedIndex] = newName;
+                this._workspaceSettings.set_strv('workspace-names', workspaceNames);
                 this._workspaceSettings.apply();
-                this._workspaceNameListStore.set_value(iter, 0, text);
+                this._workspaceNameListStore.set_value(editedIter, 0, newName);
             }
         },
 
@@ -562,8 +562,8 @@ WorkspaceSwitcherPrefs.prototype = {
 
 function buildPrefsWidget () {
     prefs = new WorkspaceSwitcherPrefs();
-    prefs.widget.show_all();
-    return prefs.widget;
+    prefs.parentWidget.show_all();
+    return prefs.parentWidget;
 }
 
 function init () { }
