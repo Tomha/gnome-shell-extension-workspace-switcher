@@ -18,100 +18,130 @@
 	<schema path="/org/gnome/shell/extensions/workspce-switcher/" id="org.gnome.shell.extensions.workspace-switcher">
 		<key name="background-colour-active" type="s">
 			<default>"#888888ff"</default>
+			<description>Hex RGBA background colour for active workspace displays.</description>
 		</key>
 		<key name="background-colour-inactive" type="s">
 			<default>"#444444ff"</default>
+			<description>Hex RGBA background colour for inactive workspace displays.</description>
 		</key>
 		<key name="border-colour-active" type="s">
 			<default>"#ccccccff"</default>
+			<description>Hex RGBA border colour for active workspace displays.</description>
 		</key>
 		<key name="border-colour-inactive" type="s">
 			<default>"#ccccccff"</default>
+			<description>Hex RGBA border colour for inactive workspace displays.</description>
 		</key>
 		<key name="border-locations" type="as">
 			<default>["TOP", "RIGHT", "BOTTOM", "LEFT"]</default>
+			<description>Which sides of workspace displays to display a border on.</description>
 		</key>
 		<key name="border-radius" type="i">
 			<range min="0" max="32"/>
 			<default>0</default>
+			<description>Radius of corners, in pixels, for workspace display borders. Allows curved corners.</description>
 		</key>
 		<key name="border-size-active" type="i">
 			<range min="0" max="8"/>
 			<default>1</default>
+			<description>Border size/width, in pixels, for active workspace displays.</description>
 		</key>
 		<key name="border-size-inactive" type="i">
 			<range min="0" max="8"/>
 			<default>1</default>
+			<description>Border size/width, in pixels, for inactive workspace displays.</description>
 		</key>
 		<key name="click-action" enum="org.gnome.shell.extensions.workspace-switcher.click-action">
 			<default>"ACTIVITIES"</default>
+			<description>Action to perform when a workspace display is clicked.</description>
 		</key>
 		<key name="cyclic-scrolling" type="b">
 			<default>true</default>
+			<description>Whether scrolling from the last workspace to the first, and vice versa, should be enabled.</description>
 		</key>
 		<key name="font-colour-active" type="s">
 			<default>"#ccccccff"</default>
+			<description>Hex RGBA font colour for active workspace displays.</description>
 		</key>
 		<key name="font-colour-inactive" type="s">
 			<default>"#ccccccff"</default>
+			<description>Hex RGBA font colour for inactive workspace displays.</description>
 		</key>
 		<key name="font-active" type="s">
 			<default>"Sans 11"</default>
+			<description>Font name and size, in pt, to use for active workspace displays.</description>
 		</key>
 		<key name="font-inactive" type="s">
 			<default>"Sans 11"</default>
+			<description>Font name and size, in pt, to use for inactive workspace displays.</description>
 		</key>
 		<key name="font-colour-use-theme-active" type="b">
 			<default>true</default>
+			<description>Whether active worskpace displays should use the shell theme for the font colour.</description>
 		</key>
 		<key name="font-colour-use-theme-inactive" type="b">
 			<default>true</default>
+			<description>Whether inactive worskpace displays should use the shell theme for the font colour.</description>
 		</key>
 		<key name="font-use-theme-active" type="b">
 			<default>true</default>
+			<description>Whether active worskpace displays should use the shell theme for the font name and size.</description>
 		</key>
 		<key name="font-use-theme-inactive" type="b">
 			<default>true</default>
+			<description>Whether inactive worskpace displays should use the shell theme for the font name and size.</description>
 		</key>
 		<key name="index" type="i">
-			<default>-1</default>
+			<default>0</default>
+			<description>Index of the workspace switcher within the panel box it is placed in.</description>
 		</key>
 		<key name="invert-scrolling" type="b">
 			<default>false</default>
+			<description>Whether to invert the default scrolling direction.</description>
 		</key>
 		<key name="min-height" type="i">
 			<range min="0" max="64"/>
 			<default>0</default>
+			<description>Minimum height, in pixels, for workspace displays.</description>
 		</key>
 		<key name="min-width" type="i">
 			<range min="0" max="256"/>
 			<default>0</default>
+			<description>Minimum width, in pixels, for workspace displays.</description>
 		</key>
 		<key name="mode" enum="org.gnome.shell.extensions.workspace-switcher.mode">
 			<default>"CURRENT"</default>
+			<description>Which extenson mode to use. Determines how workspaces are displayed in the panel.</description>
 		</key>
 		<key name="padding-horizontal" type="i">
 			<range min="0" max="32"/>
 			<default>8</default>
+			<description>How much padding, in pixels, to put left and right of workspace displays.</description>
 		</key>
 		<key name="padding-vertical" type="i">
 			<range min="0" max="32"/>
 			<default>0</default>
+			<description>How much padding, in pixels, to put above and below workspace displays.</description>
 		</key>
 		<key name="position" enum="org.gnome.shell.extensions.workspace-switcher.position">
 			<default>"RIGHT"</default>
+			<description>Which panel box/position to place the workspace switcher in.</description>
 		</key>
 		<key name="show-icon-text" type="b">
 			<default>true</default>
+			<description>Whether to show the workspace name/number alongside the icon. Only has an effect in "Icon" mode.</description>
 		</key>
 		<key name="show-names" type="b">
 			<default>true</default>
+			<description>Whether to show workspace names instead of numbers.</description>
 		</key>
 		<key name="show-total-num" type="b">
 			<default>false</default>
+			<description>Whether to show the total number of workspaces alongside the current workspace number, when workspace numbers are used.</description>
 		</key>
 		<key name="vertical-display" type="b">
 			<default>false</default>
+			<description>Whether to display workspaces vertically. Only has an effect in "All" mode.</description>
 		</key>
 	</schema>
 </schemalist>
