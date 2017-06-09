@@ -32,23 +32,20 @@ const Lang = imports.lang;
 const ExtensionUtils = imports.misc.extensionUtils;
 const Me = ExtensionUtils.getCurrentExtension();
 
-
-const ACTIVE_STYLE = "background-color: #888888; border: 1px solid #cccccc; padding: 0px 8px 0px 8px; margin: 0px 1px 0px 1px;";
-const INACTIVE_STYLE = "background-color: #444444; border: 1px solid #cccccc; padding: 0px 8px 0px 8px; margin: 0px 1px 0px 1px;";
-
 const ACTIONS = {ACTIVITIES: 0, POPUP: 1, NONE: 2}
 
 function getWorkspaceName (index) {
     return Meta.prefs_get_workspace_name(index)
 }
 
-function getWorkspaceNum (index) {
+function getWorkspaceNumber (index) {
     return (index + 1).toString();
 }
 
 function setActiveWorkspace (index) {
-    if (index >= 0 && index < global.screen.n_workspaces)
+    if (index >= 0 && index < global.screen.n_workspaces) {
         global.screen.get_workspace_by_index(index).activate(global.get_current_time());
+    }
 }
 
 const CurrentWorkspaceDisplay = new Lang.Class({
@@ -57,9 +54,9 @@ const CurrentWorkspaceDisplay = new Lang.Class({
 
     _init: function (settingsStore) {
         this.parent({y_fill: true});
-        this._settingsStore = settingsStore;
+        this._settings = settingsStore;
         this._createPopupMenu();
-        this.set_child(this._createWidgets());
+        this._createWidgets();
     },
 
     destroy: function () {
@@ -72,13 +69,13 @@ const CurrentWorkspaceDisplay = new Lang.Class({
     },
 
     addWorkspace: function () {
-        this._settingsStore.currentWorkspace = global.screen.get_active_workspace().index();
+        this._settings.currentWorkspace = global.screen.get_active_workspace().index();
         this._updatePopupSection();
         this._label.set_text(this._getWorkspaceName());
     },
 
     removeWorkspace: function () {
-        this._settingsStore.currentWorkspace = global.screen.get_active_workspace().index();
+        this._settings.currentWorkspace = global.screen.get_active_workspace().index();
         this._updatePopupSection();
         this._label.set_text(this._getWorkspaceName());
     },
@@ -89,16 +86,16 @@ const CurrentWorkspaceDisplay = new Lang.Class({
     },
 
     switchWorkspace: function () {
-        this._popupItems[this._settingsStore.currentWorkspace].setOrnament(PopupMenu.Ornament.NONE);
-        this._settingsStore.currentWorkspace = global.screen.get_active_workspace().index();
-        this._popupItems[this._settingsStore.currentWorkspace].setOrnament(PopupMenu.Ornament.DOT);
+        this._popupItems[this._settings.currentWorkspace].setOrnament(PopupMenu.Ornament.NONE);
+        this._settings.currentWorkspace = global.screen.get_active_workspace().index();
+        this._popupItems[this._settings.currentWorkspace].setOrnament(PopupMenu.Ornament.DOT);
         this._label.set_text(this._getWorkspaceName());
     },
 
     updateStyle: function () {
-        let styleString = this._settingsStore.styleStringBase +
-                          this._settingsStore.styleStringDecorationActive +
-                          this._settingsStore.styleStringFontActive;
+        let styleString = this._settings.styleStringBase +
+                          this._settings.styleStringDecorationActive +
+                          this._settings.styleStringFontActive;
         this._label.set_style(styleString);
     },
 
@@ -135,31 +132,34 @@ const CurrentWorkspaceDisplay = new Lang.Class({
                                       child: this._label});
         this._button.connect('clicked', Lang.bind(this, this._onButtonClick));
         this._button.connect('scroll-event', Lang.bind(this, this._onButtonScroll));
-        return this._button;
+        this.set_child(this._button);
     },
 
     _getWorkspaceName: function () {
-        let index = this._settingsStore.currentWorkspace;
-        if (this._settingsStore.showNames)
+        let index = this._settings.currentWorkspace;
+        if (this._settings.showNames) {
             return getWorkspaceName(index);
-        else if (this._settingsStore.showTotalNum)
-            return getWorkspaceNum(index) + '/' + global.screen.n_workspaces.toString();
-        else return getWorkspaceNum(index);
+        } else if (this._settings.showTotalNum) {
+            return getWorkspaceNumber(index) + '/' + global.screen.n_workspaces.toString();
+        } else {
+            return getWorkspaceNumber(index);
+        }
     },
 
     _onButtonClick: function (button, event) {
-        if (this._settingsStore.clickAction == ACTIONS.ACTIVITIES)
+        if (this._settings.clickAction == ACTIONS.ACTIVITIES) {
             Main.overview.toggle();
-        else if (this._settingsStore.clickAction == ACTIONS.POPUP)
+        } else if (this._settings.clickAction == ACTIONS.POPUP) {
             this._popupMenu.toggle();
+        }
     },
 
     _onPopupItemClick: function (actor, event) {
         setActiveWorkspace(actor.workspaceId);
     },
 
-    _onPopupStateChange: function (menu, open) {
-        if (open) this._button.add_style_pseudo_class('active');
+    _onPopupStateChange: function (menu, isOpen) {
+        if (isOpen) this._button.add_style_pseudo_class('active');
         else this._button.remove_style_pseudo_class('active');
     },
 
@@ -169,9 +169,9 @@ const CurrentWorkspaceDisplay = new Lang.Class({
         if (scrollDirection == Clutter.ScrollDirection.DOWN) indexChange--;
         else if (scrollDirection == Clutter.ScrollDirection.UP) indexChange++;
         else return;
-        if (this._settingsStore.invertScrolling) indexChange *= -1;
+        if (this._settings.invertScrolling) indexChange *= -1;
         let index = global.screen.get_active_workspace().index() + indexChange;
-        if (this._settingsStore.cyclicScrolling) {
+        if (this._settings.cyclicScrolling) {
             if (index == global.screen.n_workspaces) index = 0;
             else if (index == -1) index = global.screen.n_workspaces - 1;
         } else {
@@ -193,7 +193,7 @@ const CurrentWorkspaceDisplay = new Lang.Class({
             this._popupItems.push(newMenuItem);
             newMenuItem.connect('activate', this._onPopupItemClick);
         }
-        this._popupItems[this._settingsStore.currentWorkspace].setOrnament(PopupMenu.Ornament.DOT);
+        this._popupItems[this._settings.currentWorkspace].setOrnament(PopupMenu.Ornament.DOT);
     }
 });
 
@@ -205,19 +205,17 @@ const AllWorkspacesDisplay = new Lang.Class({
         this._container = new St.BoxLayout();
         this._labels = [];
         this._buttons = [];
-        this._buttonPressSignals = [];
-        this._buttonScrollSignals = [];
         for (let i = 0; i < global.screen.n_workspaces; i++) this.addWorkspace();
-        return this._container;
+        this.set_child(this._container);
     },
 
     addWorkspace: function () {
-        this._settingsStore.currentWorkspace = global.screen.get_active_workspace().index();
+        this._settings.currentWorkspace = global.screen.get_active_workspace().index();
         let newIndex = this._labels.length;
         let label = new St.Label({y_align: Clutter.ActorAlign.CENTER});
         label.set_text(this._getWorkspaceName(newIndex));
         this._labels.push(label);
-        this.updateStyleForWorkspace(newIndex);
+        this.updateWorkspaceLabelStyle(newIndex);
         let button = new St.Button({style_class: 'panel-button',
                                     reactive: true,
                                     can_focus: true,
@@ -230,12 +228,11 @@ const AllWorkspacesDisplay = new Lang.Class({
         button.connect('scroll-event', Lang.bind(this, this._onButtonScroll));
         this._buttons.push(button);
         this._container.add_child(button);
-        this.updateWorkspaceNames();
         this._updatePopupSection();
     },
 
     removeWorkspace: function () {
-        this._settingsStore.currentWorkspace = global.screen.get_active_workspace().index();
+        this._settings.currentWorkspace = global.screen.get_active_workspace().index();
         this._labels.pop().destroy();
         this._buttons.pop().destroy();
         for (let i = 0; i < this._buttons.length; i++)
@@ -252,28 +249,29 @@ const AllWorkspacesDisplay = new Lang.Class({
     },
 
     switchWorkspace: function () {
-        this._popupItems[this._settingsStore.currentWorkspace].setOrnament(PopupMenu.Ornament.NONE);
-        this._settingsStore.currentWorkspace = global.screen.get_active_workspace().index();
+        this._popupItems[this._settings.currentWorkspace].setOrnament(PopupMenu.Ornament.NONE);
+        this._settings.currentWorkspace = global.screen.get_active_workspace().index();
         for (let i = 0; i < global.screen.n_workspaces; i++)
             this.updateStyle();
-        this._popupItems[this._settingsStore.currentWorkspace].setOrnament(PopupMenu.Ornament.DOT);
+        this._popupItems[this._settings.currentWorkspace].setOrnament(PopupMenu.Ornament.DOT);
     },
 
     updateStyle: function () {
         for (let i = 0; i < this._labels.length; i++)
-            this.updateStyleForWorkspace(i);
+            this.updateWorkspaceLabelStyle(i);
     },
 
-    updateStyleForWorkspace: function (workspaceIndex) {
-        let styleString = this._settingsStore.styleStringBase;
-        if (workspaceIndex == this._settingsStore.currentWorkspace)
-            styleString += this._settingsStore.styleStringDecorationActive +
-                        this._settingsStore.styleStringFontActive;
-        else
-            styleString += this._settingsStore.styleStringDecorationInactive +
-                            this._settingsStore.styleStringFontInactive;
+    updateWorkspaceLabelStyle: function (workspaceIndex) {
+        let styleString = this._settings.styleStringBase;
+        if (workspaceIndex == this._settings.currentWorkspace) {
+            styleString += this._settings.styleStringDecorationActive +
+                        this._settings.styleStringFontActive;
+        } else {
+            styleString += this._settings.styleStringDecorationInactive +
+                            this._settings.styleStringFontInactive;
+        }
         this._labels[workspaceIndex].set_style(styleString);
-        this._container.set_vertical(this._settingsStore.verticalDisplay);
+        this._container.set_vertical(this._settings.verticalDisplay);
     },
 
     updateWorkspaceNames: function () {
@@ -282,22 +280,21 @@ const AllWorkspacesDisplay = new Lang.Class({
     },
 
     _getWorkspaceName: function (index) {
-        if (index == null)
-            index = this._settingsStore.currentWorkspace;
-        if (this._settingsStore.showNames)
-            return getWorkspaceName(index);
-        else return getWorkspaceNum(index);
+        if (index == null) index = this._settings.currentWorkspace;
+        if (this._settings.showNames) return getWorkspaceName(index);
+        else return getWorkspaceNumber(index);
     },
 
     _onButtonClick: function (button, event) {
-        if (this._settingsStore.clickAction == ACTIONS.ACTIVITIES)
+        if (this._settings.clickAction == ACTIONS.ACTIVITIES) {
             setActiveWorkspace(button.workspaceIndex);
-        else if (this._settingsStore.clickAction == ACTIONS.POPUP)
+        } else if (this._settings.clickAction == ACTIONS.POPUP) {
             this._popupMenu.toggle();
+        }
     },
 
-    _onPopupStateChange: function (menu, open) {
-        if (open){
+    _onPopupStateChange: function (menu, isOpen) {
+        if (isOpen) {
             for (let i = 0; i < this._buttons.length; i++)
                 this._buttons[i].add_style_pseudo_class('active');
         } else {
@@ -320,7 +317,7 @@ const IconWorkspaceDisplay = new Lang.Class({
         this._label = new St.Label({y_align: Clutter.ActorAlign.CENTER});
         this._label.set_text(this._getWorkspaceName());
         this.updateStyle();
-        if (!this._settingsStore.showIconText) this._label.hide();
+        this.setLabelVisibility(this._settings.showIconText);
         this._container.add_child(this._label);
         this._button = new St.Button({style_class: 'panel-button',
                                       reactive: true,
@@ -331,17 +328,17 @@ const IconWorkspaceDisplay = new Lang.Class({
                                       child: this._container});
         this._button.connect('clicked', Lang.bind(this, this._onButtonClick));
         this._button.connect('scroll-event', Lang.bind(this, this._onButtonScroll));
-        return this._button;
+        this.set_child(this._button);
     },
 
-    showLabel: function (doShow) {
-        if (doShow) this._label.show();
+    setLabelVisibility: function (isVisible) {
+        if (isVisible) this._label.show();
         else this._label.hide();
     },
 
     updateStyle: function () {
-        let styleString = this._settingsStore.styleStringBase +
-                          this._settingsStore.styleStringFontActive;
+        let styleString = this._settings.styleStringBase +
+                          this._settings.styleStringFontActive;
         this._label.set_style(styleString);
     },
 });

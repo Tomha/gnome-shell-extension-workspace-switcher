@@ -248,8 +248,8 @@ const WorkspaceSwitcher = new Lang.Class({
             case 'show-icon-text':
                 this._settingsStore.showIconText = settings.get_boolean(key);
                 if (this._settingsStore.mode == MODES.ICON) {
-                    if (this._settingsStore.showIconText) this._display.showLabel(true);
-                    else this._display.showLabel(false);
+                    if (this._settingsStore.showIconText) this._display.setLabelVisibility(true);
+                    else this._display.setLabelVisibility(false);
                 }
                 break;
             case 'show-names':
