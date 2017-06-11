@@ -75,19 +75,19 @@
 			<default>"Sans 11"</default>
 			<description>Font name and size, in pt, to use for inactive workspace displays.</description>
 		</key>
-		<key name="font-colour-use-theme-active" type="b">
+		<key name="font-colour-use-custom-active" type="b">
 			<default>true</default>
 			<description>Whether active worskpace displays should use the shell theme for the font colour.</description>
 		</key>
-		<key name="font-colour-use-theme-inactive" type="b">
+		<key name="font-colour-use-custom-inactive" type="b">
 			<default>true</default>
 			<description>Whether inactive worskpace displays should use the shell theme for the font colour.</description>
 		</key>
-		<key name="font-use-theme-active" type="b">
+		<key name="font-use-custom-active" type="b">
 			<default>true</default>
 			<description>Whether active worskpace displays should use the shell theme for the font name and size.</description>
 		</key>
-		<key name="font-use-theme-inactive" type="b">
+		<key name="font-use-custom-inactive" type="b">
 			<default>true</default>
 			<description>Whether inactive worskpace displays should use the shell theme for the font name and size.</description>
 		</key>
@@ -100,12 +100,12 @@
 			<description>Whether to invert the default scrolling direction.</description>
 		</key>
 		<key name="min-height" type="i">
-			<range min="0" max="64"/>
+			<range min="0" max="32"/>
 			<default>0</default>
 			<description>Minimum height, in pixels, for workspace displays.</description>
 		</key>
 		<key name="min-width" type="i">
-			<range min="0" max="256"/>
+			<range min="0" max="128"/>
 			<default>0</default>
 			<description>Minimum width, in pixels, for workspace displays.</description>
 		</key>

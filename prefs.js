@@ -36,9 +36,6 @@ const BORDER_LOCATION_WIDGETS = {
     BOTTOM: 'borderLocationBottom',
     LEFT: 'borderLocationLeft'
 }
-const ACTIONS = ['actionActivities', 'actionPopup', 'actionNone'];
-const MODES = ['modeCurrent', 'modeAll', 'modeIcon'];
-const POSITIONS = ['positionLeft', 'positionCenter', 'positionRight'];
 
 function hexToRgba (hex) {
     let colour = new Gdk.RGBA();
@@ -106,20 +103,20 @@ WorkspaceSwitcherPrefs.prototype = {
         let widget, value;
 
         value = this._settings.get_enum('click-action');
-        widget = this._builder.get_object(ACTIONS[value]);
-        widget.set_active(true);
+        widget = this._builder.get_object('clickAction');
+        widget.set_active(value);
 
         value = this._settings.get_int('index');
         widget = this._builder.get_object('index');
         widget.set_value(value);
 
         value = this._settings.get_enum('mode');
-        widget = this._builder.get_object(MODES[value]);
-        widget.set_active(true);
+        widget = this._builder.get_object('mode');
+        widget.set_active(value);
 
         value = this._settings.get_enum('position');
-        widget = this._builder.get_object(POSITIONS[value]);
-        widget.set_active(true);
+        widget = this._builder.get_object('position');
+        widget.set_active(value);
 
         value = this._settings.get_boolean('show-names');
         widget = this._builder.get_object('showNames');
@@ -145,14 +142,13 @@ WorkspaceSwitcherPrefs.prototype = {
         widget = this._builder.get_object('cyclicScrolling');
         widget.set_active(value);
 
-        // Populate the workspace name treeview manually
+        // Populate the workspace name treeview
         this._workspaceNameTreeView = this._builder.get_object('workspaceNameTreeView');
-        let nameColumnrenderer = new Gtk.CellRendererText({ editable: true });
-        nameColumnrenderer.connect('edited', Lang.bind(this, this._signalHandler['onWorkspaceRenamed']));
-        let nameColumn = new Gtk.TreeViewColumn({ title:"Name" });
-        nameColumn.pack_start(nameColumnrenderer, true);
-        nameColumn.add_attribute(nameColumnrenderer, 'text', 0);
-        this._workspaceNameTreeView.append_column(nameColumn);
+        let nameColumnRenderer = new Gtk.CellRendererText({ editable: true });
+        nameColumnRenderer.connect('edited', Lang.bind(this, this._signalHandler['onWorkspaceRenamed']));
+        let nameColumn = this._builder.get_object('workspaceNameColumn');
+        nameColumn.pack_start(nameColumnRenderer, true);
+        nameColumn.add_attribute(nameColumnRenderer, 'text', 0);
         this._workspaceNameListStore = this._builder.get_object('workspaceNameListStore');
         let workspaceNames = this._workspaceSettings.get_strv('workspace-names');
         let [treeNotEmpty, nextIter] = this._workspaceNameListStore.get_iter_first();
@@ -161,15 +157,8 @@ WorkspaceSwitcherPrefs.prototype = {
             this._workspaceNameListStore.set_value(nextIter, 0, workspaceNames[i]);
         }
 
-        // Add toolbar buttons manually
         let toolbar = this._builder.get_object('workspaceToolbar');
         toolbar.get_style_context().add_class(Gtk.STYLE_CLASS_INLINE_TOOLBAR);
-        let addButton = new Gtk.ToolButton({icon_name: 'list-add-symbolic'});
-        let delButton = new Gtk.ToolButton({icon_name: 'list-remove-symbolic'});
-        toolbar.add(addButton);
-        toolbar.add(delButton);
-        addButton.connect('clicked', Lang.bind(this, this._signalHandler['onWorkspaceAdded']));
-        delButton.connect('clicked', Lang.bind(this, this._signalHandler['onWorkspaceRemoved']));
     },
 
     _populateStyleTab: function () {
@@ -183,12 +172,12 @@ WorkspaceSwitcherPrefs.prototype = {
         widget = this._builder.get_object('fontInactive');
         widget.set_font_name(value);
 
-        value = this._settings.get_boolean('font-use-theme-active');
-        widget = this._builder.get_object('fontUseThemeActive');
+        value = this._settings.get_boolean('font-use-custom-active');
+        widget = this._builder.get_object('fontUseCustomActive');
         widget.set_active(value);
 
-        value = this._settings.get_boolean('font-use-theme-inactive');
-        widget = this._builder.get_object('fontUseThemeInactive');
+        value = this._settings.get_boolean('font-use-custom-inactive');
+        widget = this._builder.get_object('fontUseCustomInactive');
         widget.set_active(value);
 
         value = this._settings.get_string('font-colour-active');
@@ -199,12 +188,12 @@ WorkspaceSwitcherPrefs.prototype = {
         widget = this._builder.get_object('fontColourInactive');
         widget.set_rgba(hexToRgba(value));
 
-        value = this._settings.get_boolean('font-colour-use-theme-active');
-        widget = this._builder.get_object('fontColourUseThemeActive');
+        value = this._settings.get_boolean('font-colour-use-custom-active');
+        widget = this._builder.get_object('fontColourUseCustomActive');
         widget.set_active(value);
 
-        value = this._settings.get_boolean('font-colour-use-theme-inactive');
-        widget = this._builder.get_object('fontColourUseThemeInactive');
+        value = this._settings.get_boolean('font-colour-use-custom-inactive');
+        widget = this._builder.get_object('fontColourUseCustomInactive');
         widget.set_active(value);
 
         value = this._settings.get_int('border-size-active');
@@ -309,11 +298,9 @@ WorkspaceSwitcherPrefs.prototype = {
             this._settings.apply();
         },
 
-        onClickActionChanged: function (radiobutton) {
-            if(radiobutton.get_active()) {
-                this._settings.set_enum('click-action', ACTIONS.indexOf(radiobutton.get_name()));
-                this._settings.apply();
-            }
+        onClickActionChanged: function (combobox) {
+            this._settings.set_enum('click-action', combobox.get_active());
+            this._settings.apply();
         },
 
         onCyclicScrollingChanged: function (toggleswitch) {
@@ -341,13 +328,13 @@ WorkspaceSwitcherPrefs.prototype = {
             this._settings.apply();
         },
 
-        onFontColourUseThemeActiveToggled: function (toggleswitch) {
-            this._settings.set_boolean('font-colour-use-theme-active', toggleswitch.get_active());
+        onFontColourUseCustomActiveToggled: function (toggleswitch) {
+            this._settings.set_boolean('font-colour-use-custom-active', toggleswitch.get_active());
             this._settings.apply();
         },
 
-        onFontColourUseThemeInactiveToggled: function (toggleswitch) {
-            this._settings.set_boolean('font-colour-use-theme-inactive', toggleswitch.get_active());
+        onFontColourUseCustomInactiveToggled: function (toggleswitch) {
+            this._settings.set_boolean('font-colour-use-custom-inactive', toggleswitch.get_active());
             this._settings.apply();
         },
 
@@ -361,13 +348,13 @@ WorkspaceSwitcherPrefs.prototype = {
             this._settings.apply();
         },
 
-        onFontUseThemeActiveToggled: function (toggleswitch) {
-            this._settings.set_boolean('font-use-theme-active', toggleswitch.get_active());
+        onFontUseCustomActiveToggled: function (toggleswitch) {
+            this._settings.set_boolean('font-use-custom-active', toggleswitch.get_active());
             this._settings.apply();
         },
 
-        onFontUseThemeInactiveToggled: function (toggleswitch) {
-            this._settings.set_boolean('font-use-theme-inactive', toggleswitch.get_active());
+        onFontUseCustomInactiveToggled: function (toggleswitch) {
+            this._settings.set_boolean('font-use-custom-inactive', toggleswitch.get_active());
             this._settings.apply();
         },
 
@@ -381,11 +368,9 @@ WorkspaceSwitcherPrefs.prototype = {
             this._settings.apply();
         },
 
-        onModeChanged: function (radiobutton) {
-            if(radiobutton.get_active()) {
-                this._settings.set_enum('mode', MODES.indexOf(radiobutton.get_name()));
-                this._settings.apply();
-            }
+        onModeChanged: function (combobox) {
+            this._settings.set_enum('mode', combobox.get_active());
+            this._settings.apply();
         },
 
         onPaddingHorizontalChanged: function (scale) {
@@ -400,11 +385,9 @@ WorkspaceSwitcherPrefs.prototype = {
         },
 
 
-        onPositionChanged: function (radiobutton) {
-            if(radiobutton.get_active()) {
-                this._settings.set_enum('position', POSITIONS.indexOf(radiobutton.get_name()));
-                this._settings.apply();
-            }
+        onPositionChanged: function (combobox) {
+            this._settings.set_enum('position', combobox.get_active());
+            this._settings.apply();
         },
 
         onShowIconTextChanged: function (toggleswitch) {

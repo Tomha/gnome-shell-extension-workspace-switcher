@@ -184,23 +184,23 @@ const WorkspaceSwitcher = new Lang.Class({
                 this._settingsStore.makeInactiveFontStyleString();
                 this._display.updateStyle();
                 break;
-            case 'font-colour-use-theme-active':
-                this._settingsStore.fontColourUseThemeActive = settings.get_boolean(key);
+            case 'font-colour-use-custom-active':
+                this._settingsStore.fontColourUseCustomActive = settings.get_boolean(key);
                 this._settingsStore.makeActiveFontStyleString();
                 this._display.updateStyle();
                 break;
-            case 'font-colour-use-theme-inactive':
-                this._settingsStore.fontColourUseThemeInactive = settings.get_boolean(key);
+            case 'font-colour-use-custom-inactive':
+                this._settingsStore.fontColourUseCustomInactive = settings.get_boolean(key);
                 this._settingsStore.makeInactiveFontStyleString();
                 this._display.updateStyle();
                 break;
-            case 'font-use-theme-active':
-                this._settingsStore.fontUseThemeActive = settings.get_boolean(key);
+            case 'font-use-custom-active':
+                this._settingsStore.fontUseCustomActive = settings.get_boolean(key);
                 this._settingsStore.makeActiveFontStyleString();
                 this._display.updateStyle();
                 break;
-            case 'font-use-theme-inactive':
-                this._settingsStore.fontUseThemeInactive = settings.get_boolean(key);
+            case 'font-use-custom-inactive':
+                this._settingsStore.fontUseCustomInactive = settings.get_boolean(key);
                 this._settingsStore.makeInactiveFontStyleString();
                 this._display.updateStyle();
                 break;
@@ -304,10 +304,10 @@ const SettingsStore = new Lang.Class({
         this.fontColourInactive = settings.get_string('font-colour-inactive');
         this.fontActive = settings.get_string('font-active');
         this.fontInactive = settings.get_string('font-inactive');
-        this.fontColourUseThemeActive = settings.get_boolean('font-colour-use-theme-active');
-        this.fontColourUseThemeInactive = settings.get_boolean('font-colour-use-theme-inactive');
-        this.fontUseThemeActive = settings.get_boolean('font-use-theme-active');
-        this.fontUseThemeInactive = settings.get_boolean('font-use-theme-inactive');
+        this.fontColourUseCustomActive = settings.get_boolean('font-colour-use-custom-active');
+        this.fontColourUseCustomInactive = settings.get_boolean('font-colour-use-custom-inactive');
+        this.fontUseCustomActive = settings.get_boolean('font-use-custom-active');
+        this.fontUseCustomInactive = settings.get_boolean('font-use-custom-inactive');
         this.index = settings.get_int('index');
         this.invertScrolling = settings.get_boolean('invert-scrolling');
         this.minHeight = settings.get_int('min-height');
@@ -378,10 +378,10 @@ const SettingsStore = new Lang.Class({
 
     makeActiveFontStyleString: function () {
         this.styleStringFontActive = '';
-        if (!this.fontColourUseThemeActive)
+        if (this.fontColourUseCustomActive)
             this.styleStringFontActive +=
                 'color:' + hexToRgbaString(this.fontColourActive) + ';';
-        if (!this.fontUseThemeActive) {
+        if (this.fontUseCustomActive) {
             let font = Pango.FontDescription.from_string(this.fontActive);
             this.styleStringFontActive +=
                 'font-size:' + font.get_size()/PANGO_UNITS_PER_PT  + 'pt;' +
@@ -393,10 +393,10 @@ const SettingsStore = new Lang.Class({
 
     makeInactiveFontStyleString: function () {
         this.styleStringFontInactive = '';
-        if (!this.fontColourUseThemeInactive)
+        if (this.fontColourUseCustomInactive)
             this.styleStringFontInactive +=
                 'color:' + hexToRgbaString(this.fontColourInactive) + ';';
-        if (!this.fontUseThemeInactive) {
+        if (this.fontUseCustomInactive) {
             let font = Pango.FontDescription.from_string(this.fontInactive);
             this.styleStringFontInactive +=
                 'font-size:' + font.get_size()/PANGO_UNITS_PER_PT  + 'pt;' +
