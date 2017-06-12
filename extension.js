@@ -212,6 +212,16 @@ const WorkspaceSwitcher = new Lang.Class({
             case 'invert-scrolling':
                 this._settingsStore.invertScrolling = settings.get_boolean(key);
                 break;
+            case 'margin-horizontal':
+                this._settingsStore.marginHorizontal = settings.get_int(key);
+                this._settingsStore.makeBaseStyleString();
+                this._display.updateStyle();
+                break;
+            case 'margin-vertical':
+                this._settingsStore.marginVertical = settings.get_int(key);
+                this._settingsStore.makeBaseStyleString();
+                this._display.updateStyle();
+                break;
             case 'min-height':
                 this._settingsStore.minHeight = settings.get_int(key);
                 this._settingsStore.makeBaseStyleString();
@@ -310,6 +320,8 @@ const SettingsStore = new Lang.Class({
         this.fontUseCustomInactive = settings.get_boolean('font-use-custom-inactive');
         this.index = settings.get_int('index');
         this.invertScrolling = settings.get_boolean('invert-scrolling');
+        this.marginHorizontal = settings.get_int('margin-horizontal');
+        this.marginVertical = settings.get_int('margin-vertical');
         this.minHeight = settings.get_int('min-height');
         this.minWidth = settings.get_int('min-width');
         this.mode = settings.get_enum('mode');
@@ -329,7 +341,8 @@ const SettingsStore = new Lang.Class({
     },
 
     makeBaseStyleString: function () {
-        this.styleStringBase = 'margin: 0px 1px;' +
+        this.styleStringBase = 'margin:' + this.marginVertical + 'px ' +
+                                    this.marginHorizontal + 'px;' +
                                'min-height:' + this.minHeight + 'px;' +
                                'min-width:' + this.minWidth + 'px;' +
                                'padding:' + this.paddingVertical + 'px ' +

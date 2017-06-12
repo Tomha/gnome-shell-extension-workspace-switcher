@@ -23,6 +23,16 @@
     <property name="step_increment">1</property>
     <property name="page_increment">10</property>
   </object>
+  <object class="GtkAdjustment" id="marginHorizontalAdjustment">
+    <property name="upper">8</property>
+    <property name="step_increment">1</property>
+    <property name="page_increment">10</property>
+  </object>
+  <object class="GtkAdjustment" id="marginVerticalAdjustment">
+    <property name="upper">8</property>
+    <property name="step_increment">1</property>
+    <property name="page_increment">10</property>
+  </object>
   <object class="GtkAdjustment" id="minimumHeightAdjustment">
     <property name="upper">32</property>
     <property name="step_increment">1</property>
@@ -1291,7 +1301,7 @@
                                 <property name="can_focus">False</property>
                                 <property name="halign">start</property>
                                 <property name="valign">center</property>
-                                <property name="label" translatable="yes">Width of active border</property>
+                                <property name="label" translatable="yes">Width of active border (px)</property>
                                 <attributes>
                                   <attribute name="font-desc" value="&lt;Enter Value&gt; 8"/>
                                   <attribute name="foreground" value="#888888888888"/>
@@ -1506,7 +1516,7 @@
                                 <property name="can_focus">False</property>
                                 <property name="halign">start</property>
                                 <property name="valign">center</property>
-                                <property name="label" translatable="yes">Radius for curved corners</property>
+                                <property name="label" translatable="yes">Radius for curved corners (px)</property>
                                 <attributes>
                                   <attribute name="font-desc" value="&lt;Enter Value&gt; 8"/>
                                   <attribute name="foreground" value="#888888888888"/>
@@ -1565,7 +1575,7 @@
                                 <property name="can_focus">False</property>
                                 <property name="halign">start</property>
                                 <property name="valign">center</property>
-                                <property name="label" translatable="yes">Width of inactive border</property>
+                                <property name="label" translatable="yes">Width of inactive border (px)</property>
                                 <attributes>
                                   <attribute name="font-desc" value="&lt;Enter Value&gt; 8"/>
                                   <attribute name="foreground" value="#888888888888"/>
@@ -1715,6 +1725,7 @@
                           <object class="GtkBox">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
+                            <property name="valign">center</property>
                             <property name="orientation">vertical</property>
                             <child>
                               <object class="GtkLabel">
@@ -2116,359 +2127,576 @@
                 <property name="left_padding">8</property>
                 <property name="right_padding">8</property>
                 <child>
-                  <object class="GtkGrid">
+                  <object class="GtkBox">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
-                    <property name="row_spacing">8</property>
-                    <property name="column_spacing">8</property>
-                    <property name="row_homogeneous">True</property>
+                    <property name="spacing">4</property>
+                    <property name="homogeneous">True</property>
                     <child>
-                      <object class="GtkButton" id="resetPaddingVertical">
-                        <property name="visible">True</property>
-                        <property name="can_focus">True</property>
-                        <property name="receives_default">True</property>
-                        <property name="tooltip_text" translatable="yes">Reset padding above/below label text</property>
-                        <property name="halign">start</property>
-                        <property name="valign">center</property>
-                        <property name="relief">none</property>
-                        <property name="always_show_image">True</property>
-                        <signal name="clicked" handler="resetPaddingVertical" swapped="no"/>
-                        <child>
-                          <object class="GtkImage">
-                            <property name="visible">True</property>
-                            <property name="can_focus">False</property>
-                            <property name="stock">gtk-clear</property>
-                          </object>
-                        </child>
-                      </object>
-                      <packing>
-                        <property name="left_attach">2</property>
-                        <property name="top_attach">1</property>
-                      </packing>
-                    </child>
-                    <child>
-                      <object class="GtkButton" id="resetMinWidth">
-                        <property name="visible">True</property>
-                        <property name="can_focus">True</property>
-                        <property name="receives_default">True</property>
-                        <property name="tooltip_text" translatable="yes">Reset minimum width of workspace displays</property>
-                        <property name="halign">start</property>
-                        <property name="valign">center</property>
-                        <property name="relief">none</property>
-                        <property name="always_show_image">True</property>
-                        <signal name="clicked" handler="resetMinWidth" swapped="no"/>
-                        <child>
-                          <object class="GtkImage">
-                            <property name="visible">True</property>
-                            <property name="can_focus">False</property>
-                            <property name="stock">gtk-clear</property>
-                          </object>
-                        </child>
-                      </object>
-                      <packing>
-                        <property name="left_attach">2</property>
-                        <property name="top_attach">2</property>
-                      </packing>
-                    </child>
-                    <child>
-                      <object class="GtkButton" id="resetPaddingHorizontal">
-                        <property name="visible">True</property>
-                        <property name="can_focus">True</property>
-                        <property name="receives_default">True</property>
-                        <property name="tooltip_text" translatable="yes">Reset padding left/right of label text</property>
-                        <property name="halign">start</property>
-                        <property name="valign">center</property>
-                        <property name="relief">none</property>
-                        <property name="always_show_image">True</property>
-                        <signal name="clicked" handler="resetPaddingHorizontal" swapped="no"/>
-                        <child>
-                          <object class="GtkImage">
-                            <property name="visible">True</property>
-                            <property name="can_focus">False</property>
-                            <property name="stock">gtk-clear</property>
-                          </object>
-                        </child>
-                      </object>
-                      <packing>
-                        <property name="left_attach">2</property>
-                        <property name="top_attach">0</property>
-                      </packing>
-                    </child>
-                    <child>
-                      <object class="GtkButton" id="resetMinHeight">
-                        <property name="visible">True</property>
-                        <property name="can_focus">True</property>
-                        <property name="receives_default">True</property>
-                        <property name="tooltip_text" translatable="yes">Reset minimum height of workspace displays</property>
-                        <property name="halign">start</property>
-                        <property name="valign">center</property>
-                        <property name="relief">none</property>
-                        <property name="always_show_image">True</property>
-                        <signal name="clicked" handler="resetMinHeight" swapped="no"/>
-                        <child>
-                          <object class="GtkImage">
-                            <property name="visible">True</property>
-                            <property name="can_focus">False</property>
-                            <property name="stock">gtk-clear</property>
-                          </object>
-                        </child>
-                      </object>
-                      <packing>
-                        <property name="left_attach">2</property>
-                        <property name="top_attach">3</property>
-                      </packing>
-                    </child>
-                    <child>
-                      <object class="GtkScale" id="paddingHorizontal">
-                        <property name="visible">True</property>
-                        <property name="can_focus">True</property>
-                        <property name="tooltip_text" translatable="yes">Padding left/right of label text</property>
-                        <property name="valign">center</property>
-                        <property name="hexpand">True</property>
-                        <property name="adjustment">paddingHorizontalAdjustment</property>
-                        <property name="round_digits">0</property>
-                        <property name="digits">0</property>
-                        <signal name="value-changed" handler="onPaddingHorizontalChanged" swapped="no"/>
-                      </object>
-                      <packing>
-                        <property name="left_attach">1</property>
-                        <property name="top_attach">0</property>
-                      </packing>
-                    </child>
-                    <child>
-                      <object class="GtkScale" id="paddingVertical">
-                        <property name="visible">True</property>
-                        <property name="can_focus">True</property>
-                        <property name="tooltip_text" translatable="yes">Padding above/below label text</property>
-                        <property name="valign">center</property>
-                        <property name="hexpand">True</property>
-                        <property name="adjustment">paddingVerticalAdjustment</property>
-                        <property name="round_digits">0</property>
-                        <property name="digits">0</property>
-                        <signal name="value-changed" handler="onPaddingVerticalChanged" swapped="no"/>
-                      </object>
-                      <packing>
-                        <property name="left_attach">1</property>
-                        <property name="top_attach">1</property>
-                      </packing>
-                    </child>
-                    <child>
-                      <object class="GtkScale" id="minWidth">
-                        <property name="visible">True</property>
-                        <property name="can_focus">True</property>
-                        <property name="tooltip_text" translatable="yes">Minimum width of workspace displays</property>
-                        <property name="valign">center</property>
-                        <property name="hexpand">True</property>
-                        <property name="adjustment">minimumWidthAdjustment</property>
-                        <property name="round_digits">0</property>
-                        <property name="digits">0</property>
-                        <signal name="value-changed" handler="onMinWidthChanged" swapped="no"/>
-                      </object>
-                      <packing>
-                        <property name="left_attach">1</property>
-                        <property name="top_attach">2</property>
-                      </packing>
-                    </child>
-                    <child>
-                      <object class="GtkScale" id="minHeight">
-                        <property name="visible">True</property>
-                        <property name="can_focus">True</property>
-                        <property name="tooltip_text" translatable="yes">Minimum height of workspace displays</property>
-                        <property name="valign">center</property>
-                        <property name="hexpand">True</property>
-                        <property name="adjustment">minimumHeightAdjustment</property>
-                        <property name="round_digits">0</property>
-                        <property name="digits">0</property>
-                        <signal name="value-changed" handler="onMinHeightChanged" swapped="no"/>
-                      </object>
-                      <packing>
-                        <property name="left_attach">1</property>
-                        <property name="top_attach">3</property>
-                      </packing>
-                    </child>
-                    <child>
-                      <object class="GtkBox">
+                      <object class="GtkGrid">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
-                        <property name="orientation">vertical</property>
+                        <property name="row_spacing">4</property>
+                        <property name="column_spacing">4</property>
                         <child>
-                          <object class="GtkLabel">
+                          <object class="GtkBox">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
                             <property name="halign">start</property>
                             <property name="valign">center</property>
-                            <property name="label" translatable="yes">Horizontal Padding</property>
-                            <attributes>
-                              <attribute name="weight" value="bold"/>
-                            </attributes>
+                            <property name="orientation">vertical</property>
+                            <child>
+                              <object class="GtkLabel">
+                                <property name="visible">True</property>
+                                <property name="can_focus">False</property>
+                                <property name="halign">start</property>
+                                <property name="valign">center</property>
+                                <property name="label" translatable="yes">Horizontal Padding</property>
+                                <attributes>
+                                  <attribute name="weight" value="bold"/>
+                                </attributes>
+                              </object>
+                              <packing>
+                                <property name="expand">False</property>
+                                <property name="fill">True</property>
+                                <property name="position">0</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkLabel">
+                                <property name="visible">True</property>
+                                <property name="can_focus">False</property>
+                                <property name="halign">start</property>
+                                <property name="valign">center</property>
+                                <property name="label" translatable="yes">Horizontal space between
+text and border (px)</property>
+                                <attributes>
+                                  <attribute name="font-desc" value="&lt;Enter Value&gt; 8"/>
+                                  <attribute name="foreground" value="#888888888888"/>
+                                </attributes>
+                              </object>
+                              <packing>
+                                <property name="expand">False</property>
+                                <property name="fill">True</property>
+                                <property name="position">1</property>
+                              </packing>
+                            </child>
                           </object>
                           <packing>
-                            <property name="expand">False</property>
-                            <property name="fill">True</property>
-                            <property name="position">0</property>
+                            <property name="left_attach">0</property>
+                            <property name="top_attach">0</property>
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkLabel">
+                          <object class="GtkSpinButton" id="paddingHorizontal">
+                            <property name="visible">True</property>
+                            <property name="can_focus">True</property>
+                            <property name="tooltip_text" translatable="yes">Horizontal space between text and border</property>
+                            <property name="halign">end</property>
+                            <property name="valign">center</property>
+                            <property name="hexpand">True</property>
+                            <property name="input_purpose">number</property>
+                            <property name="adjustment">paddingHorizontalAdjustment</property>
+                            <signal name="value-changed" handler="onPaddingHorizontalChanged" swapped="no"/>
+                          </object>
+                          <packing>
+                            <property name="left_attach">1</property>
+                            <property name="top_attach">0</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkButton" id="resetPaddingHorizontal">
+                            <property name="visible">True</property>
+                            <property name="can_focus">True</property>
+                            <property name="receives_default">True</property>
+                            <property name="tooltip_text" translatable="yes">Reset padding left/right of label text</property>
+                            <property name="halign">start</property>
+                            <property name="valign">center</property>
+                            <property name="relief">none</property>
+                            <property name="always_show_image">True</property>
+                            <signal name="clicked" handler="resetPaddingHorizontal" swapped="no"/>
+                            <child>
+                              <object class="GtkImage">
+                                <property name="visible">True</property>
+                                <property name="can_focus">False</property>
+                                <property name="stock">gtk-clear</property>
+                              </object>
+                            </child>
+                          </object>
+                          <packing>
+                            <property name="left_attach">2</property>
+                            <property name="top_attach">0</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkBox">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
                             <property name="halign">start</property>
                             <property name="valign">center</property>
-                            <property name="label" translatable="yes">Padding left/right of label text</property>
-                            <attributes>
-                              <attribute name="font-desc" value="&lt;Enter Value&gt; 8"/>
-                              <attribute name="foreground" value="#888888888888"/>
-                            </attributes>
+                            <property name="orientation">vertical</property>
+                            <child>
+                              <object class="GtkLabel">
+                                <property name="visible">True</property>
+                                <property name="can_focus">False</property>
+                                <property name="halign">start</property>
+                                <property name="valign">center</property>
+                                <property name="label" translatable="yes">Horizontal Margin</property>
+                                <attributes>
+                                  <attribute name="weight" value="bold"/>
+                                </attributes>
+                              </object>
+                              <packing>
+                                <property name="expand">False</property>
+                                <property name="fill">True</property>
+                                <property name="position">0</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkLabel">
+                                <property name="visible">True</property>
+                                <property name="can_focus">False</property>
+                                <property name="halign">start</property>
+                                <property name="valign">center</property>
+                                <property name="label" translatable="yes">Horizontal space around
+the border (px)</property>
+                                <attributes>
+                                  <attribute name="font-desc" value="&lt;Enter Value&gt; 8"/>
+                                  <attribute name="foreground" value="#888888888888"/>
+                                </attributes>
+                              </object>
+                              <packing>
+                                <property name="expand">False</property>
+                                <property name="fill">True</property>
+                                <property name="position">1</property>
+                              </packing>
+                            </child>
                           </object>
                           <packing>
-                            <property name="expand">False</property>
-                            <property name="fill">True</property>
-                            <property name="position">1</property>
+                            <property name="left_attach">0</property>
+                            <property name="top_attach">1</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkSpinButton" id="marginHorizontal">
+                            <property name="visible">True</property>
+                            <property name="can_focus">True</property>
+                            <property name="tooltip_text" translatable="yes">Horizontal space around the border</property>
+                            <property name="halign">end</property>
+                            <property name="valign">center</property>
+                            <property name="hexpand">True</property>
+                            <property name="input_purpose">number</property>
+                            <property name="adjustment">marginHorizontalAdjustment</property>
+                            <signal name="value-changed" handler="onMarginHorizontalChanged" swapped="no"/>
+                          </object>
+                          <packing>
+                            <property name="left_attach">1</property>
+                            <property name="top_attach">1</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkButton" id="resetMarginHorizontal">
+                            <property name="visible">True</property>
+                            <property name="can_focus">True</property>
+                            <property name="receives_default">True</property>
+                            <property name="tooltip_text" translatable="yes">Reset minimum width of workspace displays</property>
+                            <property name="halign">start</property>
+                            <property name="valign">center</property>
+                            <property name="relief">none</property>
+                            <property name="always_show_image">True</property>
+                            <signal name="clicked" handler="resetMarginHorizontal" swapped="no"/>
+                            <child>
+                              <object class="GtkImage">
+                                <property name="visible">True</property>
+                                <property name="can_focus">False</property>
+                                <property name="stock">gtk-clear</property>
+                              </object>
+                            </child>
+                          </object>
+                          <packing>
+                            <property name="left_attach">2</property>
+                            <property name="top_attach">1</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkBox">
+                            <property name="visible">True</property>
+                            <property name="can_focus">False</property>
+                            <property name="halign">start</property>
+                            <property name="valign">center</property>
+                            <property name="orientation">vertical</property>
+                            <child>
+                              <object class="GtkLabel">
+                                <property name="visible">True</property>
+                                <property name="can_focus">False</property>
+                                <property name="halign">start</property>
+                                <property name="valign">center</property>
+                                <property name="label" translatable="yes">Minimum Width</property>
+                                <attributes>
+                                  <attribute name="weight" value="bold"/>
+                                </attributes>
+                              </object>
+                              <packing>
+                                <property name="expand">False</property>
+                                <property name="fill">True</property>
+                                <property name="position">0</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkLabel">
+                                <property name="visible">True</property>
+                                <property name="can_focus">False</property>
+                                <property name="halign">start</property>
+                                <property name="valign">center</property>
+                                <property name="label" translatable="yes">Minimum width of each
+label/button (px)</property>
+                                <attributes>
+                                  <attribute name="font-desc" value="&lt;Enter Value&gt; 8"/>
+                                  <attribute name="foreground" value="#888888888888"/>
+                                </attributes>
+                              </object>
+                              <packing>
+                                <property name="expand">False</property>
+                                <property name="fill">True</property>
+                                <property name="position">1</property>
+                              </packing>
+                            </child>
+                          </object>
+                          <packing>
+                            <property name="left_attach">0</property>
+                            <property name="top_attach">2</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkSpinButton" id="minWidth">
+                            <property name="visible">True</property>
+                            <property name="can_focus">True</property>
+                            <property name="tooltip_text" translatable="yes">Minimum width of each label/button</property>
+                            <property name="halign">end</property>
+                            <property name="valign">center</property>
+                            <property name="hexpand">True</property>
+                            <property name="input_purpose">number</property>
+                            <property name="adjustment">minimumWidthAdjustment</property>
+                            <signal name="value-changed" handler="onMinWidthChanged" swapped="no"/>
+                          </object>
+                          <packing>
+                            <property name="left_attach">1</property>
+                            <property name="top_attach">2</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkButton" id="resetMinWidth">
+                            <property name="visible">True</property>
+                            <property name="can_focus">True</property>
+                            <property name="receives_default">True</property>
+                            <property name="tooltip_text" translatable="yes">Reset minimum width of workspace displays</property>
+                            <property name="halign">start</property>
+                            <property name="valign">center</property>
+                            <property name="relief">none</property>
+                            <property name="always_show_image">True</property>
+                            <signal name="clicked" handler="resetMinWidth" swapped="no"/>
+                            <child>
+                              <object class="GtkImage">
+                                <property name="visible">True</property>
+                                <property name="can_focus">False</property>
+                                <property name="stock">gtk-clear</property>
+                              </object>
+                            </child>
+                          </object>
+                          <packing>
+                            <property name="left_attach">2</property>
+                            <property name="top_attach">2</property>
                           </packing>
                         </child>
                       </object>
                       <packing>
-                        <property name="left_attach">0</property>
-                        <property name="top_attach">0</property>
+                        <property name="expand">False</property>
+                        <property name="fill">True</property>
+                        <property name="position">0</property>
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkBox">
+                      <object class="GtkGrid">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
-                        <property name="orientation">vertical</property>
+                        <property name="row_spacing">4</property>
+                        <property name="column_spacing">4</property>
                         <child>
-                          <object class="GtkLabel">
+                          <object class="GtkBox">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
                             <property name="halign">start</property>
                             <property name="valign">center</property>
-                            <property name="label" translatable="yes">Vertical Padding</property>
-                            <attributes>
-                              <attribute name="weight" value="bold"/>
-                            </attributes>
+                            <property name="orientation">vertical</property>
+                            <child>
+                              <object class="GtkLabel">
+                                <property name="visible">True</property>
+                                <property name="can_focus">False</property>
+                                <property name="halign">start</property>
+                                <property name="valign">center</property>
+                                <property name="label" translatable="yes">Vertical Padding</property>
+                                <attributes>
+                                  <attribute name="weight" value="bold"/>
+                                </attributes>
+                              </object>
+                              <packing>
+                                <property name="expand">False</property>
+                                <property name="fill">True</property>
+                                <property name="position">0</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkLabel">
+                                <property name="visible">True</property>
+                                <property name="can_focus">False</property>
+                                <property name="halign">start</property>
+                                <property name="valign">center</property>
+                                <property name="label" translatable="yes">Vertical space between
+text and border (px)</property>
+                                <attributes>
+                                  <attribute name="font-desc" value="&lt;Enter Value&gt; 8"/>
+                                  <attribute name="foreground" value="#888888888888"/>
+                                </attributes>
+                              </object>
+                              <packing>
+                                <property name="expand">False</property>
+                                <property name="fill">True</property>
+                                <property name="position">1</property>
+                              </packing>
+                            </child>
                           </object>
                           <packing>
-                            <property name="expand">False</property>
-                            <property name="fill">True</property>
-                            <property name="position">0</property>
+                            <property name="left_attach">0</property>
+                            <property name="top_attach">0</property>
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkLabel">
+                          <object class="GtkSpinButton" id="paddingVertical">
+                            <property name="visible">True</property>
+                            <property name="can_focus">True</property>
+                            <property name="tooltip_text" translatable="yes">Vertical space between text and border</property>
+                            <property name="halign">end</property>
+                            <property name="valign">center</property>
+                            <property name="hexpand">True</property>
+                            <property name="input_purpose">number</property>
+                            <property name="adjustment">paddingVerticalAdjustment</property>
+                            <signal name="value-changed" handler="onPaddingVerticalChanged" swapped="no"/>
+                          </object>
+                          <packing>
+                            <property name="left_attach">1</property>
+                            <property name="top_attach">0</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkButton" id="resetPaddingVertical">
+                            <property name="visible">True</property>
+                            <property name="can_focus">True</property>
+                            <property name="receives_default">True</property>
+                            <property name="tooltip_text" translatable="yes">Reset padding above/below label text</property>
+                            <property name="halign">start</property>
+                            <property name="valign">center</property>
+                            <property name="relief">none</property>
+                            <property name="always_show_image">True</property>
+                            <signal name="clicked" handler="resetPaddingVertical" swapped="no"/>
+                            <child>
+                              <object class="GtkImage">
+                                <property name="visible">True</property>
+                                <property name="can_focus">False</property>
+                                <property name="stock">gtk-clear</property>
+                              </object>
+                            </child>
+                          </object>
+                          <packing>
+                            <property name="left_attach">2</property>
+                            <property name="top_attach">0</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkBox">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
                             <property name="halign">start</property>
                             <property name="valign">center</property>
-                            <property name="label" translatable="yes">Padding above/below label text</property>
-                            <attributes>
-                              <attribute name="font-desc" value="&lt;Enter Value&gt; 8"/>
-                              <attribute name="foreground" value="#888888888888"/>
-                            </attributes>
+                            <property name="orientation">vertical</property>
+                            <child>
+                              <object class="GtkLabel">
+                                <property name="visible">True</property>
+                                <property name="can_focus">False</property>
+                                <property name="halign">start</property>
+                                <property name="valign">center</property>
+                                <property name="label" translatable="yes">Vertical Margin</property>
+                                <attributes>
+                                  <attribute name="weight" value="bold"/>
+                                </attributes>
+                              </object>
+                              <packing>
+                                <property name="expand">False</property>
+                                <property name="fill">True</property>
+                                <property name="position">0</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkLabel">
+                                <property name="visible">True</property>
+                                <property name="can_focus">False</property>
+                                <property name="halign">start</property>
+                                <property name="valign">center</property>
+                                <property name="label" translatable="yes">Vertical space around
+the border (px)</property>
+                                <attributes>
+                                  <attribute name="font-desc" value="&lt;Enter Value&gt; 8"/>
+                                  <attribute name="foreground" value="#888888888888"/>
+                                </attributes>
+                              </object>
+                              <packing>
+                                <property name="expand">False</property>
+                                <property name="fill">True</property>
+                                <property name="position">1</property>
+                              </packing>
+                            </child>
                           </object>
                           <packing>
-                            <property name="expand">False</property>
-                            <property name="fill">True</property>
-                            <property name="position">1</property>
+                            <property name="left_attach">0</property>
+                            <property name="top_attach">1</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkSpinButton" id="marginVertical">
+                            <property name="visible">True</property>
+                            <property name="can_focus">True</property>
+                            <property name="tooltip_text" translatable="yes">Vertical space around the border</property>
+                            <property name="halign">end</property>
+                            <property name="valign">center</property>
+                            <property name="hexpand">True</property>
+                            <property name="input_purpose">number</property>
+                            <property name="adjustment">marginVerticalAdjustment</property>
+                            <signal name="value-changed" handler="onMarginVerticalChanged" swapped="no"/>
+                          </object>
+                          <packing>
+                            <property name="left_attach">1</property>
+                            <property name="top_attach">1</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkButton" id="resetMarginVertical">
+                            <property name="visible">True</property>
+                            <property name="can_focus">True</property>
+                            <property name="receives_default">True</property>
+                            <property name="tooltip_text" translatable="yes">Reset minimum width of workspace displays</property>
+                            <property name="halign">start</property>
+                            <property name="valign">center</property>
+                            <property name="relief">none</property>
+                            <property name="always_show_image">True</property>
+                            <signal name="clicked" handler="resetMarginVertical" swapped="no"/>
+                            <child>
+                              <object class="GtkImage">
+                                <property name="visible">True</property>
+                                <property name="can_focus">False</property>
+                                <property name="stock">gtk-clear</property>
+                              </object>
+                            </child>
+                          </object>
+                          <packing>
+                            <property name="left_attach">2</property>
+                            <property name="top_attach">1</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkBox">
+                            <property name="visible">True</property>
+                            <property name="can_focus">False</property>
+                            <property name="halign">start</property>
+                            <property name="valign">center</property>
+                            <property name="orientation">vertical</property>
+                            <child>
+                              <object class="GtkLabel">
+                                <property name="visible">True</property>
+                                <property name="can_focus">False</property>
+                                <property name="halign">start</property>
+                                <property name="valign">center</property>
+                                <property name="label" translatable="yes">Minimum Height</property>
+                                <property name="justify">right</property>
+                                <attributes>
+                                  <attribute name="weight" value="bold"/>
+                                </attributes>
+                              </object>
+                              <packing>
+                                <property name="expand">False</property>
+                                <property name="fill">True</property>
+                                <property name="position">0</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkLabel">
+                                <property name="visible">True</property>
+                                <property name="can_focus">False</property>
+                                <property name="halign">start</property>
+                                <property name="valign">center</property>
+                                <property name="label" translatable="yes">Minimum height of each
+label/button (px)</property>
+                                <attributes>
+                                  <attribute name="font-desc" value="&lt;Enter Value&gt; 8"/>
+                                  <attribute name="foreground" value="#888888888888"/>
+                                </attributes>
+                              </object>
+                              <packing>
+                                <property name="expand">False</property>
+                                <property name="fill">True</property>
+                                <property name="position">1</property>
+                              </packing>
+                            </child>
+                          </object>
+                          <packing>
+                            <property name="left_attach">0</property>
+                            <property name="top_attach">2</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkSpinButton" id="minHeight">
+                            <property name="visible">True</property>
+                            <property name="can_focus">True</property>
+                            <property name="tooltip_text" translatable="yes">Minimum height of each label/button</property>
+                            <property name="halign">end</property>
+                            <property name="valign">center</property>
+                            <property name="hexpand">True</property>
+                            <property name="input_purpose">number</property>
+                            <property name="adjustment">minimumHeightAdjustment</property>
+                            <signal name="value-changed" handler="onMinHeightChanged" swapped="no"/>
+                          </object>
+                          <packing>
+                            <property name="left_attach">1</property>
+                            <property name="top_attach">2</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkButton" id="resetMinHeight">
+                            <property name="visible">True</property>
+                            <property name="can_focus">True</property>
+                            <property name="receives_default">True</property>
+                            <property name="tooltip_text" translatable="yes">Reset minimum height of workspace displays</property>
+                            <property name="halign">start</property>
+                            <property name="valign">center</property>
+                            <property name="relief">none</property>
+                            <property name="always_show_image">True</property>
+                            <signal name="clicked" handler="resetMinHeight" swapped="no"/>
+                            <child>
+                              <object class="GtkImage">
+                                <property name="visible">True</property>
+                                <property name="can_focus">False</property>
+                                <property name="stock">gtk-clear</property>
+                              </object>
+                            </child>
+                          </object>
+                          <packing>
+                            <property name="left_attach">2</property>
+                            <property name="top_attach">2</property>
                           </packing>
                         </child>
                       </object>
                       <packing>
-                        <property name="left_attach">0</property>
-                        <property name="top_attach">1</property>
-                      </packing>
-                    </child>
-                    <child>
-                      <object class="GtkBox">
-                        <property name="visible">True</property>
-                        <property name="can_focus">False</property>
-                        <property name="orientation">vertical</property>
-                        <child>
-                          <object class="GtkLabel">
-                            <property name="visible">True</property>
-                            <property name="can_focus">False</property>
-                            <property name="halign">start</property>
-                            <property name="valign">center</property>
-                            <property name="label" translatable="yes">Minimum Width</property>
-                            <attributes>
-                              <attribute name="weight" value="bold"/>
-                            </attributes>
-                          </object>
-                          <packing>
-                            <property name="expand">False</property>
-                            <property name="fill">True</property>
-                            <property name="position">0</property>
-                          </packing>
-                        </child>
-                        <child>
-                          <object class="GtkLabel">
-                            <property name="visible">True</property>
-                            <property name="can_focus">False</property>
-                            <property name="halign">start</property>
-                            <property name="valign">center</property>
-                            <property name="label" translatable="yes">Minimum width of workspace displays</property>
-                            <attributes>
-                              <attribute name="font-desc" value="&lt;Enter Value&gt; 8"/>
-                              <attribute name="foreground" value="#888888888888"/>
-                            </attributes>
-                          </object>
-                          <packing>
-                            <property name="expand">False</property>
-                            <property name="fill">True</property>
-                            <property name="position">1</property>
-                          </packing>
-                        </child>
-                      </object>
-                      <packing>
-                        <property name="left_attach">0</property>
-                        <property name="top_attach">2</property>
-                      </packing>
-                    </child>
-                    <child>
-                      <object class="GtkBox">
-                        <property name="visible">True</property>
-                        <property name="can_focus">False</property>
-                        <property name="orientation">vertical</property>
-                        <child>
-                          <object class="GtkLabel">
-                            <property name="visible">True</property>
-                            <property name="can_focus">False</property>
-                            <property name="halign">start</property>
-                            <property name="valign">center</property>
-                            <property name="label" translatable="yes">Minimum Height</property>
-                            <property name="justify">right</property>
-                            <attributes>
-                              <attribute name="weight" value="bold"/>
-                            </attributes>
-                          </object>
-                          <packing>
-                            <property name="expand">False</property>
-                            <property name="fill">True</property>
-                            <property name="position">0</property>
-                          </packing>
-                        </child>
-                        <child>
-                          <object class="GtkLabel">
-                            <property name="visible">True</property>
-                            <property name="can_focus">False</property>
-                            <property name="halign">start</property>
-                            <property name="valign">center</property>
-                            <property name="label" translatable="yes">Minimum height of workspace displays</property>
-                            <attributes>
-                              <attribute name="font-desc" value="&lt;Enter Value&gt; 8"/>
-                              <attribute name="foreground" value="#888888888888"/>
-                            </attributes>
-                          </object>
-                          <packing>
-                            <property name="expand">False</property>
-                            <property name="fill">True</property>
-                            <property name="position">1</property>
-                          </packing>
-                        </child>
-                      </object>
-                      <packing>
-                        <property name="left_attach">0</property>
-                        <property name="top_attach">3</property>
+                        <property name="expand">False</property>
+                        <property name="fill">True</property>
+                        <property name="position">1</property>
                       </packing>
                     </child>
                   </object>

@@ -99,6 +99,16 @@
 			<default>false</default>
 			<description>Whether to invert the default scrolling direction.</description>
 		</key>
+		<key name="margin-horizontal" type="i">
+			<range min="0" max="8"/>
+			<default>1</default>
+			<description>How much margin, in pixels, to put left and right of workspace displays.</description>
+		</key>
+		<key name="margin-vertical" type="i">
+			<range min="0" max="8"/>
+			<default>0</default>
+			<description>How much margin, in pixels, to put above and below workspace displays.</description>
+		</key>
 		<key name="min-height" type="i">
 			<range min="0" max="32"/>
 			<default>0</default>

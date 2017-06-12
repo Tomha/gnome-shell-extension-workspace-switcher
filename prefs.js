@@ -238,6 +238,14 @@ WorkspaceSwitcherPrefs.prototype = {
         widget = this._builder.get_object('paddingVertical');
         widget.set_value(value);
 
+        value = this._settings.get_int('margin-horizontal');
+        widget = this._builder.get_object('marginHorizontal');
+        widget.set_value(value);
+
+        value = this._settings.get_int('margin-vertical');
+        widget = this._builder.get_object('marginVertical');
+        widget.set_value(value);
+
         value = this._settings.get_int('min-width');
         widget = this._builder.get_object('minWidth');
         widget.set_value(value);
@@ -283,18 +291,18 @@ WorkspaceSwitcherPrefs.prototype = {
             this._settings.apply();
         },
 
-        onBorderRadiusChanged: function (scale) {
-            this._settings.set_int('border-radius', scale.get_value());
+        onBorderRadiusChanged: function (spinbutton) {
+            this._settings.set_int('border-radius', spinbutton.get_value());
             this._settings.apply();
         },
 
-        onBorderSizeActiveChanged: function (scale) {
-            this._settings.set_int('border-size-active', scale.get_value());
+        onBorderSizeActiveChanged: function (spinbutton) {
+            this._settings.set_int('border-size-active', spinbutton.get_value());
             this._settings.apply();
         },
 
-        onBorderSizeInactiveChanged: function (scale) {
-            this._settings.set_int('border-size-inactive', scale.get_value());
+        onBorderSizeInactiveChanged: function (spinbutton) {
+            this._settings.set_int('border-size-inactive', spinbutton.get_value());
             this._settings.apply();
         },
 
@@ -358,13 +366,25 @@ WorkspaceSwitcherPrefs.prototype = {
             this._settings.apply();
         },
 
-        onMinHeightChanged: function (scale) {
-            this._settings.set_int('min-height', scale.get_value());
+        onMarginHorizontalChanged: function (spinbutton) {
+            this._settings.set_int('margin-horizontal', spinbutton.get_value());
             this._settings.apply();
         },
 
-        onMinWidthChanged: function (scale) {
-            this._settings.set_int('min-width', scale.get_value());
+
+        onMarginVerticalChanged: function (spinbutton) {
+            this._settings.set_int('margin-vertical', spinbutton.get_value());
+            this._settings.apply();
+        },
+
+
+        onMinHeightChanged: function (spinbutton) {
+            this._settings.set_int('min-height', spinbutton.get_value());
+            this._settings.apply();
+        },
+
+        onMinWidthChanged: function (spinbutton) {
+            this._settings.set_int('min-width', spinbutton.get_value());
             this._settings.apply();
         },
 
@@ -373,14 +393,14 @@ WorkspaceSwitcherPrefs.prototype = {
             this._settings.apply();
         },
 
-        onPaddingHorizontalChanged: function (scale) {
-            this._settings.set_int('padding-horizontal', scale.get_value());
+        onPaddingHorizontalChanged: function (spinbutton) {
+            this._settings.set_int('padding-horizontal', spinbutton.get_value());
             this._settings.apply();
         },
 
 
-        onPaddingVerticalChanged: function (scale) {
-            this._settings.set_int('padding-vertical', scale.get_value());
+        onPaddingVerticalChanged: function (spinbutton) {
+            this._settings.set_int('padding-vertical', spinbutton.get_value());
             this._settings.apply();
         },
 
@@ -511,6 +531,20 @@ WorkspaceSwitcherPrefs.prototype = {
             let widget = this._builder.get_object('fontColourInactive');
             let value = this._settings.get_string('font-colour-inactive');
             widget.set_rgba(hexToRgba(value));
+        },
+
+        resetMarginHorizontal: function (button) {
+            this._settings.reset('margin-horizontal');
+            let widget = this._builder.get_object('marginHorizontal');
+            let value = this._settings.get_int('margin-horizontal');
+            widget.set_value(value);
+        },
+
+        resetMarginVertical: function (button) {
+            this._settings.reset('margin-vertical');
+            let widget = this._builder.get_object('marginVertical');
+            let value = this._settings.get_int('margin-vertical');
+            widget.set_value(value);
         },
 
         resetMinHeight: function (button) {
