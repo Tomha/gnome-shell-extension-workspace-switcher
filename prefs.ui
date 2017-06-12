@@ -1301,7 +1301,7 @@
                                 <property name="can_focus">False</property>
                                 <property name="halign">start</property>
                                 <property name="valign">center</property>
-                                <property name="label" translatable="yes">Width of active border (px)</property>
+                                <property name="label" translatable="yes">Width of active border (0-8px)</property>
                                 <attributes>
                                   <attribute name="font-desc" value="&lt;Enter Value&gt; 8"/>
                                   <attribute name="foreground" value="#888888888888"/>
@@ -1516,7 +1516,7 @@
                                 <property name="can_focus">False</property>
                                 <property name="halign">start</property>
                                 <property name="valign">center</property>
-                                <property name="label" translatable="yes">Radius for curved corners (px)</property>
+                                <property name="label" translatable="yes">Radius for curved corners (0-32px)</property>
                                 <attributes>
                                   <attribute name="font-desc" value="&lt;Enter Value&gt; 8"/>
                                   <attribute name="foreground" value="#888888888888"/>
@@ -1575,7 +1575,7 @@
                                 <property name="can_focus">False</property>
                                 <property name="halign">start</property>
                                 <property name="valign">center</property>
-                                <property name="label" translatable="yes">Width of inactive border (px)</property>
+                                <property name="label" translatable="yes">Width of inactive border (0-8px)</property>
                                 <attributes>
                                   <attribute name="font-desc" value="&lt;Enter Value&gt; 8"/>
                                   <attribute name="foreground" value="#888888888888"/>
@@ -2169,7 +2169,7 @@
                                 <property name="halign">start</property>
                                 <property name="valign">center</property>
                                 <property name="label" translatable="yes">Horizontal space between
-text and border (px)</property>
+text and border (0-32px)</property>
                                 <attributes>
                                   <attribute name="font-desc" value="&lt;Enter Value&gt; 8"/>
                                   <attribute name="foreground" value="#888888888888"/>
@@ -2259,7 +2259,7 @@ text and border (px)</property>
                                 <property name="halign">start</property>
                                 <property name="valign">center</property>
                                 <property name="label" translatable="yes">Horizontal space around
-the border (px)</property>
+the border (0-8px)</property>
                                 <attributes>
                                   <attribute name="font-desc" value="&lt;Enter Value&gt; 8"/>
                                   <attribute name="foreground" value="#888888888888"/>
@@ -2349,7 +2349,7 @@ the border (px)</property>
                                 <property name="halign">start</property>
                                 <property name="valign">center</property>
                                 <property name="label" translatable="yes">Minimum width of each
-label/button (px)</property>
+label/button (0-128px)</property>
                                 <attributes>
                                   <attribute name="font-desc" value="&lt;Enter Value&gt; 8"/>
                                   <attribute name="foreground" value="#888888888888"/>
@@ -2452,7 +2452,7 @@ label/button (px)</property>
                                 <property name="halign">start</property>
                                 <property name="valign">center</property>
                                 <property name="label" translatable="yes">Vertical space between
-text and border (px)</property>
+text and border (0-32px)</property>
                                 <attributes>
                                   <attribute name="font-desc" value="&lt;Enter Value&gt; 8"/>
                                   <attribute name="foreground" value="#888888888888"/>
@@ -2542,7 +2542,7 @@ text and border (px)</property>
                                 <property name="halign">start</property>
                                 <property name="valign">center</property>
                                 <property name="label" translatable="yes">Vertical space around
-the border (px)</property>
+the border (0-8px)</property>
                                 <attributes>
                                   <attribute name="font-desc" value="&lt;Enter Value&gt; 8"/>
                                   <attribute name="foreground" value="#888888888888"/>
@@ -2633,7 +2633,7 @@ the border (px)</property>
                                 <property name="halign">start</property>
                                 <property name="valign">center</property>
                                 <property name="label" translatable="yes">Minimum height of each
-label/button (px)</property>
+label/button (0-32px)</property>
                                 <attributes>
                                   <attribute name="font-desc" value="&lt;Enter Value&gt; 8"/>
                                   <attribute name="foreground" value="#888888888888"/>
