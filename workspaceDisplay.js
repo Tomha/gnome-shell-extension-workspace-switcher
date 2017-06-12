@@ -20,6 +20,7 @@ An up to date version can also be found at:
 https://github.com/Tomha/gnome-shell-extension-workspace-switcher */
 
 const Clutter = imports.gi.Clutter;
+const Gio = imports.gi.Gio;
 const Gtk = imports.gi.Gtk;
 const Meta = imports.gi.Meta;
 const St = imports.gi.St;
@@ -310,9 +311,8 @@ const IconWorkspaceDisplay = new Lang.Class({
 
     _createWidgets: function () {
         this._container = new St.BoxLayout();
-        Gtk.IconTheme.get_default().append_search_path(Me.dir.get_child('icons').get_path());
-        this._icon = new St.Icon({icon_name: 'workspace-symbolic',
-                                  style_class: 'system-status-icon'});
+        let gicon = Gio.icon_new_for_string(Me.path + '/icons/workspace-switcher-tiles.svg');
+        this._icon = new St.Icon({gicon: gicon, style_class: 'system-status-icon'});
         this._container.add_child(this._icon);
         this._label = new St.Label({y_align: Clutter.ActorAlign.CENTER});
         this._label.set_text(this._getWorkspaceName());
