@@ -53,9 +53,13 @@ const CurrentWorkspaceDisplay = new Lang.Class({
     Name: 'CurrentWorkspaceDisplay',
     Extends: St.Bin,
 
-    _init: function (settingsStore) {
+    _init: function (gsettings, styleStore) {
         this.parent({y_fill: true});
-        this._settings = settingsStore;
+        this._settings = gsettings;
+        this._styles = styleStore;
+        this._currentWorkspace = global.screen.get_active_workspace().index();
+        this._cyclicScrolling = this._settings.get_boolean('cyclic-scrolling');
+        this._invertedScrolling = this._settings.get_boolean('invert-scrolling');
         this._createPopupMenu();
         this._createWidgets();
     },
@@ -70,13 +74,13 @@ const CurrentWorkspaceDisplay = new Lang.Class({
     },
 
     addWorkspace: function () {
-        this._settings.currentWorkspace = global.screen.get_active_workspace().index();
+        this._currentWorkspace = global.screen.get_active_workspace().index();
         this._updatePopupSection();
         this._label.set_text(this._getWorkspaceName());
     },
 
     removeWorkspace: function () {
-        this._settings.currentWorkspace = global.screen.get_active_workspace().index();
+        this._currentWorkspace = global.screen.get_active_workspace().index();
         this._updatePopupSection();
         this._label.set_text(this._getWorkspaceName());
     },
@@ -86,18 +90,30 @@ const CurrentWorkspaceDisplay = new Lang.Class({
         this.updateWorkspaceNames();
     },
 
+    setCyclicScrolling: function (enabled) {
+        this._cyclicScrolling = enabled
+    },
+
+    setInvertedScrolling: function (enabled) {
+        this._invertedScrolling = enabled
+    },
+
     switchWorkspace: function () {
-        this._popupItems[this._settings.currentWorkspace].setOrnament(PopupMenu.Ornament.NONE);
-        this._settings.currentWorkspace = global.screen.get_active_workspace().index();
-        this._popupItems[this._settings.currentWorkspace].setOrnament(PopupMenu.Ornament.DOT);
+        this._popupItems[this._currentWorkspace].setOrnament(PopupMenu.Ornament.NONE);
+        this._currentWorkspace = global.screen.get_active_workspace().index();
+        this._popupItems[this._currentWorkspace].setOrnament(PopupMenu.Ornament.DOT);
         this._label.set_text(this._getWorkspaceName());
     },
 
     updateStyle: function () {
-        let styleString = this._settings.styleStringBase +
-                          this._settings.styleStringDecorationActive +
-                          this._settings.styleStringFontActive;
+        let styleString = this._styles.baseStyle +
+                          this._styles.decorationActiveStyle +
+                          this._styles.fontActiveStyle;
         this._label.set_style(styleString);
+    },
+
+    updateWorkspaceLabelOrientation: function () {
+        return; // Implemented by AllWorkspacesDisplay child
     },
 
     updateWorkspaceNames: function () {
@@ -137,10 +153,10 @@ const CurrentWorkspaceDisplay = new Lang.Class({
     },
 
     _getWorkspaceName: function () {
-        let index = this._settings.currentWorkspace;
-        if (this._settings.showNames) {
+        let index = this._currentWorkspace;
+        if (this._settings.get_boolean('show-names')) {
             return getWorkspaceName(index);
-        } else if (this._settings.showTotalNum) {
+        } else if (this._settings.get_boolean('show-total-num')) {
             return getWorkspaceNumber(index) + '/' + global.screen.n_workspaces.toString();
         } else {
             return getWorkspaceNumber(index);
@@ -148,11 +164,9 @@ const CurrentWorkspaceDisplay = new Lang.Class({
     },
 
     _onButtonClick: function (button, event) {
-        if (this._settings.clickAction == ACTIONS.ACTIVITIES) {
-            Main.overview.toggle();
-        } else if (this._settings.clickAction == ACTIONS.POPUP) {
-            this._popupMenu.toggle();
-        }
+        let clickAction = this._settings.get_enum('click-action')
+        if (clickAction == ACTIONS.ACTIVITIES) Main.overview.toggle();
+        else if (clickAction == ACTIONS.POPUP) this._popupMenu.toggle();
     },
 
     _onPopupItemClick: function (actor, event) {
@@ -170,9 +184,9 @@ const CurrentWorkspaceDisplay = new Lang.Class({
         if (scrollDirection == Clutter.ScrollDirection.DOWN) indexChange--;
         else if (scrollDirection == Clutter.ScrollDirection.UP) indexChange++;
         else return;
-        if (this._settings.invertScrolling) indexChange *= -1;
+        if (this._invertedScrolling) indexChange *= -1;
         let index = global.screen.get_active_workspace().index() + indexChange;
-        if (this._settings.cyclicScrolling) {
+        if (this._cyclicScrolling) {
             if (index == global.screen.n_workspaces) index = 0;
             else if (index == -1) index = global.screen.n_workspaces - 1;
         } else {
@@ -194,7 +208,7 @@ const CurrentWorkspaceDisplay = new Lang.Class({
             this._popupItems.push(newMenuItem);
             newMenuItem.connect('activate', this._onPopupItemClick);
         }
-        this._popupItems[this._settings.currentWorkspace].setOrnament(PopupMenu.Ornament.DOT);
+        this._popupItems[this._currentWorkspace].setOrnament(PopupMenu.Ornament.DOT);
     }
 });
 
@@ -211,7 +225,7 @@ const AllWorkspacesDisplay = new Lang.Class({
     },
 
     addWorkspace: function () {
-        this._settings.currentWorkspace = global.screen.get_active_workspace().index();
+        this._currentWorkspace = global.screen.get_active_workspace().index();
         let newIndex = this._labels.length;
         let label = new St.Label({y_align: Clutter.ActorAlign.CENTER});
         label.set_text(this._getWorkspaceName(newIndex));
@@ -233,7 +247,7 @@ const AllWorkspacesDisplay = new Lang.Class({
     },
 
     removeWorkspace: function () {
-        this._settings.currentWorkspace = global.screen.get_active_workspace().index();
+        this._currentWorkspace = global.screen.get_active_workspace().index();
         this._labels.pop().destroy();
         this._buttons.pop().destroy();
         for (let i = 0; i < this._buttons.length; i++)
@@ -250,11 +264,11 @@ const AllWorkspacesDisplay = new Lang.Class({
     },
 
     switchWorkspace: function () {
-        this._popupItems[this._settings.currentWorkspace].setOrnament(PopupMenu.Ornament.NONE);
-        this._settings.currentWorkspace = global.screen.get_active_workspace().index();
+        this._popupItems[this._currentWorkspace].setOrnament(PopupMenu.Ornament.NONE);
+        this._currentWorkspace = global.screen.get_active_workspace().index();
         for (let i = 0; i < global.screen.n_workspaces; i++)
             this.updateStyle();
-        this._popupItems[this._settings.currentWorkspace].setOrnament(PopupMenu.Ornament.DOT);
+        this._popupItems[this._currentWorkspace].setOrnament(PopupMenu.Ornament.DOT);
     },
 
     updateStyle: function () {
@@ -262,17 +276,20 @@ const AllWorkspacesDisplay = new Lang.Class({
             this.updateWorkspaceLabelStyle(i);
     },
 
+    updateWorkspaceLabelOrientation: function () {
+        this._container.set_vertical(this._settings.get_boolean('vertical-display'));
+    },
+
     updateWorkspaceLabelStyle: function (workspaceIndex) {
-        let styleString = this._settings.styleStringBase;
-        if (workspaceIndex == this._settings.currentWorkspace) {
-            styleString += this._settings.styleStringDecorationActive +
-                        this._settings.styleStringFontActive;
+        let styleString = this._styles.baseStyle;
+        if (workspaceIndex == this._currentWorkspace) {
+            styleString += this._styles.decorationActiveStyle +
+                        this._styles.fontActiveStyle;
         } else {
-            styleString += this._settings.styleStringDecorationInactive +
-                            this._settings.styleStringFontInactive;
+            styleString += this._styles.decorationInactiveStyle +
+                            this._styles.fontInactiveStyle;
         }
         this._labels[workspaceIndex].set_style(styleString);
-        this._container.set_vertical(this._settings.verticalDisplay);
     },
 
     updateWorkspaceNames: function () {
@@ -281,17 +298,15 @@ const AllWorkspacesDisplay = new Lang.Class({
     },
 
     _getWorkspaceName: function (index) {
-        if (index == null) index = this._settings.currentWorkspace;
-        if (this._settings.showNames) return getWorkspaceName(index);
+        if (index == null) index = this._currentWorkspace;
+        if (this._settings.get_boolean('show-names')) return getWorkspaceName(index);
         else return getWorkspaceNumber(index);
     },
 
     _onButtonClick: function (button, event) {
-        if (this._settings.clickAction == ACTIONS.ACTIVITIES) {
-            setActiveWorkspace(button.workspaceIndex);
-        } else if (this._settings.clickAction == ACTIONS.POPUP) {
-            this._popupMenu.toggle();
-        }
+        let clickAction = this._settings.get_enum('click-action');
+        if (clickAction == ACTIONS.ACTIVITIES) setActiveWorkspace(button.workspaceIndex);
+        else if (clickAction == ACTIONS.POPUP) this._popupMenu.toggle();
     },
 
     _onPopupStateChange: function (menu, isOpen) {
@@ -317,7 +332,7 @@ const IconWorkspaceDisplay = new Lang.Class({
         this._label = new St.Label({y_align: Clutter.ActorAlign.CENTER});
         this._label.set_text(this._getWorkspaceName());
         this.updateStyle();
-        this.setLabelVisibility(this._settings.showIconText);
+        this.setLabelVisibility(this._settings.get_boolean('show-icon-text'));
         this._container.add_child(this._label);
         this._button = new St.Button({style_class: 'panel-button',
                                       reactive: true,
@@ -337,8 +352,8 @@ const IconWorkspaceDisplay = new Lang.Class({
     },
 
     updateStyle: function () {
-        let styleString = this._settings.styleStringBase +
-                          this._settings.styleStringFontActive;
+        let styleString = this._styles.baseStyle +
+                          this._styles.fontActiveStyle;
         this._label.set_style(styleString);
     },
 });

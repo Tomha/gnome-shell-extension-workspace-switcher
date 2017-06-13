@@ -19,7 +19,6 @@ Workspace Switcher; if not, see http://www.gnu.org/licenses/.
 An up to date version can also be found at:
 https://github.com/Tomha/gnome-shell-extension-workspace-switcher */
 
-const Clutter = imports.gi.Clutter;
 const Pango = imports.gi.Pango;
 const Main = imports.ui.main;
 const Lang = imports.lang;
@@ -73,15 +72,15 @@ function init() {
 const WorkspaceSwitcher = new Lang.Class({
     Name: 'WorkspaceSwitcher',
 
-    init: function () { }, // Called by GNOME Shell when extension first loaded
+    init: function () { },
 
     enable: function () {
         this._settings = Settings.getSettings();
-        this._settingsStore = new SettingsStore(this._settings);
         this._workspaceSettings = Settings.getSettings('org.gnome.desktop.wm.preferences');
+        this._styles = new StyleStore(this._settings);
 
-        this._display = new MODE_OBJECTS[this._settingsStore.mode](this._settingsStore);
-        this._insertWidget();
+        this._display = new MODE_OBJECTS[this._settings.get_enum('mode')](this._settings, this._styles);
+        this._insertDisplay();
 
         this._settingsSignal = this._settings.connect('changed', Lang.bind(this, this._onSettingsChanged));
         this._workspaceSettingsSignal = this._workspaceSettings.connect('changed', Lang.bind(this, this._onWorkspaceSettingsChanged));
@@ -93,186 +92,113 @@ const WorkspaceSwitcher = new Lang.Class({
     },
 
     disable: function () {
-        this._removeWidget();
-
+        this._removeDisplay();
         this._display.destroy();
 
         this._settings.disconnect(this._settingsSignal);
         this._workspaceSettings.disconnect(this._workspaceSettingsSignal);
+
         for (let i = 0; i < this._workspaceSignals.length; i++)
             global.screen.disconnect(this._workspaceSignals[i]);
+
+        delete this._display;
+        delete this._settings;
+        delete this._settingsSignal;
+        delete this._styles;
+        delete this._workspaceSettings;
+        delete this._workspaceSettingsSignal;
+        delete this._workspaceSignals;
     },
 
-    _insertWidget: function () {
-        insertAtPosition(this._display,
-                         this._settingsStore.position,
-                         this._settingsStore.index);
+    _insertDisplay: function () {
+        this._currentPosition = this._settings.get_enum('position');
+        insertAtPosition(this._display, this._currentPosition, this._settings.get_int('index'));
     },
 
-    _removeWidget: function () {
-        removeFromPosition(this._display,
-                           this._settingsStore.position);
+    _removeDisplay: function () {
+        removeFromPosition(this._display, this._currentPosition);
+        this._currentPosition = null;
     },
 
     _onSettingsChanged: function (settings, key) {
         switch (key) {
+            case 'margin-horizontal':
+            case 'margin-vertical':
+            case 'min-height':
+            case 'padding-horizontal':
+            case 'padding-vertical':
+                this._styles.makeBaseStyle();
+                this._display.updateStyle();
+                break;
             case 'background-colour-active':
-                this._settingsStore.backgroundColourActive = settings.get_string(key);
-                this._settingsStore.makeActiveDecorationStyleString();
+            case 'border-colour-active':
+            case 'border-size-active':
+                this._styles.makeActiveDecorationStyle();
                 this._display.updateStyle();
                 break;
             case 'background-colour-inactive':
-                this._settingsStore.backgroundColourInactive = settings.get_string(key);
-                this._settingsStore.makeInactiveDecorationStyleString();
-                this._display.updateStyle();
-                break;
-            case 'border-colour-active':
-                this._settingsStore.borderColourActive = settings.get_string(key);
-                this._settingsStore.makeActiveDecorationStyleString();
-                this._display.updateStyle();
-                break;
             case 'border-colour-inactive':
-                this._settingsStore.borderColourInactive = settings.get_string(key);
-                this._settingsStore.makeInactiveDecorationStyleString();
+            case 'border-size-inactive':
+                this._styles.makeInactiveDecorationStyle();
                 this._display.updateStyle();
                 break;
             case 'border-locations':
-                this._settingsStore.borderLocations = settings.get_strv(key);
-                this._settingsStore.makeActiveDecorationStyleString();
-                this._settingsStore.makeInactiveDecorationStyleString();
-                this._display.updateStyle();
-                break;
             case 'border-radius':
-                this._settingsStore.borderRadius = settings.get_int(key);
-                this._settingsStore.makeActiveDecorationStyleString();
-                this._settingsStore.makeInactiveDecorationStyleString();
+                this._styles.makeActiveDecorationStyle();
+                this._styles.makeInactiveDecorationStyle();
                 this._display.updateStyle();
-                break;
-            case 'border-size-active':
-                this._settingsStore.borderSizeActive = settings.get_int(key);
-                this._settingsStore.makeActiveDecorationStyleString();
-                this._display.updateStyle();
-                break;
-            case 'border-size-inactive':
-                this._settingsStore.borderSizeInactive = settings.get_int(key);
-                this._settingsStore.makeInactiveDecorationStyleString();
-                this._display.updateStyle();
-                break;
-            case 'click-action':
-                this._settingsStore.clickAction = settings.get_enum(key);
-                break;
-            case 'cyclic-scrolling':
-                this._settingsStore.cyclicScrolling = settings.get_boolean(key);
                 break;
             case 'font-colour-active':
-                this._settingsStore.fontColourActive = settings.get_string(key);
-                this._settingsStore.makeActiveFontStyleString();
+            case 'font-active':
+            case 'font-colour-use-custom-active':
+            case 'font-use-custom-active':
+                this._styles.makeActiveFontStyle();
                 this._display.updateStyle();
                 break;
             case 'font-colour-inactive':
-                this._settingsStore.fontColourInactive = settings.get_string(key);
-                this._settingsStore.makeInactiveFontStyleString();
-                this._display.updateStyle();
-                break;
-            case 'font-active':
-                this._settingsStore.fontActive = settings.get_string(key);
-                this._settingsStore.makeActiveFontStyleString();
-                this._display.updateStyle();
-                break;
             case 'font-inactive':
-                this._settingsStore.fontInactive = settings.get_string(key);
-                this._settingsStore.makeInactiveFontStyleString();
-                this._display.updateStyle();
-                break;
-            case 'font-colour-use-custom-active':
-                this._settingsStore.fontColourUseCustomActive = settings.get_boolean(key);
-                this._settingsStore.makeActiveFontStyleString();
-                this._display.updateStyle();
-                break;
             case 'font-colour-use-custom-inactive':
-                this._settingsStore.fontColourUseCustomInactive = settings.get_boolean(key);
-                this._settingsStore.makeInactiveFontStyleString();
-                this._display.updateStyle();
-                break;
-            case 'font-use-custom-active':
-                this._settingsStore.fontUseCustomActive = settings.get_boolean(key);
-                this._settingsStore.makeActiveFontStyleString();
-                this._display.updateStyle();
-                break;
             case 'font-use-custom-inactive':
-                this._settingsStore.fontUseCustomInactive = settings.get_boolean(key);
-                this._settingsStore.makeInactiveFontStyleString();
+                this._styles.makeInactiveFontStyle();
                 this._display.updateStyle();
                 break;
             case 'index':
-                this._settingsStore.index = settings.get_int(key);
-                this._removeWidget();
-                this._insertWidget();
+                this._removeDisplay();
+                this._insertDisplay();
+                break;
+            case 'cyclic-scrolling':
+                this._display.setCyclicScrolling(this._settings.get_boolean('cyclic-scrolling'));
                 break;
             case 'invert-scrolling':
-                this._settingsStore.invertScrolling = settings.get_boolean(key);
-                break;
-            case 'margin-horizontal':
-                this._settingsStore.marginHorizontal = settings.get_int(key);
-                this._settingsStore.makeBaseStyleString();
-                this._display.updateStyle();
-                break;
-            case 'margin-vertical':
-                this._settingsStore.marginVertical = settings.get_int(key);
-                this._settingsStore.makeBaseStyleString();
-                this._display.updateStyle();
-                break;
-            case 'min-height':
-                this._settingsStore.minHeight = settings.get_int(key);
-                this._settingsStore.makeBaseStyleString();
-                this._display.updateStyle();
+                this._display.setInvertedScrolling(this._settings.get_boolean('invert-scrolling'));
                 break;
             case 'min-width':
-                this._settingsStore.minWidth = settings.get_int(key);
-                this._settingsStore.makeBaseStyleString();
+                this._styles.makeBaseStyle();
                 this._display.resetWorkspaceNames(); // Prevents alignment issues
                 this._display.updateStyle();
                 break;
             case 'mode':
-                this._removeWidget();
+                this._removeDisplay();
                 this._display.destroy();
-                this._settingsStore.mode = settings.get_enum(key);
-                this._display = new MODE_OBJECTS[this._settingsStore.mode](this._settingsStore);
-                this._insertWidget();
-                break;
-            case 'padding-horizontal':
-                this._settingsStore.paddingHorizontal = settings.get_int(key);
-                this._settingsStore.makeBaseStyleString();
-                this._display.updateStyle();
-                break;
-            case 'padding-vertical':
-                this._settingsStore.paddingVertical = settings.get_int(key);
-                this._settingsStore.makeBaseStyleString();
-                this._display.updateStyle();
+                this._display = new MODE_OBJECTS[this._settings.get_enum('mode')](this._settings, this._styles);
+                this._insertDisplay();
                 break;
             case 'position':
-                this._removeWidget();
-                this._settingsStore.position = settings.get_enum(key);
-                this._insertWidget();
+                this._removeDisplay();
+                this._insertDisplay();
                 break;
             case 'show-icon-text':
-                this._settingsStore.showIconText = settings.get_boolean(key);
-                if (this._settingsStore.mode == MODES.ICON) {
-                    if (this._settingsStore.showIconText) this._display.setLabelVisibility(true);
-                    else this._display.setLabelVisibility(false);
-                }
+                if (this._settings.get_enum('mode') == MODES.ICON)
+                    this._display.setLabelVisibility(this._settings.get_boolean('show-icon-text'));
                 break;
             case 'show-names':
-                this._settingsStore.showNames = settings.get_boolean(key);
                 this._display.updateWorkspaceNames();
                 break;
             case 'show-total-num':
-                this._settingsStore.showTotalNum = settings.get_boolean(key);
-                if (!this._settingsStore.showNames) this._display.updateWorkspaceNames();
+                if (!this._settings.get_boolean('show-names')) this._display.updateWorkspaceNames();
                 break;
             case 'vertical-display':
-                this._settingsStore.verticalDisplay = settings.get_boolean(key);
-                this._display.updateStyle();
+                this._display.updateWorkspaceLabelOrientation();
                 break;
         }
     },
@@ -295,108 +221,64 @@ const WorkspaceSwitcher = new Lang.Class({
     }
 });
 
-const SettingsStore = new Lang.Class({
-    Name: 'SettingsStore',
+const StyleStore = new Lang.Class({
+    Name: 'StyleStore',
 
-    _init: function (settings) {
-        this.backgroundColourActive = settings.get_string('background-colour-active');
-        this.backgroundColourInactive = settings.get_string('background-colour-inactive');
-        this.borderColourActive = settings.get_string('border-colour-active');
-        this.borderColourInactive = settings.get_string('border-colour-inactive');
-        this.borderLocations = settings.get_strv('border-locations');
-        this.borderRadius = settings.get_int('border-radius');
-        this.borderSizeActive = settings.get_int('border-size-active');
-        this.borderSizeInactive = settings.get_int('border-size-inactive');
-        this.clickAction = settings.get_enum('click-action');
-        this.currentWorkspace = global.screen.get_active_workspace().index();
-        this.cyclicScrolling = settings.get_boolean('cyclic-scrolling');
-        this.fontColourActive = settings.get_string('font-colour-active');
-        this.fontColourInactive = settings.get_string('font-colour-inactive');
-        this.fontActive = settings.get_string('font-active');
-        this.fontInactive = settings.get_string('font-inactive');
-        this.fontColourUseCustomActive = settings.get_boolean('font-colour-use-custom-active');
-        this.fontColourUseCustomInactive = settings.get_boolean('font-colour-use-custom-inactive');
-        this.fontUseCustomActive = settings.get_boolean('font-use-custom-active');
-        this.fontUseCustomInactive = settings.get_boolean('font-use-custom-inactive');
-        this.index = settings.get_int('index');
-        this.invertScrolling = settings.get_boolean('invert-scrolling');
-        this.marginHorizontal = settings.get_int('margin-horizontal');
-        this.marginVertical = settings.get_int('margin-vertical');
-        this.minHeight = settings.get_int('min-height');
-        this.minWidth = settings.get_int('min-width');
-        this.mode = settings.get_enum('mode');
-        this.paddingHorizontal = settings.get_int('padding-horizontal');
-        this.paddingVertical = settings.get_int('padding-vertical');
-        this.position = settings.get_enum('position');
-        this.showIconText = settings.get_boolean('show-icon-text');
-        this.showNames = settings.get_boolean('show-names');
-        this.showTotalNum = settings.get_boolean('show-total-num');
-        this.verticalDisplay = settings.get_boolean('vertical-display');
-
-        this.makeBaseStyleString();
-        this.makeActiveDecorationStyleString();
-        this.makeInactiveDecorationStyleString();
-        this.makeActiveFontStyleString();
-        this.makeInactiveFontStyleString();
+    _init: function (gsettings) {
+        this._settings = gsettings;
+        this.makeBaseStyle();
+        this.makeActiveDecorationStyle();
+        this.makeInactiveDecorationStyle();
+        this.makeActiveFontStyle();
+        this.makeInactiveFontStyle();
     },
 
-    makeBaseStyleString: function () {
-        this.styleStringBase = 'margin:' + this.marginVertical + 'px ' +
-                                    this.marginHorizontal + 'px;' +
-                               'min-height:' + this.minHeight + 'px;' +
-                               'min-width:' + this.minWidth + 'px;' +
-                               'padding:' + this.paddingVertical + 'px ' +
-                                    this.paddingHorizontal + 'px;' +
-                               'text-align:center;' +
-                               'vertical-align: middle;';
+    makeBaseStyle: function () {
+        this.baseStyle =
+            'margin:' + this._settings.get_int('margin-vertical') + 'px ' +
+                this._settings.get_int('margin-horizontal') + 'px;' +
+            'min-height:' + this._settings.get_int('min-height') + 'px;' +
+            'min-width:' + this._settings.get_int('min-width') + 'px;' +
+            'padding:' + this._settings.get_int('padding-vertical') + 'px ' +
+                this._settings.get_int('padding-horizontal') + 'px;' +
+            'text-align:center;' +
+            'vertical-align: middle;';
     },
 
-    makeActiveDecorationStyleString: function () {
-        this.styleStringDecorationActive =
-            'background-color: ' + hexToRgbaString(this.backgroundColourActive) + ';' +
-            'border-color:' + hexToRgbaString(this.borderColourActive) + ';' +
-            'border-radius:'+ this.borderRadius + 'px;';
-
-        this.styleStringDecorationActive += 'border-top-width:' +
-            (this.borderLocations.indexOf('TOP') > -1 ? this.borderSizeActive + 'px;' : '0px;');
-
-         this.styleStringDecorationActive += 'border-right-width:' +
-            (this.borderLocations.indexOf('RIGHT') > -1 ? this.borderSizeActive + 'px;' : '0px;');
-
-        this.styleStringDecorationActive += 'border-bottom-width:' +
-            (this.borderLocations.indexOf('BOTTOM') > -1 ? this.borderSizeActive + 'px;' : '0px;');
-
-        this.styleStringDecorationActive += 'border-left-width:' +
-            (this.borderLocations.indexOf('LEFT') > -1 ? this.borderSizeActive + 'px;' : '0px;');
+    makeActiveDecorationStyle: function () {
+        let borderLocations = this._settings.get_strv('border-locations');
+        let borderSize = this._settings.get_int('border-size-active').toString() + 'px;';
+        this.decorationActiveStyle =
+            'background-color:' + hexToRgbaString(this._settings.get_string('background-colour-active')) + ';' +
+            'border-color:' + hexToRgbaString(this._settings.get_string('border-colour-active')) + ';' +
+            'border-radius:'+ this._settings.get_int('border-radius') + 'px;' +
+            'border-top-width:' + (borderLocations.indexOf('TOP') > -1 ? borderSize : '0px;') +
+            'border-right-width:' + (borderLocations.indexOf('RIGHT') > -1 ? borderSize : '0px;') +
+            'border-bottom-width:' + (borderLocations.indexOf('BOTTOM') > -1 ? borderSize : '0px;') +
+            'border-left-width:' + (borderLocations.indexOf('LEFT') > -1 ? borderSize : '0px;');
     },
 
-    makeInactiveDecorationStyleString: function () {
-        this.styleStringDecorationInactive =
-            'background-color: ' + hexToRgbaString(this.backgroundColourInactive) + ';' +
-            'border-color:' + hexToRgbaString(this.borderColourInactive) + ';' +
-            'border-radius:'+ this.borderRadius + 'px;';
-
-        this.styleStringDecorationInactive += 'border-top-width:' +
-            (this.borderLocations.indexOf('TOP') > -1 ? this.borderSizeInactive + 'px;' : '0px;');
-
-         this.styleStringDecorationInactive += 'border-right-width:' +
-            (this.borderLocations.indexOf('RIGHT') > -1 ? this.borderSizeInactive + 'px;' : '0px;');
-
-        this.styleStringDecorationInactive += 'border-bottom-width:' +
-            (this.borderLocations.indexOf('BOTTOM') > -1 ? this.borderSizeInactive + 'px;' : '0px;');
-
-        this.styleStringDecorationInactive += 'border-left-width:' +
-            (this.borderLocations.indexOf('LEFT') > -1 ? this.borderSizeInactive + 'px;' : '0px;');
+    makeInactiveDecorationStyle: function () {
+        let borderLocations = this._settings.get_strv('border-locations');
+        let borderSize = this._settings.get_int('border-size-inactive').toString() + 'px;';
+        this.decorationInactiveStyle =
+            'background-color:' + hexToRgbaString(this._settings.get_string('background-colour-inactive')) + ';' +
+            'border-color:' + hexToRgbaString(this._settings.get_string('border-colour-inactive')) + ';' +
+            'border-radius:'+ this._settings.get_int('border-radius') + 'px;' +
+            'border-top-width:' + (borderLocations.indexOf('TOP') > -1 ? borderSize : '0px;') +
+            'border-right-width:' + (borderLocations.indexOf('RIGHT') > -1 ? borderSize : '0px;') +
+            'border-bottom-width:' + (borderLocations.indexOf('BOTTOM') > -1 ? borderSize : '0px;') +
+            'border-left-width:' + (borderLocations.indexOf('LEFT') > -1 ? borderSize : '0px;');
     },
 
-    makeActiveFontStyleString: function () {
-        this.styleStringFontActive = '';
-        if (this.fontColourUseCustomActive)
-            this.styleStringFontActive +=
-                'color:' + hexToRgbaString(this.fontColourActive) + ';';
-        if (this.fontUseCustomActive) {
-            let font = Pango.FontDescription.from_string(this.fontActive);
-            this.styleStringFontActive +=
+    makeActiveFontStyle: function () {
+        this.fontActiveStyle = '';
+        if (this._settings.get_boolean('font-colour-use-custom-active'))
+            this.fontActiveStyle +=
+                'color:' + hexToRgbaString(this._settings.get_string('font-colour-active')) + ';';
+        if (this._settings.get_boolean('font-use-custom-active')) {
+            let font = Pango.FontDescription.from_string(this._settings.get_string('font-active'));
+            this.fontActiveStyle +=
                 'font-size:' + font.get_size()/PANGO_UNITS_PER_PT  + 'pt;' +
                 'font-family:' + font.get_family() + ';' +
                 'font-weight:' + PANGO_WEIGHTS[font.get_weight()] + ';' +
@@ -404,14 +286,14 @@ const SettingsStore = new Lang.Class({
         }
     },
 
-    makeInactiveFontStyleString: function () {
-        this.styleStringFontInactive = '';
-        if (this.fontColourUseCustomInactive)
-            this.styleStringFontInactive +=
-                'color:' + hexToRgbaString(this.fontColourInactive) + ';';
-        if (this.fontUseCustomInactive) {
-            let font = Pango.FontDescription.from_string(this.fontInactive);
-            this.styleStringFontInactive +=
+    makeInactiveFontStyle: function () {
+        this.fontInactiveStyle = '';
+        if (this._settings.get_boolean('font-colour-use-custom-inactive'))
+            this.fontInactiveStyle +=
+                'color:' + hexToRgbaString(this._settings.get_string('font-colour-inactive')) + ';';
+        if (this._settings.get_boolean('font-use-custom-inactive')) {
+            let font = Pango.FontDescription.from_string(this._settings.get_string('font-inactive'));
+            this.fontInactiveStyle +=
                 'font-size:' + font.get_size()/PANGO_UNITS_PER_PT  + 'pt;' +
                 'font-family:' + font.get_family() + ';' +
                 'font-weight:' + PANGO_WEIGHTS[font.get_weight()] + ';' +
