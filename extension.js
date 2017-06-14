@@ -25,15 +25,15 @@ const ExtensionUtils = imports.misc.extensionUtils;
 const Me = ExtensionUtils.getCurrentExtension();
 const Settings = Me.imports.settings;
 const StylesStorage = Me.imports.stylesStorage;
-const WorkspaceDisplay = Me.imports.workspaceDisplay;
+const WorkspaceDisplays = Me.imports.workspaceDisplays;
 
 const PANEL_POSITIONS = [Main.panel._leftBox,
                          Main.panel._centerBox,
                          Main.panel._rightBox];
 const MODES = { CURRENT: 0, ALL: 1, ICON: 2 };
-const MODE_OBJECTS = [WorkspaceDisplay.CurrentWorkspaceDisplay,
-                      WorkspaceDisplay.AllWorkspacesDisplay,
-                      WorkspaceDisplay.IconWorkspaceDisplay];
+const MODE_OBJECTS = [WorkspaceDisplays.CurrentWorkspaceDisplay,
+                      WorkspaceDisplays.AllWorkspacesDisplay,
+                      WorkspaceDisplays.IconWorkspaceDisplay];
 
 function insertAtPosition (actor, position, index) {
     PANEL_POSITIONS[position].insert_child_at_index(actor, index);

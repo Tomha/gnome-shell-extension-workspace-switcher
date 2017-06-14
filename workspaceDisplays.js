@@ -1,7 +1,7 @@
 /* Copyright (C) 2017 Tom Hartill
 
-workspaceDisplay.js - Utility file for the Workspace Switcher extension. Defines
-objects used for the different display modes.
+workspaceDisplays.js - Utility file for the Workspace Switcher extension.
+Defines objects used for the different display modes.
 
 Workspace Switcher is free software; you can redistribute it and/or modify it
 under the terms of the GNU General Public License as published by the Free
