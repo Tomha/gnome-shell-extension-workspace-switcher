@@ -190,7 +190,7 @@ const WorkspaceSwitcher = new Lang.Class({
     },
 
     _onWorkspaceSettingsChanged: function (settings, key) {
-        if (key == 'workspace-names' && this._settingsStore.showNames)
+        if (key == 'workspace-names' && this._settings.get_boolean("show-names"))
             this._display.updateWorkspaceNames();
     },
 
