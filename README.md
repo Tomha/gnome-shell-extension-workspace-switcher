@@ -28,17 +28,21 @@ The full set of options can be seen below:
 # Panel Display
 Including fonts, colours, and sizes/thicknesses, there is potential for a huge range of appearances. Below are some examples of the basic display types:
 
-![Preview A](preview/display/A - Icon.png)
-![Preview B](preview/display/B - Icon + Text.png)
+![PreviewA](preview/display/A-Icon.png)
 
-![Preview C](preview/display/C - Classic Single.png)
-![Preview D](preview/display/D - Classic All.png)
+![PreviewB](preview/display/B-Icon+Text.png)
 
-![Preview E](preview/display/E - Classic Names.png)
-![Preview F](preview/display/F - Classic Totals.png)
+![PreviewC](preview/display/C-ClassicSingle.png)
 
-![Preview G](preview/display/G - Underline.png)
-![Preview H](preview/display/H - Circles.png)
+![PreviewD](preview/display/D-ClassicAll.png)
+
+![PreviewE](preview/display/E-ClassicNames.png)
+
+![PreviewF](preview/display/F-ClassicTotals.png)
+
+![PreviewG](preview/display/G-Underline.png)
+
+![PreviewH](preview/display/H-Circles.png)
 
 # Switching Workspace
 There are 3 ways to change workspace, based partly off the display mode you use:
