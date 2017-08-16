@@ -7,5 +7,5 @@
     "shell-version": [ "3.24" ],
     "url": "https://github.com/Tomha/gnome-shell-extension-workspace-switcher",
     "uuid": "workspace-switcher@tomha.github.com",
-    "version": "Alpha 1.0"
+    "version": "1.0"
 }
