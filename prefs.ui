@@ -807,6 +807,7 @@
                             <property name="can_focus">False</property>
                             <property name="use_underline">True</property>
                             <property name="icon_name">list-remove-symbolic</property>
+                            <signal name="clicked" handler="onWorkspaceRemoved" swapped="no"/>
                           </object>
                           <packing>
                             <property name="expand">False</property>
