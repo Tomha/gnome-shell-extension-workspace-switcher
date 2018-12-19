@@ -32,6 +32,7 @@ const Lang = imports.lang;
 
 const ExtensionUtils = imports.misc.extensionUtils;
 const Me = ExtensionUtils.getCurrentExtension();
+const Utils = Me.imports.utils;
 
 const ACTIONS = {ACTIVITIES: 0, POPUP: 1, NONE: 2}
 
@@ -44,8 +45,8 @@ function getWorkspaceNumber (index) {
 }
 
 function setActiveWorkspace (index) {
-    if (index >= 0 && index < global.screen.n_workspaces) {
-        global.screen.get_workspace_by_index(index).activate(global.get_current_time());
+    if (index >= 0 && index < Utils.getWorkspaceManager().n_workspaces) {
+        Utils.getWorkspaceManager().get_workspace_by_index(index).activate(global.get_current_time());
     }
 }
 
@@ -57,7 +58,7 @@ const CurrentWorkspaceDisplay = new Lang.Class({
         this.parent({y_fill: true});
         this._settings = gsettings;
         this._styles = styleStore;
-        this._currentWorkspace = global.screen.get_active_workspace().index();
+        this._currentWorkspace = Utils.getWorkspaceManager().get_active_workspace().index();
         this._cyclicScrolling = this._settings.get_boolean('cyclic-scrolling');
         this._invertedScrolling = this._settings.get_boolean('invert-scrolling');
         this._createPopupMenu();
@@ -74,13 +75,13 @@ const CurrentWorkspaceDisplay = new Lang.Class({
     },
 
     addWorkspace: function () {
-        this._currentWorkspace = global.screen.get_active_workspace().index();
+        this._currentWorkspace = Utils.getWorkspaceManager().get_active_workspace().index();
         this._updatePopupSection();
         this._label.set_text(this._getWorkspaceName());
     },
 
     removeWorkspace: function () {
-        this._currentWorkspace = global.screen.get_active_workspace().index();
+        this._currentWorkspace = Utils.getWorkspaceManager().get_active_workspace().index();
         this._updatePopupSection();
         this._label.set_text(this._getWorkspaceName());
     },
@@ -100,7 +101,7 @@ const CurrentWorkspaceDisplay = new Lang.Class({
 
     switchWorkspace: function () {
         this._popupItems[this._currentWorkspace].setOrnament(PopupMenu.Ornament.NONE);
-        this._currentWorkspace = global.screen.get_active_workspace().index();
+        this._currentWorkspace = Utils.getWorkspaceManager().get_active_workspace().index();
         this._popupItems[this._currentWorkspace].setOrnament(PopupMenu.Ornament.DOT);
         this._label.set_text(this._getWorkspaceName());
     },
@@ -157,7 +158,7 @@ const CurrentWorkspaceDisplay = new Lang.Class({
         if (this._settings.get_boolean('show-names')) {
             return getWorkspaceName(index);
         } else if (this._settings.get_boolean('show-total-num')) {
-            return getWorkspaceNumber(index) + '/' + global.screen.n_workspaces.toString();
+            return getWorkspaceNumber(index) + '/' + Utils.getWorkspaceManager().n_workspaces.toString();
         } else {
             return getWorkspaceNumber(index);
         }
@@ -185,12 +186,12 @@ const CurrentWorkspaceDisplay = new Lang.Class({
         else if (scrollDirection == Clutter.ScrollDirection.UP) indexChange++;
         else return;
         if (this._invertedScrolling) indexChange *= -1;
-        let index = global.screen.get_active_workspace().index() + indexChange;
+        let index = Utils.getWorkspaceManager().get_active_workspace().index() + indexChange;
         if (this._cyclicScrolling) {
-            if (index == global.screen.n_workspaces) index = 0;
-            else if (index == -1) index = global.screen.n_workspaces - 1;
+            if (index == Utils.getWorkspaceManager().n_workspaces) index = 0;
+            else if (index == -1) index = Utils.getWorkspaceManager().n_workspaces - 1;
         } else {
-            if (index == global.screen.n_workspaces) index = global.screen.n_workspaces - 1;
+            if (index == Utils.getWorkspaceManager().n_workspaces) index = Utils.getWorkspaceManager().n_workspaces - 1;
             else if (index == -1) index = 0;
         }
         setActiveWorkspace(index);
@@ -200,7 +201,7 @@ const CurrentWorkspaceDisplay = new Lang.Class({
         this._popupSection.removeAll();
         this._popupItems = [];
 
-        for(let i = 0; i < global.screen.n_workspaces; i++) {
+        for(let i = 0; i < Utils.getWorkspaceManager().n_workspaces; i++) {
             let newMenuItem = new PopupMenu.PopupMenuItem(getWorkspaceName(i));
             newMenuItem.workspaceId = i;
 
@@ -220,12 +221,12 @@ const AllWorkspacesDisplay = new Lang.Class({
         this._container = new St.BoxLayout();
         this._labels = [];
         this._buttons = [];
-        for (let i = 0; i < global.screen.n_workspaces; i++) this.addWorkspace();
+        for (let i = 0; i < Utils.getWorkspaceManager().n_workspaces; i++) this.addWorkspace();
         this.set_child(this._container);
     },
 
     addWorkspace: function () {
-        this._currentWorkspace = global.screen.get_active_workspace().index();
+        this._currentWorkspace = Utils.getWorkspaceManager().get_active_workspace().index();
         let newIndex = this._labels.length;
         let label = new St.Label({y_align: Clutter.ActorAlign.CENTER});
         label.set_text(this._getWorkspaceName(newIndex));
@@ -247,7 +248,7 @@ const AllWorkspacesDisplay = new Lang.Class({
     },
 
     removeWorkspace: function () {
-        this._currentWorkspace = global.screen.get_active_workspace().index();
+        this._currentWorkspace = Utils.getWorkspaceManager().get_active_workspace().index();
         this._labels.pop().destroy();
         this._buttons.pop().destroy();
         for (let i = 0; i < this._buttons.length; i++)
@@ -265,8 +266,8 @@ const AllWorkspacesDisplay = new Lang.Class({
 
     switchWorkspace: function () {
         this._popupItems[this._currentWorkspace].setOrnament(PopupMenu.Ornament.NONE);
-        this._currentWorkspace = global.screen.get_active_workspace().index();
-        for (let i = 0; i < global.screen.n_workspaces; i++)
+        this._currentWorkspace = Utils.getWorkspaceManager().get_active_workspace().index();
+        for (let i = 0; i < Utils.getWorkspaceManager().n_workspaces; i++)
             this.updateStyle();
         this._popupItems[this._currentWorkspace].setOrnament(PopupMenu.Ornament.DOT);
     },

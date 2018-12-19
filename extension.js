@@ -25,6 +25,7 @@ const ExtensionUtils = imports.misc.extensionUtils;
 const Me = ExtensionUtils.getCurrentExtension();
 const Settings = Me.imports.settings;
 const StylesStorage = Me.imports.stylesStorage;
+const Utils = Me.imports.utils;
 const WorkspaceDisplays = Me.imports.workspaceDisplays;
 
 const PANEL_POSITIONS = [Main.panel._leftBox,
@@ -60,32 +61,23 @@ const WorkspaceSwitcher = new Lang.Class({
         this._display = new MODE_OBJECTS[this._settings.get_enum('mode')](this._settings, this._styles);
         this._insertDisplay();
 
-        this._settingsSignal = this._settings.connect('changed', Lang.bind(this, this._onSettingsChanged));
-        this._workspaceSettingsSignal = this._workspaceSettings.connect('changed', Lang.bind(this, this._onWorkspaceSettingsChanged));
-
-        this._workspaceSignals = [];
-        this._workspaceSignals.push(global.screen.connect('workspace-added', Lang.bind(this, this._onWorkspaceAdded)));
-        this._workspaceSignals.push(global.screen.connect('workspace-removed', Lang.bind(this, this._onWorkspaceRemoved)));
-        this._workspaceSignals.push(global.screen.connect('workspace-switched', Lang.bind(this, this._onWorkspaceSwitched)));
+        Utils.connect_and_track(this, this._settings, 'changed', Lang.bind(this, this._onSettingsChanged));
+        Utils.connect_and_track(this, this._workspaceSettings, 'changed', Lang.bind(this, this._onWorkspaceSettingsChanged));
+        Utils.connect_and_track(this, Utils.getWorkspaceManager(), 'workspace-added', Lang.bind(this, this._onWorkspaceAdded));
+        Utils.connect_and_track(this, Utils.getWorkspaceManager(), 'workspace-removed', Lang.bind(this, this._onWorkspaceRemoved));
+        Utils.connect_and_track(this, Utils.getWorkspaceManager(), 'workspace-switched', Lang.bind(this, this._onWorkspaceSwitched));
     },
 
     disable: function () {
         this._removeDisplay();
         this._display.destroy();
 
-        this._settings.disconnect(this._settingsSignal);
-        this._workspaceSettings.disconnect(this._workspaceSettingsSignal);
-
-        for (let i = 0; i < this._workspaceSignals.length; i++)
-            global.screen.disconnect(this._workspaceSignals[i]);
+        Utils.disconnect_tracked_signals(this);
 
         delete this._display;
         delete this._settings;
-        delete this._settingsSignal;
         delete this._styles;
         delete this._workspaceSettings;
-        delete this._workspaceSettingsSignal;
-        delete this._workspaceSignals;
     },
 
     _insertDisplay: function () {
