@@ -55,7 +55,7 @@ const CurrentWorkspaceDisplay = new Lang.Class({
     Extends: St.Bin,
 
     _init: function (gsettings, styleStore) {
-        this.parent({y_fill: true});
+        this.parent();
         this._settings = gsettings;
         this._styles = styleStore;
         this._currentWorkspace = Utils.getWorkspaceManager().get_active_workspace().index();
@@ -144,8 +144,6 @@ const CurrentWorkspaceDisplay = new Lang.Class({
         this._button = new St.Button({style_class: 'panel-button',
                                       reactive: true,
                                       can_focus: true,
-                                      x_fill: true,
-                                      y_fill: false,
                                       track_hover: true,
                                       child: this._label});
         this._button.connect('clicked', Lang.bind(this, this._onButtonClick));
@@ -235,8 +233,6 @@ const AllWorkspacesDisplay = new Lang.Class({
         let button = new St.Button({style_class: 'panel-button',
                                     reactive: true,
                                     can_focus: true,
-                                    x_fill: true,
-                                    y_fill: false,
                                     track_hover: true,
                                     child: label});
         button.workspaceIndex = newIndex;
@@ -338,8 +334,6 @@ const IconWorkspaceDisplay = new Lang.Class({
         this._button = new St.Button({style_class: 'panel-button',
                                       reactive: true,
                                       can_focus: true,
-                                      x_fill: true,
-                                      y_fill: false,
                                       track_hover: true,
                                       child: this._container});
         this._button.connect('clicked', Lang.bind(this, this._onButtonClick));
