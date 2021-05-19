@@ -15,7 +15,7 @@
 		<value value="1" nick="CENTER"/>
 		<value value="2" nick="RIGHT"/>
 	</enum>
-	<schema path="/org/gnome/shell/extensions/workspce-switcher/" id="org.gnome.shell.extensions.workspace-switcher">
+	<schema path="/org/gnome/shell/extensions/workspace-switcher/" id="org.gnome.shell.extensions.workspace-switcher">
 		<key name="background-colour-active" type="s">
 			<default>"#888888ff"</default>
 			<description>Hex RGBA background colour for active workspace displays.</description>
